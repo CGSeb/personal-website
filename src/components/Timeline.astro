@@ -76,9 +76,16 @@ const { lang, entries } = Astro.props;
       box-shadow: 0 0 0 8px transparent;
     }
   }
+  /* Reduced motion: no growing ring, only a slow fade of the dot itself, which does not move.
+     `!important` overrides the global reduced-motion reset in base.css. */
+  @keyframes fade {
+    50% {
+      opacity: 0.35;
+    }
+  }
   @media (prefers-reduced-motion: reduce) {
     .timeline-entry.ongoing::before {
-      animation: none;
+      animation: fade 2.4s ease-in-out infinite !important;
     }
   }
   h3 {

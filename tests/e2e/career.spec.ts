@@ -47,7 +47,7 @@ for (const lang of ['fr', 'en'] as const) {
       await expect(ongoing.locator('.period time')).toHaveCount(1);
     });
 
-    test('the ongoing dot pulses, except with reduced motion', async ({ page }) => {
+    test('the ongoing dot pulses, and only fades with reduced motion', async ({ page }) => {
       const dot = (selector: string) =>
         page.locator(selector).evaluate((el) => {
           const s = getComputedStyle(el, '::before');
@@ -62,7 +62,8 @@ for (const lang of ['fr', 'en'] as const) {
       expect(past.animation).toBe('none');
 
       await page.emulateMedia({ reducedMotion: 'reduce' });
-      expect((await dot('#experience .timeline-entry.ongoing')).animation).toBe('none');
+      // Reduced motion: no ring, only a slow fade of the dot.
+      expect((await dot('#experience .timeline-entry.ongoing')).animation).toBe('fade');
     });
 
     test('a diploma page shows its details', async ({ page }) => {
