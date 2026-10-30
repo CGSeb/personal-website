@@ -20,6 +20,8 @@ export interface Stage {
   view(): CameraView;
   setView(view: CameraView): void;
   frames(): number;
+  /** Caps the device pixel ratio (adaptive quality). */
+  setPixelRatio(ratio: number): void;
   /** World position -> pixels inside the canvas. */
   toScreen(position: THREE.Vector3): { x: number; y: number };
   onRender(listener: () => void): void;
@@ -197,6 +199,10 @@ export function createStage(
       requestRender();
     },
     frames: () => frameCount,
+    setPixelRatio: (ratio) => {
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, ratio));
+      resize();
+    },
     toScreen: (position) => {
       // The camera may have moved since the last frame: refresh its matrices first.
       camera.updateMatrixWorld();

@@ -138,16 +138,16 @@ testing of each story.
 
 ### Tests for User Story 4 ⚠️
 
-- [ ] T030 [P] [US4] Unit tests in `tests/unit/scene-quality.test.ts` for the governor of `src/scene/quality.ts`: measured from 3 s after first render, sliding 2 s window, threshold "30 i/s (téléphone) ou 50 i/s (ordinateur)", at most one step down every 3 s, levels `high → medium → low`, never back up, at `low` and still slow → `propose-written`
-- [ ] T031 [P] [US4] Unit tests in `tests/unit/scene-capabilities.test.ts` for the decision of `src/scene/capabilities.ts`: no WebGL → `fallback`; reduced motion or save-data without a stored choice → `choice`; stored `scene.choice` honored; otherwise `3d`
-- [ ] T032 [P] [US4] E2E in `tests/e2e/scene-fallback.spec.ts`: Chromium launched with `--disable-webgl --disable-3d-apis` shows the no-WebGL message and link, list and panels still work (US4-1); `reducedMotion: 'reduce'` shows the choice screen, "Continuer en 3D" loads the scene without camera animation, "Version écrite" goes to the written home (US4-2, FR-024); blocked `room.glb` / model requests show the load error with "Réessayer" (edge case); JavaScript disabled shows the `<noscript>` message (US4-4)
+- [X] T030 [P] [US4] Unit tests in `tests/unit/scene-quality.test.ts` for the governor of `src/scene/quality.ts`: measured from 3 s after first render, sliding 2 s window, threshold "30 i/s (téléphone) ou 50 i/s (ordinateur)", at most one step down every 3 s, levels `high → medium → low`, never back up, at `low` and still slow → `propose-written`
+- [X] T031 [P] [US4] Unit tests in `tests/unit/scene-capabilities.test.ts` for the decision of `src/scene/capabilities.ts`: no WebGL → `fallback`; reduced motion or save-data without a stored choice → `choice`; stored `scene.choice` honored; otherwise `3d`
+- [X] T032 [P] [US4] E2E in `tests/e2e/scene-fallback.spec.ts` and `tests/e2e/scene-nowebgl.spec.ts` (own file: it needs its own browser launch): Chromium launched with `--disable-webgl --disable-3d-apis` shows the no-WebGL message and link, list and panels still work (US4-1); `reducedMotion: 'reduce'` shows the choice screen, "Continuer en 3D" loads the scene without camera animation, "Version écrite" goes to the written home (US4-2, FR-024); blocked `room.glb` / model requests show the load error with "Réessayer" (edge case); JavaScript disabled shows the `<noscript>` message (US4-4)
 
 ### Implementation for User Story 4
 
-- [ ] T033 [US4] `src/scene/capabilities.ts`: WebGL2 then WebGL1 detection, `prefers-reduced-motion`, `navigator.connection?.saveData`, stored `scene.choice` (try/catch), returning `3d | choice | fallback`
-- [ ] T034 [US4] `src/components/scene/SceneChoice.astro` and `src/components/scene/SceneFallback.astro` (choice screen, no-WebGL message, load error with retry, too-slow proposal), shown by `src/scene/boot.ts`
-- [ ] T035 [US4] `src/scene/quality.ts` governor wired into `src/scene/renderer.ts`: apply levels (pixel ratio, shadows, antialiasing), store `scene.quality`, show the too-slow proposal at the end (FR-022, FR-023, US4-3)
-- [ ] T036 [US4] Reduced motion in the scene: no camera easing, instant recenter and focus moves, no idle animation (FR-024)
+- [X] T033 [US4] `src/scene/capabilities.ts`: WebGL2 then WebGL1 detection, `prefers-reduced-motion`, `navigator.connection?.saveData`, stored `scene.choice` (try/catch), returning `3d | choice | fallback`
+- [X] T034 [US4] Choice screen, no-WebGL message, load error with retry and too-slow notice, built by `src/scene/boot.ts` from the page labels (no separate Astro components: they only exist once JavaScript runs)
+- [X] T035 [US4] `src/scene/quality.ts` governor wired into `src/scene/renderer.ts`: apply levels (pixel ratio; antialiasing is fixed when the renderer is created and shadows only matter once the real models cast them), store `scene.quality`, show the too-slow proposal at the end (FR-022, FR-023, US4-3)
+- [X] T036 [US4] Reduced motion in the scene: no camera easing, instant recenter and focus moves, no idle animation (FR-024)
 
 **Checkpoint**: every fallback path ends on readable content
 

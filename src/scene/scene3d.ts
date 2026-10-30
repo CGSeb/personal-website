@@ -7,6 +7,7 @@ import { placeObjects, type PlacedObject } from './objects';
 import type { Panels } from './panels';
 import { attachPicking } from './picking';
 import { createStage, HOME_ZOOM, type CameraView } from './renderer';
+import { QUALITY, QualityGovernor, type QualityLevel } from './quality';
 import { loadRoom } from './room';
 
 const VIEW_KEY = 'scene.camera';
@@ -30,9 +31,29 @@ const saveView = (view: CameraView) => {
 export interface SceneHandle {
   screenPosition(key: string): { x: number; y: number } | null;
   frames(): number;
+  quality(): QualityLevel;
 }
 
-export async function createScene(data: PageData, panels: Panels): Promise<SceneHandle> {
+export interface SceneOptions {
+  /** Called once when the scene stays too slow at the lowest quality. */
+  onSlow(): void;
+}
+
+const QUALITY_KEY = 'scene.quality';
+const readQuality = (): QualityLevel | null => {
+  try {
+    const value = sessionStorage.getItem(QUALITY_KEY);
+    return value && value in QUALITY ? (value as QualityLevel) : null;
+  } catch {
+    return null;
+  }
+};
+
+export async function createScene(
+  data: PageData,
+  panels: Panels,
+  options: SceneOptions,
+): Promise<SceneHandle> {
   const container = document.getElementById('scene')!;
   const wrap = container.parentElement!;
   const tooltip = wrap.querySelector<HTMLElement>('.scene-tooltip')!;
@@ -40,12 +61,17 @@ export async function createScene(data: PageData, panels: Panels): Promise<Scene
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const coarse = matchMedia('(pointer: coarse)').matches;
 
+  // Adaptive quality (FR-022): start lower on touch screens, never above a level kept earlier
+  // in the session, and step down while the scene stays too slow.
+  const initialQuality: QualityLevel = readQuality() ?? (coarse ? 'medium' : 'high');
+  const governor = new QualityGovernor({ level: initialQuality, minFps: coarse ? 30 : 50 });
+
   const room = await loadRoom(data.models);
   const stage = createStage(container, {
     home: room.home,
     bounds: room.bounds,
     reducedMotion,
-    pixelRatio: coarse ? 1.5 : 2,
+    pixelRatio: QUALITY[initialQuality].pixelRatio,
   });
   stage.scene.add(room.group);
 
@@ -147,5 +173,19 @@ export async function createScene(data: PageData, panels: Panels): Promise<Scene
   stage.requestRender();
 
   panels.openFromHash(screenPosition);
-  return { screenPosition, frames: stage.frames };
+  stage.onRender(() => {
+    const action = governor.frame(performance.now());
+    if (action.type === 'down') {
+      stage.setPixelRatio(QUALITY[action.level].pixelRatio);
+      try {
+        sessionStorage.setItem(QUALITY_KEY, action.level);
+      } catch {
+        // Private browsing: the level is measured again next time.
+      }
+    } else if (action.type === 'propose-written') {
+      options.onSlow();
+    }
+  });
+
+  return { screenPosition, frames: stage.frames, quality: () => governor.level };
 }
