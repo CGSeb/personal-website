@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/data/portfolio.schema.json",
+  "title": "Portfolio export",
+  "description": "Published content of the portfolio, for the 3D scene and other programs (contracts/portfolio-export.md).",
+  "type": "object",
+  "required": ["schemaVersion", "generatedAt", "site", "profile", "categories", "technologies", "projects", "education", "experience"],
+  "additionalProperties": false,
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "text": {
+      "type": "object",
+      "required": ["fr", "en"],
+      "additionalProperties": false,
+      "properties": { "fr": { "type": "string", "minLength": 1 }, "en": { "type": "string", "minLength": 1 } }
+    },
+    "urls": {
+      "type": "object",
+      "required": ["fr", "en"],
+      "additionalProperties": false,
+      "properties": { "fr": { "type": "string", "pattern": "^/fr/" }, "en": { "type": "string", "pattern": "^/en/" } }
+    },
+    "yearMonth": { "type": "string", "pattern": "^\\d{4}-(0[1-9]|1[0-2])$" },
+    "period": {
+      "type": "object",
+      "required": ["start", "end"],
+      "additionalProperties": false,
+      "properties": {
+        "start": { "$ref": "#/$defs/yearMonth" },
+        "end": { "oneOf": [{ "$ref": "#/$defs/yearMonth" }, { "type": "null" }] }
+      }
+    },
+    "image": {
+      "type": "object",
+      "required": ["url", "alt"],
+      "additionalProperties": false,
+      "properties": { "url": { "type": "string" }, "alt": { "$ref": "#/$defs/text" } }
+    },
+    "taxonomy": {
+      "type": "object",
+      "required": ["id", "label"],
+      "additionalProperties": false,
+      "properties": { "id": { "$ref": "#/$defs/id" }, "label": { "$ref": "#/$defs/text" } }
+    },
+    "ids": { "type": "array", "items": { "$ref": "#/$defs/id" } }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "site": {
+      "type": "object",
+      "required": ["baseUrl", "languages"],
+      "additionalProperties": false,
+      "properties": {
+        "baseUrl": { "type": "string", "format": "uri" },
+        "languages": { "const": ["fr", "en"] }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "required": ["name", "headline", "summary", "photo", "profiles"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "headline": { "$ref": "#/$defs/text" },
+        "summary": { "$ref": "#/$defs/text" },
+        "photo": { "$ref": "#/$defs/image" },
+        "profiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["network", "url"],
+            "additionalProperties": false,
+            "properties": { "network": { "type": "string" }, "url": { "type": "string", "format": "uri" } }
+          }
+        }
+      }
+    },
+    "categories": { "type": "array", "items": { "$ref": "#/$defs/taxonomy" } },
+    "technologies": { "type": "array", "items": { "$ref": "#/$defs/taxonomy" } },
+    "projects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "summary", "role", "period", "categories", "technologies", "cover", "links", "experience", "education", "featured", "order", "urls"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "$ref": "#/$defs/id" },
+          "title": { "$ref": "#/$defs/text" },
+          "summary": { "$ref": "#/$defs/text" },
+          "role": { "$ref": "#/$defs/text" },
+          "period": { "$ref": "#/$defs/period" },
+          "categories": { "$ref": "#/$defs/ids" },
+          "technologies": { "$ref": "#/$defs/ids" },
+          "cover": { "oneOf": [{ "$ref": "#/$defs/image" }, { "type": "null" }] },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["kind", "url"],
+              "additionalProperties": false,
+              "properties": {
+                "kind": { "enum": ["demo", "code", "video", "article", "other"] },
+                "url": { "type": "string", "format": "uri" }
+              }
+            }
+          },
+          "experience": { "$ref": "#/$defs/ids" },
+          "education": { "$ref": "#/$defs/ids" },
+          "featured": { "type": "boolean" },
+          "order": { "type": "integer", "minimum": 0 },
+          "urls": { "$ref": "#/$defs/urls" }
+        }
+      }
+    },
+    "education": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "institution", "location", "period", "level", "projects", "urls"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "$ref": "#/$defs/id" },
+          "title": { "$ref": "#/$defs/text" },
+          "institution": { "type": "string" },
+          "location": { "$ref": "#/$defs/text" },
+          "period": { "$ref": "#/$defs/period" },
+          "level": { "oneOf": [{ "$ref": "#/$defs/text" }, { "type": "null" }] },
+          "projects": { "$ref": "#/$defs/ids" },
+          "urls": { "$ref": "#/$defs/urls" }
+        }
+      }
+    },
+    "experience": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "position", "organization", "location", "type", "period", "technologies", "projects", "urls"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "$ref": "#/$defs/id" },
+          "position": { "$ref": "#/$defs/text" },
+          "organization": { "type": "string" },
+          "location": { "$ref": "#/$defs/text" },
+          "type": { "enum": ["employment", "freelance", "internship", "apprenticeship", "volunteer"] },
+          "period": { "$ref": "#/$defs/period" },
+          "technologies": { "$ref": "#/$defs/ids" },
+          "projects": { "$ref": "#/$defs/ids" },
+          "urls": { "$ref": "#/$defs/urls" }
+        }
+      }
+    }
+  }
+}

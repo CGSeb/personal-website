@@ -1,31 +1,29 @@
 // Content access layer: loads the collections once, validates them (the build fails on
-// error), drops drafts, sorts, resolves images and computes reverse relations.
+// error), drops drafts, sorts and computes reverse relations. Images are already resolved
+// by Astro's `image()` in the collection schemas.
 import type { ImageMetadata } from 'astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
-import type { Education, Experience, ImageT, Lang, Profile, Project, Taxonomy } from './schemas';
-import { validateContent, type ElementCollection } from './validate';
-
-const imageFiles = import.meta.glob<ImageMetadata>('/content/**/*.{jpg,jpeg,png,webp,avif}', {
-  eager: true,
-  import: 'default',
-});
-
-const imagePath = (collection: ElementCollection | 'profile', folder: string, src: string) => {
-  const rel = src.replace(/^\.\//, '');
-  return collection === 'profile' ? `/content/${rel}` : `/content/${collection}/${folder}/${rel}`;
-};
+import type {
+  Education,
+  Experience,
+  Lang,
+  LocalizedTextT,
+  Profile,
+  Project,
+  Taxonomy,
+} from './schemas';
+import { validateContent } from './validate';
 
 export interface ResolvedImage {
   image: ImageMetadata;
   alt: { fr: string; en: string };
 }
 
-const resolveImage = (
-  collection: ElementCollection | 'profile',
-  folder: string,
-  img: ImageT,
-): ResolvedImage => ({
-  image: imageFiles[imagePath(collection, folder, img.src)]!,
+const resolveImage = (img: {
+  src: ImageMetadata;
+  alt?: LocalizedTextT | undefined;
+}): ResolvedImage => ({
+  image: img.src,
   alt: img.alt ?? { fr: '', en: '' },
 });
 
@@ -112,7 +110,8 @@ async function loadSite(): Promise<Site> {
   ]);
 
   const profile = profileEntries[0]?.data;
-  if (!profile) throw new Error('content/profile.yaml : fichier manquant');
+  if (!profile)
+    throw new Error(`${process.env.CONTENT_DIR ?? 'content'}/profile.yaml : fichier manquant`);
 
   const bodyMaps = {
     projects: bodiesOf(projectBodies),
@@ -131,8 +130,6 @@ async function loadSite(): Promise<Site> {
     categories: categories.map((e) => e.data),
     technologies: technologies.map((e) => e.data),
     bodies,
-    imageExists: (collection, folder, src) => imagePath(collection, folder, src) in imageFiles,
-    profilePhoto: profile.photo,
   });
   for (const w of warnings) console.warn(`[contenu] ${w}`);
   if (errors.length) {
@@ -156,8 +153,8 @@ async function loadSite(): Promise<Site> {
       // References to drafts are ignored (validation warned about them).
       experience: data.experience.filter((ref) => publishedExperience.has(ref)),
       education: data.education.filter((ref) => publishedEducation.has(ref)),
-      cover: data.cover ? resolveImage('projects', id, data.cover) : undefined,
-      gallery: data.gallery.map((img) => resolveImage('projects', id, img)),
+      cover: data.cover ? resolveImage(data.cover) : undefined,
+      gallery: data.gallery.map((img) => resolveImage(img)),
       bodies: pick(bodyMaps.projects, id),
     }))
     .sort(compareProjects);
@@ -172,7 +169,7 @@ async function loadSite(): Promise<Site> {
   }
 
   return {
-    profile: { ...profile, photo: resolveImage('profile', '', profile.photo) },
+    profile: { ...profile, photo: resolveImage(profile.photo) },
     categories: categories.map((e) => e.data),
     technologies: technologies.map((e) => e.data),
     projects: projectItems,

@@ -73,6 +73,7 @@ export function buildLlms(input: LlmsInput): string {
     '## Optional',
     '',
     `- [llms-full.txt](${abs(site, '/llms-full.txt')}): every description in full, French and English`,
+    `- [portfolio.json](${abs(site, '/data/portfolio.json')}): structured export of the content`,
     '',
   );
   return out.join('\n');

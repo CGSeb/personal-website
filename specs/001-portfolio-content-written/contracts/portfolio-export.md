@@ -50,10 +50,15 @@ externe (FR-006). Encodage UTF-8, `Content-Type: application/json`.
 
 ## Règles
 
-- Les descriptions longues (`fr.md` / `en.md`) ne sont **pas** incluses : la scène 3D affiche
-  le résumé et renvoie vers la page écrite (`urls`), conformément au principe I. Elles restent
-  disponibles dans `/llms-full.txt`.
+- Les descriptions longues (`fr.md` / `en.md`) ne sont **pas** incluses pour l'instant. Elles
+  restent disponibles dans `/llms-full.txt`.
+- Usage prévu par la scène 3D : un clic sur un objet (diplôme au mur, projet…) affiche
+  d'abord ses informations **dans la scène** (petite pop-up ou élément 3D) ; seul un bouton
+  « En savoir plus » mène à la page écrite (`urls`, principe I). Le détail des panneaux, et
+  donc les champs à ajouter ici (descriptions, compétences, galerie…), sera fixé dans la
+  spec de la scène 3D ; un ajout de champ ne change pas `schemaVersion`.
 - Les relations inverses (`projects` d'un diplôme ou d'une expérience) sont incluses, calculées.
+- `order` est la position du projet dans l'ordre du site (`order` explicite, puis du plus récent au plus ancien), à partir de 0.
 - Les URL d'images pointent vers les fichiers optimisés générés ; les URL de pages sont
   relatives à `site.baseUrl`.
 - `id` est stable et identique à celui de la source de contenu.

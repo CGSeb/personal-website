@@ -180,15 +180,15 @@ testing of each story.
 
 ### Tests for User Story 6 ⚠️
 
-- [ ] T057 [P] [US6] JSON Schema of the export in `src/lib/export.schema.json` matching contracts/portfolio-export.md (`schemaVersion: 1`, no `email`, no long descriptions, `urls` per language)
-- [ ] T058 [P] [US6] Unit tests in `tests/unit/export.test.ts`: export validates against the schema; drafts absent; reverse relations present; ids identical to the content source (US6-4)
-- [ ] T059 [P] [US6] Build-level test in `tests/unit/build-content.test.ts`: building with `tests/fixtures/content/invalid/` fails with one message per problem (US6-2); a `draft` project is absent from pages, sitemap, `llms.txt` and export (US6-3)
+- [X] T057 [P] [US6] JSON Schema of the export in `src/lib/export.schema.json` matching contracts/portfolio-export.md (`schemaVersion: 1`, no `email`, no long descriptions, `urls` per language)
+- [X] T058 [P] [US6] Unit tests in `tests/unit/export.test.ts`: export validates against the schema; drafts absent; reverse relations present; ids identical to the content source (US6-4)
+- [X] T059 [P] [US6] Build-level test in `tests/unit/build-content.test.ts` (real `astro build` with `CONTENT_DIR` pointing at the fixtures and its own `ASTRO_CACHE_DIR`): building with `tests/fixtures/content/invalid/` fails and names the file and field (US6-2; Astro stops at the first schema error, the cross-check lists all of its own); a `draft` project is absent from pages, sitemap, `llms.txt` and export (US6-3)
 
 ### Implementation for User Story 6
 
-- [ ] T060 [US6] Export builder in `src/lib/export.ts` and endpoint `src/pages/data/portfolio.json.ts` (FR-006, contracts/portfolio-export.md)
-- [ ] T061 [US6] Redirects: read `content/redirects.yaml` in `astro.config.mjs` and pass it to Astro's `redirects` option so each `from` becomes a static redirect page with `rel=canonical` to `to` (FR-025, research § 6)
-- [ ] T062 [P] [US6] Content editing guide in `content/README.md`: folder layout, required fields, a copy-paste project template, how to mark `draft`/`featured`, how to add a redirect when an id or slug changes, how to read build errors (SC-005)
+- [X] T060 [US6] Export builder in `src/lib/export.ts` and endpoint `src/pages/data/portfolio.json.ts` (FR-006, contracts/portfolio-export.md)
+- [X] T061 [US6] Redirects: read `content/redirects.yaml` in `astro.config.mjs` and pass it to Astro's `redirects` option so each `from` becomes a static redirect page with `rel=canonical` to `to` (FR-025, research § 6)
+- [X] T062 [P] [US6] Content editing guide in `content/README.md`: folder layout, required fields, a copy-paste project template, how to mark `draft`/`featured`, how to add a redirect when an id or slug changes, how to read build errors (SC-005)
 
 **Checkpoint**: content can be added safely in one place and is exported for the 3D scene
 
