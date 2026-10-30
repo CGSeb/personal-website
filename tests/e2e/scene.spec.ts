@@ -160,3 +160,57 @@ test.describe('scene (US2)', () => {
     );
   });
 });
+
+test.describe('scene on phones (US3)', () => {
+  test('a tap opens the panel as a bottom sheet that fits the screen (US3-1, US3-2)', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 375, height: 740 });
+    await openScene(page);
+    const { x, y } = await objectPoint(page, 'project/lesson-folk');
+    await page.mouse.click(x, y);
+    const panel = page.locator('#panel-project-lesson-folk');
+    await expect(panel).toBeVisible();
+    const sheet = (await panel.boundingBox())!;
+    const scene = (await page.locator('.scene-wrap').boundingBox())!;
+    expect(sheet.width).toBeGreaterThanOrEqual(scene.width - 2);
+    expect(Math.round(sheet.y + sheet.height)).toBeLessThanOrEqual(
+      Math.round(scene.y + scene.height) + 1,
+    );
+    expect(sheet.height).toBeLessThanOrEqual(scene.height * 0.7 + 1);
+    await expect(panel.getByRole('button', { name: 'Fermer' })).toBeInViewport();
+  });
+
+  test('swiping the sheet down closes it (US3-2)', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'touch events are dispatched through Chromium');
+    await page.setViewportSize({ width: 375, height: 740 });
+    await openScene(page);
+    await page.locator('.scene-list').getByRole('button', { name: 'LessonFolk' }).click();
+    const panel = page.locator('#panel-project-lesson-folk');
+    await expect(panel).toBeVisible();
+    const box = (await panel.boundingBox())!;
+    await panel.dispatchEvent('touchstart', {
+      touches: [{ identifier: 1, clientX: box.x + 40, clientY: box.y + 20 }],
+    });
+    await panel.dispatchEvent('touchend', {
+      changedTouches: [{ identifier: 1, clientX: box.x + 40, clientY: box.y + 140 }],
+    });
+    await expect(panel).toBeHidden();
+  });
+
+  test('turning the screen keeps the scene without reloading (US3-3)', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 780 });
+    await openScene(page);
+    await page.evaluate(() => ((window as unknown as { marker: number }).marker = 1));
+    await page.setViewportSize({ width: 780, height: 390 });
+    await expect(page.locator('#scene canvas')).toBeVisible();
+    expect(await page.evaluate(() => (window as unknown as { marker?: number }).marker)).toBe(1);
+    // Objects are still placed inside the view.
+    const p = await page.evaluate(() => window.__scene!.screenPosition('project/lesson-folk'));
+    const box = (await page.locator('#scene').boundingBox())!;
+    expect(p!.x).toBeGreaterThan(0);
+    expect(p!.x).toBeLessThan(box.width);
+    expect(p!.y).toBeGreaterThan(0);
+    expect(p!.y).toBeLessThan(box.height);
+  });
+});

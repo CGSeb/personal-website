@@ -48,6 +48,24 @@ export class Panels {
       this.close();
     });
     window.addEventListener('hashchange', () => this.openFromHash());
+    this.enableSwipeToClose();
+  }
+
+  /** Bottom sheet on phones: a downward swipe from the top of its content closes it (US3). */
+  private enableSwipeToClose() {
+    let start: { y: number; panel: HTMLElement } | null = null;
+    this.wrap.addEventListener(
+      'touchstart',
+      (e) => {
+        const panel = (e.target as HTMLElement).closest<HTMLElement>('.scene-panel');
+        start = panel && panel.scrollTop === 0 ? { y: e.touches[0]!.clientY, panel } : null;
+      },
+      { passive: true },
+    );
+    this.wrap.addEventListener('touchend', (e) => {
+      if (start && e.changedTouches[0]!.clientY - start.y > 80) this.close();
+      start = null;
+    });
   }
 
   get current(): string | null {

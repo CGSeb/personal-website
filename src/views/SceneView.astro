@@ -315,6 +315,10 @@ const jsonLd = graph(
       max-height: 70%;
       border-radius: var(--radius) var(--radius) 0 0;
     }
+    /* A flatter cover leaves room for the text in the bottom sheet. */
+    .scene-panels :global(.scene-panel .cover) {
+      aspect-ratio: 16 / 7;
+    }
   }
   :global(html.js) .when-no-js,
   :global(html:not(.js)) .when-js {
