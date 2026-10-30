@@ -118,13 +118,13 @@ testing of each story.
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T026 [P] [US3] E2E in `tests/e2e/scene.spec.ts` for the `mobile-webkit` and `chromium-320` projects: tap at an object's screen position opens its panel as a bottom sheet that fits the viewport (US3-1/2); viewport change from portrait to landscape keeps the scene without reload (US3-3)
+- [X] T026 [P] [US3] E2E in `tests/e2e/scene.spec.ts` for the `mobile-webkit` and `chromium-320` projects: tap at an object's screen position opens its panel as a bottom sheet that fits the viewport (US3-1/2); viewport change from portrait to landscape keeps the scene without reload (US3-3)
 
 ### Implementation for User Story 3
 
-- [ ] T027 [US3] Touch tuning in `src/scene/renderer.ts` and `src/scene/picking.ts`: one-finger pan, pinch zoom, tap threshold, larger hit shapes on coarse pointers (`matchMedia('(pointer: coarse)')`)
-- [ ] T028 [US3] Bottom-sheet panel layout under 40rem in the panel styles (`src/components/scene/ScenePanel.astro`): max 70 % of the viewport height, scrollable content, close button within thumb reach, swipe-down to close
-- [ ] T029 [US3] Orientation and resize: keep the camera target on resize / orientation change in `src/scene/renderer.ts`; initial quality level `medium` on coarse pointers (data-model.md)
+- [X] T027 [US3] Touch tuning in `src/scene/renderer.ts` and `src/scene/picking.ts`: one-finger pan, pinch zoom, tap threshold, larger hit shapes on coarse pointers (`matchMedia('(pointer: coarse)')`)
+- [X] T028 [US3] Bottom-sheet panel layout under 40rem in the panel styles (`src/components/scene/ScenePanel.astro`): max 70 % of the viewport height, scrollable content, close button within thumb reach, swipe-down to close
+- [X] T029 [US3] Orientation and resize: keep the camera target on resize / orientation change in `src/scene/renderer.ts`; initial quality level `medium` on coarse pointers (data-model.md)
 
 **Checkpoint**: the scene works on phones
 

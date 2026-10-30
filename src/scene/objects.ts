@@ -16,6 +16,8 @@ export interface PlacedObject {
 const HIGHLIGHT = new THREE.Color('#ffb020');
 /** Coded stand-ins are drawn larger than life so they read well from the isometric view. */
 const STAND_IN_SCALE = 1.6;
+/** Hit shapes are larger than the objects, more so for fingers (US3). */
+const HIT_SCALE = matchMedia('(pointer: coarse)').matches ? 1.6 : 1.3;
 const SELECTED = new THREE.Color('#ff7a00');
 
 /** A small canvas texture with a short badge (never the full content). */
@@ -196,9 +198,9 @@ export async function placeObjects(
       const size = new THREE.Box3().setFromObject(root).getSize(new THREE.Vector3());
       const hit = new THREE.Mesh(
         new THREE.BoxGeometry(
-          Math.max(size.x, 0.3) * 1.3,
-          Math.max(size.y, 0.3) * 1.3,
-          Math.max(size.z, 0.3) * 1.3,
+          Math.max(size.x, 0.3) * HIT_SCALE,
+          Math.max(size.y, 0.3) * HIT_SCALE,
+          Math.max(size.z, 0.3) * HIT_SCALE,
         ),
         new THREE.MeshBasicMaterial({ visible: false }),
       );

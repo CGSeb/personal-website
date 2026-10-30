@@ -3,7 +3,8 @@
 import * as THREE from 'three';
 import type { PlacedObject } from './objects';
 
-const DRAG_TOLERANCE = 6; // px
+/** Movement allowed for a click (px): fingers move more than a mouse. */
+const DRAG_TOLERANCE = { mouse: 6, touch: 12 };
 
 export interface PickingHandlers {
   onHover(key: string | null, at: { x: number; y: number }): void;
@@ -50,7 +51,8 @@ export function attachPicking(
     const start = down;
     down = null;
     if (!start || start.id !== event.pointerId) return;
-    if (Math.hypot(event.clientX - start.x, event.clientY - start.y) > DRAG_TOLERANCE) return;
+    const tolerance = event.pointerType === 'mouse' ? DRAG_TOLERANCE.mouse : DRAG_TOLERANCE.touch;
+    if (Math.hypot(event.clientX - start.x, event.clientY - start.y) > tolerance) return;
     if (event.detail > 1) return; // double click
     handlers.onSelect(pick(event));
   };
