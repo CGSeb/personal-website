@@ -6,6 +6,7 @@ export interface SceneTestHook {
   screenPosition(key: string): { x: number; y: number } | null;
   quality(): 'high' | 'medium' | 'low';
   frames(): number;
+  highlighted(): string | null;
 }
 
 declare global {

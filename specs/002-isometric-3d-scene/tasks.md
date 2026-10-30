@@ -161,13 +161,13 @@ testing of each story.
 
 ### Tests for User Story 5 ⚠️
 
-- [ ] T037 [P] [US5] E2E in `tests/e2e/scene.spec.ts`: Tab moves through the item list in a logical order with a visible focus and highlights the object in the scene (US5-1); Enter opens the panel and focuses it, Escape closes and returns focus (US5-2); the panel has `aria-labelledby` and the canvas container an accessible name (US5-3); the language switcher link carries the translated fragment and opens the same item in the other language (US5-4, FR-018)
+- [X] T037 [P] [US5] E2E in `tests/e2e/scene.spec.ts`: Tab moves through the item list in a logical order with a visible focus and highlights the object in the scene (US5-1); Enter opens the panel and focuses it, Escape closes and returns focus (US5-2); the panel has `aria-labelledby` and the canvas container an accessible name (US5-3); the language switcher link carries the translated fragment and opens the same item in the other language (US5-4, FR-018)
 
 ### Implementation for User Story 5
 
-- [ ] T038 [US5] List ↔ scene link in `src/scene/panels.ts` and `src/scene/objects.ts`: focus or hover on a list button highlights the object and pans it into view if needed; selecting an object marks its list button `aria-current`
-- [ ] T039 [US5] Language switcher: update the header switcher's `href` with the translated fragment whenever a panel opens or closes, in `src/scene/panels.ts` (uses `src/scene/hash.ts`)
-- [ ] T040 [US5] Accessible names and roles in `SceneView.astro`: `#scene` gets `role="application"` and an `aria-label` once the 3D is ready, a polite live region announces the opened item, focus outlines on list buttons
+- [X] T038 [US5] List ↔ scene link in `src/scene/panels.ts` and `src/scene/objects.ts`: focus or hover on a list button highlights the object and pans it into view if needed; selecting an object marks its list button `aria-current`
+- [X] T039 [US5] Language switcher: update the header switcher's `href` with the translated fragment whenever a panel opens or closes, in `src/scene/panels.ts` (uses `src/scene/hash.ts`)
+- [X] T040 [US5] Accessible names and roles in `SceneView.astro`: `#scene` gets `role="application"` and an `aria-label` once the 3D is ready, a polite live region announces the opened item, focus outlines on list buttons
 
 **Checkpoint**: the scene is usable without a mouse and in both languages
 

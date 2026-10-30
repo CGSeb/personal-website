@@ -55,6 +55,7 @@ window.__scene = {
   screenPosition(key: string): { x: number; y: number } | null, // centre de l'objet, en px CSS
   quality(): 'high' | 'medium' | 'low',
   frames(): number, // images rendues depuis le chargement
+  highlighted(): string | null, // élément mis en évidence (survol ou focus dans la liste)
 };
 ```
 
