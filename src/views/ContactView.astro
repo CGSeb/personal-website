@@ -1,0 +1,113 @@
+---
+// Contact page (FR-026): a protected e-mail link and the profile links, no form.
+import { render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getSite } from '../content';
+import { alternateOf, urlFor, type Lang } from '../i18n/routes';
+import { t } from '../i18n/ui';
+import { protectedMailto } from '../lib/email';
+import { breadcrumb, graph, personId } from '../lib/jsonld';
+
+interface Props {
+  lang: Lang;
+}
+
+const NETWORK_NAMES: Record<string, string> = {
+  linkedin: 'LinkedIn',
+  github: 'GitHub',
+  youtube: 'YouTube',
+  x: 'X',
+  mastodon: 'Mastodon',
+};
+
+const { lang } = Astro.props;
+const { profile, pages } = await getSite();
+const page = pages.contact[lang];
+const { Content } = await render(page);
+const mail = protectedMailto(profile.email);
+const path = urlFor('contact', lang);
+const jsonLd = graph(
+  {
+    '@type': 'ContactPage',
+    url: new URL(path, Astro.site).href,
+    name: page.data.title,
+    inLanguage: lang,
+    mainEntity: { '@id': personId(Astro.site!) },
+  },
+  breadcrumb(Astro.site!, [
+    { name: t(lang, 'nav.home'), path: urlFor('home', lang) },
+    { name: page.data.title, path },
+  ]),
+);
+---
+
+<BaseLayout
+  lang={lang}
+  title={page.data.title}
+  description={page.data.description}
+  canonicalPath={path}
+  alternatePath={alternateOf('contact', lang)}
+  jsonLd={jsonLd}
+>
+  <div class="container contact">
+    <h1>{page.data.title}</h1>
+    <div class="prose intro">
+      <Content />
+    </div>
+
+    <section aria-labelledby="email-title">
+      <h2 id="email-title">{t(lang, 'contact.email')}</h2>
+      {/* Entity-encoded on purpose: written raw so Astro does not escape the entities. */}
+      <p class="mail" set:html={`<a href="${mail.href}">${mail.text}</a>`} />
+    </section>
+
+    {(profile.profiles?.length ?? 0) > 0 && (
+      <section aria-labelledby="profiles-title">
+        <h2 id="profiles-title">{t(lang, 'contact.profiles')}</h2>
+        <ul class="profiles">
+          {profile.profiles!.map((p) => (
+            <li>
+              <a href={p.url} rel="me noopener">
+                {p.label ?? NETWORK_NAMES[p.network] ?? new URL(p.url).hostname}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .contact {
+    padding-top: var(--space-xl);
+  }
+  .intro {
+    color: var(--color-muted);
+  }
+  section {
+    margin-top: var(--space-xl);
+  }
+  .mail {
+    font-size: var(--step-1);
+    font-weight: 600;
+  }
+  .profiles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-s);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .profiles a {
+    display: inline-block;
+    padding: var(--space-xs) var(--space-m);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    text-decoration: none;
+  }
+  .profiles a:hover {
+    border-color: var(--color-accent);
+  }
+</style>

@@ -17,6 +17,7 @@ export function allPages(site: Site): PagePair[] {
     ...usedCategories.map((c) => pair((l) => urlFor('category', l, c.id))),
     ...site.projects.map((p) => pair((l) => urlFor('project', l, slugFor(p, l)))),
     pair((l) => urlFor('career', l)),
+    pair((l) => urlFor('contact', l)),
     ...site.experience.map((e) => pair((l) => urlFor('experience', l, slugFor(e, l)))),
     ...site.education.map((e) => pair((l) => urlFor('education', l, slugFor(e, l)))),
   ];
