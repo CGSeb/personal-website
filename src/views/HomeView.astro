@@ -1,0 +1,114 @@
+---
+import { Picture } from 'astro:assets';
+import { render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { getSite } from '../content';
+import { alternateOf, urlFor, type Lang } from '../i18n/routes';
+import { t } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+/** Shown once the 3D experience exists (FR-012, spec 002). */
+const SHOW_3D_ENTRY = false;
+
+const { lang } = Astro.props;
+const { profile, projects, pages } = await getSite();
+const page = pages.home[lang];
+const { Content } = await render(page);
+const featured = projects.filter((p) => p.featured);
+---
+
+<BaseLayout
+  lang={lang}
+  title={page.data.title}
+  description={page.data.description}
+  canonicalPath={urlFor('home', lang)}
+  alternatePath={alternateOf('home', lang)}
+>
+  <section class="hero container">
+    <Picture
+      src={profile.photo.image}
+      formats={['avif', 'webp']}
+      fallbackFormat="webp"
+      widths={[160, 320]}
+      sizes="160px"
+      alt={profile.photo.alt[lang]}
+      class="photo"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <div>
+      <h1>{profile.name}</h1>
+      <p class="headline">{profile.headline[lang]}</p>
+      <p class="summary">{profile.summary[lang]}</p>
+      {SHOW_3D_ENTRY && (
+        <a class="explore-3d" href={`/${lang}/3d/`}>
+          {t(lang, 'home.explore3d')}
+        </a>
+      )}
+    </div>
+  </section>
+
+  <section class="container intro">
+    <div class="prose"><Content /></div>
+  </section>
+
+  {featured.length > 0 && (
+    <section class="container featured" aria-labelledby="featured-title">
+      <h2 id="featured-title">{t(lang, 'home.featured')}</h2>
+      <div class="grid">
+        {featured.map((project, i) => (
+          <ProjectCard lang={lang} project={project} level={3} eager={i < 2} />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <p class="container more">
+    <a href={urlFor('projects', lang)}>{t(lang, 'home.allProjects')} →</a>
+  </p>
+</BaseLayout>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-l);
+    align-items: center;
+    padding-block: var(--space-2xl) var(--space-xl);
+  }
+  .hero :global(.photo) {
+    width: clamp(5rem, 22vw, 10rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  @media (max-width: 30rem) {
+    .hero {
+      grid-template-columns: 1fr;
+    }
+  }
+  .headline {
+    font-size: var(--step-1);
+    font-weight: 600;
+  }
+  .summary {
+    color: var(--color-muted);
+    max-width: var(--text-width);
+  }
+  .featured {
+    margin-top: var(--space-xl);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+    gap: var(--space-l);
+  }
+  .more {
+    margin-top: var(--space-l);
+    font-weight: 600;
+  }
+</style>

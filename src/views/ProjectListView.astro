@@ -1,0 +1,96 @@
+---
+// Project list, optionally restricted to one category (FR-009: one static page per
+// category, so filtering works without JavaScript).
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { getSite, labelOf } from '../content';
+import { alternateOf, urlFor, type Lang } from '../i18n/routes';
+import { t } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  category?: string;
+}
+
+const { lang, category } = Astro.props;
+const { projects, categories } = await getSite();
+const usedCategories = categories.filter((c) => projects.some((p) => p.categories.includes(c.id)));
+const list = category ? projects.filter((p) => p.categories.includes(category)) : projects;
+const categoryLabel = category ? labelOf(categories, category, lang) : '';
+
+const title = category
+  ? t(lang, 'projects.inCategory', { category: categoryLabel })
+  : t(lang, 'projects.title');
+const description = category
+  ? t(lang, 'projects.categoryDescription', { category: categoryLabel })
+  : t(lang, 'projects.description');
+const canonicalPath = category ? urlFor('category', lang, category) : urlFor('projects', lang);
+---
+
+<BaseLayout
+  lang={lang}
+  title={title}
+  description={description}
+  canonicalPath={canonicalPath}
+  alternatePath={category ? alternateOf('category', lang, category) : alternateOf('projects', lang)}
+>
+  <div class="container">
+    <h1>{title}</h1>
+    <p class="intro">{t(lang, 'projects.intro')}</p>
+
+    <nav aria-label={t(lang, 'projects.filter')} class="filters">
+      <ul class="tags">
+        <li>
+          <a href={urlFor('projects', lang)} aria-current={!category ? 'page' : undefined}>
+            {t(lang, 'projects.all')}
+          </a>
+        </li>
+        {usedCategories.map((c) => (
+          <li>
+            <a
+              href={urlFor('category', lang, c.id)}
+              aria-current={category === c.id ? 'page' : undefined}
+            >
+              {c.label[lang]}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="grid">
+      {list.map((project, i) => (
+        <ProjectCard lang={lang} project={project} eager={i < 2} />
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .container {
+    padding-top: var(--space-xl);
+  }
+  .intro {
+    color: var(--color-muted);
+  }
+  .filters {
+    margin-block: var(--space-l);
+  }
+  .filters a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .filters li:has(a[aria-current='page']) {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+  .filters a[aria-current='page'] {
+    color: var(--color-bg);
+    font-weight: 600;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+    gap: var(--space-l);
+  }
+</style>

@@ -1,0 +1,7 @@
+id: freelance-dev
+position: { fr: Développeur indépendant, en: Freelance developer }
+organization: Indépendant
+location: { fr: France, en: France }
+type: freelance
+period: { start: 2025-01 }
+technologies: [typescript, astro, ai]

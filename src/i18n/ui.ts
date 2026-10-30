@@ -1,0 +1,125 @@
+// Interface labels. Every key must exist in both languages: `satisfies` makes a missing
+// key a type error.
+import type { Lang } from '../content/schemas';
+
+const fr = {
+  'nav.label': 'Navigation principale',
+  'nav.home': 'Accueil',
+  'nav.projects': 'Projets',
+  'nav.career': 'Parcours',
+  'nav.contact': 'Contact',
+  skip: 'Aller au contenu',
+  'home.featured': 'Projets à la une',
+  'home.allProjects': 'Voir tous les projets',
+  'home.explore3d': 'Explorer le portfolio en 3D',
+  'projects.title': 'Projets',
+  'projects.description': 'Tous les projets : applications, outils et créations.',
+  'projects.intro': 'Une sélection de projets, du plus récent au plus ancien.',
+  'projects.filter': 'Filtrer par catégorie',
+  'projects.all': 'Tous',
+  'projects.inCategory': 'Projets : {category}',
+  'projects.categoryDescription': 'Projets de la catégorie {category}.',
+  'project.role': 'Rôle',
+  'project.period': 'Période',
+  'project.technologies': 'Technologies et outils',
+  'project.categories': 'Catégories',
+  'project.links': 'Liens',
+  'project.gallery': 'Galerie',
+  'project.experience': 'Expériences liées',
+  'project.education': 'Diplômes liés',
+  'project.previous': 'Projet précédent',
+  'project.next': 'Projet suivant',
+  'project.backToList': 'Retour aux projets',
+  'period.since': 'Depuis',
+  'link.demo': 'Démo',
+  'link.code': 'Code source',
+  'link.video': 'Vidéo',
+  'link.article': 'Article',
+  'link.other': 'Lien',
+  'video.play': 'Lire la vidéo : {title}',
+  'video.notice': 'La vidéo est hébergée par un service tiers et ne se charge qu’après un clic.',
+  'footer.rights': 'Tous droits réservés.',
+  'experienceType.employment': 'Emploi',
+  'experienceType.freelance': 'Freelance',
+  'experienceType.internship': 'Stage',
+  'experienceType.apprenticeship': 'Alternance',
+  'experienceType.volunteer': 'Bénévolat',
+  'notFound.title': 'Page introuvable',
+};
+
+const en = {
+  'nav.label': 'Main navigation',
+  'nav.home': 'Home',
+  'nav.projects': 'Projects',
+  'nav.career': 'Career',
+  'nav.contact': 'Contact',
+  skip: 'Skip to content',
+  'home.featured': 'Featured projects',
+  'home.allProjects': 'See all projects',
+  'home.explore3d': 'Explore the portfolio in 3D',
+  'projects.title': 'Projects',
+  'projects.description': 'All projects: applications, tools and creative work.',
+  'projects.intro': 'A selection of projects, most recent first.',
+  'projects.filter': 'Filter by category',
+  'projects.all': 'All',
+  'projects.inCategory': 'Projects: {category}',
+  'projects.categoryDescription': 'Projects in the {category} category.',
+  'project.role': 'Role',
+  'project.period': 'Period',
+  'project.technologies': 'Technologies and tools',
+  'project.categories': 'Categories',
+  'project.links': 'Links',
+  'project.gallery': 'Gallery',
+  'project.experience': 'Related experience',
+  'project.education': 'Related education',
+  'project.previous': 'Previous project',
+  'project.next': 'Next project',
+  'project.backToList': 'Back to projects',
+  'period.since': 'Since',
+  'link.demo': 'Demo',
+  'link.code': 'Source code',
+  'link.video': 'Video',
+  'link.article': 'Article',
+  'link.other': 'Link',
+  'video.play': 'Play the video: {title}',
+  'video.notice': 'The video is hosted by a third-party service and only loads after a click.',
+  'footer.rights': 'All rights reserved.',
+  'experienceType.employment': 'Employment',
+  'experienceType.freelance': 'Freelance',
+  'experienceType.internship': 'Internship',
+  'experienceType.apprenticeship': 'Apprenticeship',
+  'experienceType.volunteer': 'Volunteering',
+  'notFound.title': 'Page not found',
+} satisfies Record<keyof typeof fr, string>;
+
+export type UiKey = keyof typeof fr;
+const labels: Record<Lang, Record<UiKey, string>> = { fr, en };
+
+/** Interface label, with `{name}` placeholders replaced from `vars`. */
+export function t(lang: Lang, key: UiKey, vars: Record<string, string> = {}): string {
+  return labels[lang][key].replace(/\{(\w+)\}/g, (_, name: string) => vars[name] ?? `{${name}}`);
+}
+
+const MONTHS: Record<Lang, string[]> = {
+  fr: [
+    'janv.',
+    'févr.',
+    'mars',
+    'avr.',
+    'mai',
+    'juin',
+    'juil.',
+    'août',
+    'sept.',
+    'oct.',
+    'nov.',
+    'déc.',
+  ],
+  en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+};
+
+/** `2026-10` -> `oct. 2026` / `Oct 2026`. */
+export const formatYearMonth = (lang: Lang, ym: string): string => {
+  const [year, month] = ym.split('-');
+  return `${MONTHS[lang][Number(month) - 1]} ${year}`;
+};

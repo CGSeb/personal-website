@@ -1,0 +1,4 @@
+/* Inter, self-hosted through @fontsource and bundled with the site (no third-party request).
+   Its @font-face rules use `font-display: swap` and unicode ranges, so only the latin
+   files are downloaded for French and English text. */
+@import '@fontsource-variable/inter/wght.css';

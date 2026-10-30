@@ -1,0 +1,84 @@
+---
+import { SECTIONS, urlFor, type Lang } from '../i18n/routes';
+import { t } from '../i18n/ui';
+import { getSite } from '../content';
+
+interface Props {
+  lang: Lang;
+  currentPath: string;
+}
+
+const { lang, currentPath } = Astro.props;
+const { profile } = await getSite();
+
+const items = [
+  { href: urlFor('home', lang), label: t(lang, 'nav.home'), exact: true },
+  { href: urlFor('projects', lang), label: t(lang, 'nav.projects') },
+  ...(SECTIONS.career ? [{ href: urlFor('career', lang), label: t(lang, 'nav.career') }] : []),
+  ...(SECTIONS.contact ? [{ href: urlFor('contact', lang), label: t(lang, 'nav.contact') }] : []),
+];
+const isCurrent = (item: { href: string; exact?: boolean }) =>
+  item.exact ? currentPath === item.href : currentPath.startsWith(item.href);
+---
+
+<header class="site-header">
+  <div class="container bar">
+    <a class="brand" href={urlFor('home', lang)}>
+      {profile.name}
+    </a>
+    <nav aria-label={t(lang, 'nav.label')}>
+      <ul>
+        {items.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              aria-current={currentPath === item.href ? 'page' : undefined}
+              class:list={{ active: isCurrent(item) }}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xs) var(--space-l);
+    padding-block: var(--space-s);
+  }
+  .brand {
+    font-weight: 700;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-m);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  nav a {
+    display: inline-block;
+    padding-block: var(--space-xs);
+    color: var(--color-muted);
+    text-decoration: none;
+  }
+  nav a.active,
+  nav a:hover {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
+</style>

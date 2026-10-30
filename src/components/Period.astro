@@ -1,0 +1,26 @@
+---
+import type { PeriodT } from '../content/schemas';
+import type { Lang } from '../i18n/routes';
+import { formatYearMonth, t } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  period: PeriodT;
+}
+
+const { lang, period } = Astro.props;
+---
+
+<span class="period">
+  {period.end ? (
+    <>
+      <time datetime={period.start}>{formatYearMonth(lang, period.start)}</time> –{' '}
+      <time datetime={period.end}>{formatYearMonth(lang, period.end)}</time>
+    </>
+  ) : (
+    <>
+      {t(lang, 'period.since')}{' '}
+      <time datetime={period.start}>{formatYearMonth(lang, period.start)}</time>
+    </>
+  )}
+</span>

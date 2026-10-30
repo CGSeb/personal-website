@@ -1,0 +1,97 @@
+---
+import { Picture } from 'astro:assets';
+import type { ProjectItem } from '../content';
+import { getSite, labelOf } from '../content';
+import { slugFor, urlFor, type Lang } from '../i18n/routes';
+
+interface Props {
+  lang: Lang;
+  project: ProjectItem;
+  /** Heading level inside the list. */
+  level?: 2 | 3;
+  /** First cards are above the fold: load their image eagerly. */
+  eager?: boolean;
+}
+
+const { lang, project, level = 2, eager = false } = Astro.props;
+const { categories } = await getSite();
+const Heading = `h${level}` as 'h2' | 'h3';
+const href = urlFor('project', lang, slugFor(project, lang));
+const sizes = '(min-width: 72rem) 22rem, (min-width: 40rem) 45vw, 100vw';
+---
+
+<article class="project-card">
+  {project.cover ? (
+    <Picture
+      src={project.cover.image}
+      formats={['avif', 'webp']}
+      fallbackFormat="webp"
+      widths={[400, 800, 1200]}
+      sizes={sizes}
+      alt={project.cover.alt[lang]}
+      loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={eager ? 'high' : 'auto'}
+    />
+  ) : (
+    <img src="/images/default-cover.svg" width="1600" height="1000" alt="" loading="lazy" />
+  )}
+  <div class="body">
+    <Heading>
+      <a href={href}>{project.title[lang]}</a>
+    </Heading>
+    <p>{project.summary[lang]}</p>
+    <ul class="tags">
+      {project.categories.map((id) => (
+        <li>{labelOf(categories, id, lang)}</li>
+      ))}
+    </ul>
+  </div>
+</article>
+
+<style>
+  .project-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .project-card :global(img) {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+  .body {
+    padding: var(--space-m);
+  }
+  h2,
+  h3 {
+    font-size: var(--step-1);
+  }
+  /* The whole card is clickable through the title link. */
+  a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  a {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+  .project-card:hover a,
+  a:focus-visible {
+    text-decoration: underline;
+  }
+  .project-card:focus-within {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  a:focus-visible {
+    outline: none;
+  }
+  p {
+    color: var(--color-muted);
+  }
+</style>

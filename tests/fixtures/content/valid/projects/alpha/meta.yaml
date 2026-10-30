@@ -1,0 +1,12 @@
+id: alpha
+title: { fr: Projet alpha, en: Project alpha }
+summary: { fr: Un résumé de projet assez long pour respecter la limite de cinquante., en: A project summary long enough to respect the fifty character minimum. }
+role: { fr: Développement, en: Development }
+period: { start: 2026-01 }
+categories: [web]
+technologies: [astro]
+status: published
+featured: true
+cover: { src: ./cover.webp, alt: { fr: Couverture, en: Cover } }
+experience: [job-a]
+education: [degree]

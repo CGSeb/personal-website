@@ -1,0 +1,9 @@
+id: master-informatique
+title:
+  fr: Master en informatique
+  en: Master's degree in computer science
+institution: Université (à préciser)
+location: { fr: France, en: France }
+period: { start: 2018-09, end: 2020-06 }
+obtained: true
+level: { fr: Bac+5, en: Master's level }

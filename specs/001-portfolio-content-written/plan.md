@@ -108,10 +108,11 @@ src/
 ├── components/                # Header, LanguageSwitcher, ProjectCard, Timeline, VideoFacade…
 ├── layouts/BaseLayout.astro
 ├── styles/                    # Jetons CSS, base, typographie
+├── views/                     # Gabarits partagés FR/EN (HomeView, ProjectListView, ProjectView…)
 └── pages/
     ├── index.astro            # Racine x-default + redirection de langue
     ├── 404.astro
-    ├── [lang]/…               # Pages par langue (cf. contracts/routes.md)
+    ├── fr/…, en/…             # Un fichier fin par page et par langue, segments traduits (cf. contracts/routes.md)
     ├── data/portfolio.json.ts
     ├── llms.txt.ts
     ├── llms-full.txt.ts

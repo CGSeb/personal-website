@@ -1,0 +1,52 @@
+---
+import type { LinkT } from '../content/schemas';
+import type { Lang } from '../i18n/routes';
+import { t } from '../i18n/ui';
+import VideoFacade from './VideoFacade.astro';
+
+interface Props {
+  lang: Lang;
+  links: LinkT[];
+  projectTitle: string;
+}
+
+const { lang, links, projectTitle } = Astro.props;
+const videos = links.filter((l) => l.kind === 'video');
+const others = links.filter((l) => l.kind !== 'video');
+---
+
+{others.length > 0 && (
+  <ul class="links">
+    {others.map((link) => (
+      <li>
+        <a href={link.url} rel="noopener">
+          {link.label?.[lang] ?? t(lang, `link.${link.kind}`)}
+        </a>
+      </li>
+    ))}
+  </ul>
+)}
+{videos.map((link) => (
+  <VideoFacade lang={lang} url={link.url} title={link.label?.[lang] ?? projectTitle} />
+))}
+
+<style>
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-s);
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--space-m);
+  }
+  .links a {
+    display: inline-block;
+    padding: var(--space-xs) var(--space-m);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    text-decoration: none;
+  }
+  .links a:hover {
+    border-color: var(--color-accent);
+  }
+</style>

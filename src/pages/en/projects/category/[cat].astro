@@ -1,0 +1,9 @@
+---
+import ProjectListView from '../../../../views/ProjectListView.astro';
+import { categoryPaths } from '../../../../lib/paths';
+
+export const getStaticPaths = categoryPaths;
+const { id } = Astro.props;
+---
+
+<ProjectListView lang="en" category={id} />

@@ -1,0 +1,3 @@
+- { id: astro, label: { fr: Astro, en: Astro } }
+- { id: typescript, label: { fr: TypeScript, en: TypeScript } }
+- { id: blender, label: { fr: Blender, en: Blender } }
