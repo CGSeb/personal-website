@@ -1,0 +1,25 @@
+# Profil — textes provisoires à remplacer.
+name: Sébastien
+headline:
+  fr: Développeur et créateur de projets numériques
+  en: Developer and digital project maker
+summary:
+  fr: Je conçois des applications, des outils et des expériences interactives, du prototype à la mise en ligne. (Texte provisoire.)
+  en: I design applications, tools and interactive experiences, from prototype to launch. (Placeholder text.)
+photo:
+  src: ./profile-photo.webp
+  alt:
+    fr: Portrait de Sébastien
+    en: Portrait of Sébastien
+location:
+  fr: France
+  en: France
+languages:
+  - { code: fr, level: { fr: Langue maternelle, en: Native } }
+  - { code: en, level: { fr: Courant, en: Fluent } }
+email: contact@example.com
+profiles:
+  - { network: github, url: https://github.com/CGSeb }
+jobTitle:
+  fr: Développeur
+  en: Developer

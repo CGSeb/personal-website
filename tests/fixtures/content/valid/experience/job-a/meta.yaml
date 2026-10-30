@@ -1,0 +1,7 @@
+id: job-a
+position: { fr: Développeur, en: Developer }
+organization: Société A
+location: { fr: Lyon, en: Lyon }
+type: employment
+period: { start: 2018-01, end: 2022-12 }
+technologies: [typescript]

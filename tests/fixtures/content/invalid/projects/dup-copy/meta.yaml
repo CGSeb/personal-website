@@ -1,0 +1,10 @@
+id: alpha
+title: { fr: Projet beta, en: Project beta }
+summary: { fr: Un résumé de projet assez long pour respecter la limite de cinquante., en: A project summary long enough to respect the fifty character minimum. }
+role: { fr: Développement, en: Development }
+period: { start: 2025-05 }
+categories: [web]
+technologies: [astro]
+status: published
+featured: false
+experience: [job-a]

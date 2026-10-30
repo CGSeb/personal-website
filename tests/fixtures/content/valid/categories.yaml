@@ -1,0 +1,2 @@
+- { id: web, label: { fr: Web, en: Web } }
+- { id: video, label: { fr: Vidéo, en: Video } }

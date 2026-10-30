@@ -1,0 +1,22 @@
+id: portfolio-3d
+title:
+  fr: Portfolio 3D isométrique
+  en: Isometric 3D portfolio
+summary:
+  fr: Un portfolio à explorer comme un petit monde en 3D vu de haut, doublé d'une version écrite. (Provisoire.)
+  en: A portfolio you explore like a small 3D world seen from above, with a written version. (Placeholder.)
+role:
+  fr: Conception et développement
+  en: Design and development
+period: { start: 2026-10 }
+categories: [web]
+technologies: [astro, typescript, threejs]
+cover:
+  src: ./cover.webp
+  alt:
+    fr: Vue isométrique du portfolio
+    en: Isometric view of the portfolio
+links:
+  - { kind: code, url: https://github.com/CGSeb/personal-website }
+experience: [freelance-dev]
+featured: true

@@ -1,0 +1,253 @@
+---
+import { Picture } from 'astro:assets';
+import { render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Period from '../components/Period.astro';
+import ProjectLinks from '../components/ProjectLinks.astro';
+import { findById, getSite, labelOf } from '../content';
+import { alternateOf, SECTIONS, slugFor, urlFor, type Lang } from '../i18n/routes';
+import { t } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  id: string;
+}
+
+const { lang, id } = Astro.props;
+const { projects, categories, technologies, experience, education } = await getSite();
+const index = projects.findIndex((p) => p.id === id);
+const project = projects[index]!;
+const previous = projects[index - 1];
+const next = projects[index + 1];
+const { Content } = await render(project.bodies[lang]);
+
+const linkedExperience = project.experience
+  .map((ref) => findById(experience, ref)!)
+  .filter(Boolean);
+const linkedEducation = project.education.map((ref) => findById(education, ref)!).filter(Boolean);
+const projectUrl = (p: { id: string; slug?: { fr?: string; en?: string } }) =>
+  urlFor('project', lang, slugFor(p, lang));
+const imageSizes = '(min-width: 72rem) 72rem, 100vw';
+---
+
+<BaseLayout
+  lang={lang}
+  title={project.title[lang]}
+  description={project.summary[lang]}
+  canonicalPath={projectUrl(project)}
+  alternatePath={alternateOf('project', lang, project)}
+>
+  <article class="container project">
+    <header>
+      <h1>{project.title[lang]}</h1>
+      <p class="summary">{project.summary[lang]}</p>
+    </header>
+
+    {project.cover && (
+      <Picture
+        src={project.cover.image}
+        formats={['avif', 'webp']}
+        fallbackFormat="webp"
+        widths={[640, 1024, 1600]}
+        sizes={imageSizes}
+        alt={project.cover.alt[lang]}
+        class="cover"
+        loading="eager"
+        fetchpriority="high"
+      />
+    )}
+
+    <dl class="project-meta">
+      <div>
+        <dt>{t(lang, 'project.role')}</dt>
+        <dd>{project.role[lang]}</dd>
+      </div>
+      <div>
+        <dt>{t(lang, 'project.period')}</dt>
+        <dd>
+          <Period lang={lang} period={project.period} />
+        </dd>
+      </div>
+      <div>
+        <dt>{t(lang, 'project.categories')}</dt>
+        <dd>
+          <ul class="tags">
+            {project.categories.map((c) => (
+              <li>
+                <a href={urlFor('category', lang, c)}>{labelOf(categories, c, lang)}</a>
+              </li>
+            ))}
+          </ul>
+        </dd>
+      </div>
+      {project.technologies.length > 0 && (
+        <div>
+          <dt>{t(lang, 'project.technologies')}</dt>
+          <dd>
+            <ul class="tags">
+              {project.technologies.map((tech) => (
+                <li>{labelOf(technologies, tech, lang)}</li>
+              ))}
+            </ul>
+          </dd>
+        </div>
+      )}
+    </dl>
+
+    {project.links.length > 0 && (
+      <section aria-labelledby="links-title">
+        <h2 id="links-title">{t(lang, 'project.links')}</h2>
+        <ProjectLinks lang={lang} links={project.links} projectTitle={project.title[lang]} />
+      </section>
+    )}
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    {project.gallery.length > 0 && (
+      <section aria-labelledby="gallery-title">
+        <h2 id="gallery-title">{t(lang, 'project.gallery')}</h2>
+        <div class="gallery">
+          {project.gallery.map((img) => (
+            <Picture
+              src={img.image}
+              formats={['avif', 'webp']}
+              fallbackFormat="webp"
+              widths={[480, 960]}
+              sizes="(min-width: 48rem) 50vw, 100vw"
+              alt={img.alt[lang]}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    {(linkedExperience.length > 0 || linkedEducation.length > 0) && (
+      <section class="related">
+        {linkedExperience.length > 0 && (
+          <>
+            <h2>{t(lang, 'project.experience')}</h2>
+            <ul>
+              {linkedExperience.map((e) => (
+                <li>
+                  {SECTIONS.career ? (
+                    <a href={urlFor('experience', lang, slugFor(e, lang))}>
+                      {e.position[lang]} — {e.organization}
+                    </a>
+                  ) : (
+                    <span>
+                      {e.position[lang]} — {e.organization}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+        {linkedEducation.length > 0 && (
+          <>
+            <h2>{t(lang, 'project.education')}</h2>
+            <ul>
+              {linkedEducation.map((e) => (
+                <li>
+                  {SECTIONS.career ? (
+                    <a href={urlFor('education', lang, slugFor(e, lang))}>
+                      {e.title[lang]} — {e.institution}
+                    </a>
+                  ) : (
+                    <span>
+                      {e.title[lang]} — {e.institution}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </section>
+    )}
+
+    <nav class="pager" aria-label={t(lang, 'projects.title')}>
+      {previous ? (
+        <a href={projectUrl(previous)} rel="prev">
+          ← {t(lang, 'project.previous')} : {previous.title[lang]}
+        </a>
+      ) : (
+        <span />
+      )}
+      <a href={urlFor('projects', lang)}>{t(lang, 'project.backToList')}</a>
+      {next ? (
+        <a href={projectUrl(next)} rel="next">
+          {t(lang, 'project.next')} : {next.title[lang]} →
+        </a>
+      ) : (
+        <span />
+      )}
+    </nav>
+  </article>
+</BaseLayout>
+
+<style>
+  .project {
+    padding-top: var(--space-xl);
+  }
+  .summary {
+    font-size: var(--step-1);
+    color: var(--color-muted);
+    max-width: var(--text-width);
+  }
+  .project :global(.cover) {
+    width: 100%;
+    border-radius: var(--radius);
+    margin-block: var(--space-l);
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+  .project-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: var(--space-m) var(--space-l);
+    margin: 0 0 var(--space-xl);
+  }
+  dt {
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  dd {
+    margin: var(--space-2xs) 0 0;
+  }
+  section {
+    margin-block: var(--space-xl);
+  }
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+    gap: var(--space-m);
+  }
+  .gallery :global(img) {
+    border-radius: var(--radius);
+  }
+  .pager {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: var(--space-m);
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-l);
+    margin-top: var(--space-2xl);
+  }
+  .pager a[rel='next'] {
+    text-align: right;
+  }
+  @media (max-width: 40rem) {
+    .pager {
+      grid-template-columns: 1fr;
+    }
+    .pager a[rel='next'] {
+      text-align: left;
+    }
+  }
+</style>

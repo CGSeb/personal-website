@@ -1,0 +1,28 @@
+id: lesson-folk
+title:
+  fr: LessonFolk
+  en: LessonFolk
+summary:
+  fr: Un tuteur qui enseigne l'IA à tous, des débutants aux praticiens, par la conversation. (Texte provisoire.)
+  en: A tutor that teaches AI to anyone, from beginners to practitioners, through conversation. (Placeholder.)
+role:
+  fr: Fondateur, conception et développement
+  en: Founder, design and development
+period: { start: 2026-03 }
+categories: [education-tech, web]
+technologies: [typescript, nodejs, ai]
+cover:
+  src: ./cover.webp
+  alt:
+    fr: Écran d'accueil de LessonFolk
+    en: LessonFolk home screen
+gallery:
+  - src: ./screen-1.webp
+    alt:
+      fr: Une leçon en cours dans LessonFolk
+      en: A lesson in progress in LessonFolk
+links:
+  - { kind: demo, url: https://example.com/lessonfolk }
+  - { kind: video, url: https://www.youtube.com/watch?v=aqz-KE-bpKQ }
+experience: [freelance-dev]
+featured: true

@@ -1,0 +1,7 @@
+id: broken-ref
+title: { fr: Lien cassé, en: Broken link }
+summary: { fr: Un résumé de projet assez long pour respecter la limite de cinquante., en: A project summary long enough to respect the fifty character minimum. }
+role: { fr: Dev, en: Dev }
+period: { start: 2024-01 }
+categories: [nope]
+experience: [ghost-job]

@@ -1,0 +1,10 @@
+id: gamma-draft
+title: { fr: Projet gamma-draft, en: Project gamma-draft }
+summary: { fr: Un résumé de projet assez long pour respecter la limite de cinquante., en: A project summary long enough to respect the fifty character minimum. }
+role: { fr: Développement, en: Development }
+period: { start: 2026-06 }
+categories: [web]
+technologies: [astro]
+status: draft
+featured: false
+

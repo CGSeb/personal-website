@@ -1,0 +1,5 @@
+name: Test Person
+headline: { fr: Développeur, en: Developer }
+summary: { fr: Résumé court., en: Short summary. }
+photo: { src: ./photo.webp, alt: { fr: Portrait, en: Portrait } }
+email: test@example.com

@@ -1,0 +1,6 @@
+- id: web
+  label: { fr: Web, en: Web }
+- id: education-tech
+  label: { fr: Éducation, en: Education }
+- id: video
+  label: { fr: Vidéo, en: Video }

@@ -1,0 +1,12 @@
+- id: astro
+  label: { fr: Astro, en: Astro }
+- id: typescript
+  label: { fr: TypeScript, en: TypeScript }
+- id: threejs
+  label: { fr: Three.js, en: Three.js }
+- id: nodejs
+  label: { fr: Node.js, en: Node.js }
+- id: blender
+  label: { fr: Blender, en: Blender }
+- id: ai
+  label: { fr: IA générative, en: Generative AI }

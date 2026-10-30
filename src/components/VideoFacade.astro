@@ -1,0 +1,64 @@
+---
+// Third-party video behind a click (FR-023, constitution V): nothing is requested from the
+// video host until the visitor presses play. Without JavaScript it is a plain link.
+import type { Lang } from '../i18n/routes';
+import { t } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  url: string;
+  title: string;
+}
+
+const { lang, url, title } = Astro.props;
+
+const youtubeId = (() => {
+  const u = new URL(url);
+  if (u.hostname === 'youtu.be') return u.pathname.slice(1);
+  if (u.hostname.endsWith('youtube.com'))
+    return u.searchParams.get('v') ?? u.pathname.split('/').pop();
+  return undefined;
+})();
+const embed = youtubeId
+  ? `https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1`
+  : undefined;
+---
+
+<div class="video-facade" data-embed={embed} data-title={title}>
+  <a href={url} rel="noopener" class="video-link">
+    ▶ {t(lang, 'video.play', { title })}
+  </a>
+  {embed && <p class="notice">{t(lang, 'video.notice')}</p>}
+</div>
+
+<script is:inline>
+  document.querySelectorAll('.video-facade[data-embed]').forEach((box) => {
+    box.querySelector('.video-link').addEventListener('click', (event) => {
+      event.preventDefault();
+      const frame = document.createElement('iframe');
+      frame.src = box.dataset.embed;
+      frame.title = box.dataset.title;
+      frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      frame.loading = 'lazy';
+      box.replaceChildren(frame);
+    });
+  });
+</script>
+
+<style>
+  .video-facade {
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-m);
+  }
+  .video-facade :global(iframe) {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0;
+  }
+  .notice {
+    margin: var(--space-xs) 0 0;
+    font-size: var(--step--1);
+    color: var(--color-muted);
+  }
+</style>
