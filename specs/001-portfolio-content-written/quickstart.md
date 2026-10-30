@@ -43,3 +43,26 @@ npm run preview    # sert dist/ localement
 - Passer une page de projet dans le test des résultats enrichis de Google et le validateur
   schema.org.
 - Relire les deux langues d'au moins un élément de chaque type.
+
+## Résultats (2026-10-30, contenu provisoire)
+
+| # | Résultat |
+|---|---|
+| 1 | ✅ 28 pages construites (FR et EN de chaque élément, racine, 404) |
+| 2 | ✅ `tests/unit/build-content.test.ts` : la construction sur `tests/fixtures/content/invalid/` échoue en nommant fichier et champ (Astro s'arrête à la première erreur de forme ; la vérification croisée liste toutes les siennes) |
+| 3 | ✅ même test : le brouillon `gamma-draft` n'apparaît dans aucune page, ni le sitemap, ni `llms.txt`, ni l'export |
+| 4 | ✅ projet temporaire `qs-test` : pages FR/EN, liste, expérience liée, sitemap, `llms.txt`, export ; retiré ensuite |
+| 5–8 | ✅ `npm run test:e2e` : 189 réussis, 3 sautés (redirection et vidéo sans JavaScript, par conception) |
+| 9 | ✅ `npm test` : 48 réussis |
+| 10 | ✅ `npm run lhci` : 100 / 100 / 100 / 100 sur les 10 pages, LCP 1,2–1,4 s, CLS 0, 0 Ko de JavaScript |
+| 11 | ✅ `npm run check:seo` : 27 pages, sitemap complet |
+| 12 | ✅ redirection d'essai `/fr/projets/ancien-portfolio/` → `/fr/projets/portfolio-3d/` générée (meta refresh + canonical), puis retirée |
+| 13 | ✅ aucune occurrence de l'adresse en clair dans `dist/` ; le lien fonctionne dans le navigateur |
+
+Lighthouse a d'abord mesuré un CLS de 0,32 à 0,39 dû au chargement de la police ; corrigé par
+une police de secours aux métriques d'Inter et le préchargement du fichier latin.
+`npm run check:links` signale 2 liens en échec, attendus avec le contenu provisoire :
+`https://example.com/lessonfolk` et le dépôt GitHub du portfolio, privé.
+
+Reste manuel avant la mise en ligne : vrai téléphone, test des résultats enrichis de Google,
+relecture des deux langues avec le vrai contenu.

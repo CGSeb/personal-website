@@ -2,3 +2,14 @@
    Its @font-face rules use `font-display: swap` and unicode ranges, so only the latin
    files are downloaded for French and English text. */
 @import '@fontsource-variable/inter/wght.css';
+
+/* Fallback shown while Inter loads, adjusted to Inter's metrics so the swap does not move the
+   text (it caused most of the layout shift measured by Lighthouse). */
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Arial');
+  size-adjust: 107.12%;
+  ascent-override: 90.44%;
+  descent-override: 22.52%;
+  line-gap-override: 0%;
+}
