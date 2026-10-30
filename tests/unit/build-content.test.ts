@@ -20,7 +20,9 @@ function build(fixture: 'valid' | 'invalid') {
       FORCE_COLOR: '0',
     },
   });
-  return { status: result.status, output: `${result.stdout}\n${result.stderr}` };
+  // Without colour codes, whatever the terminal.
+  const output = `${result.stdout}\n${result.stderr}`.replace(/\u001b\[[0-9;]*m/g, '');
+  return { status: result.status, output };
 }
 
 const allFiles = (dir: string): string[] =>
@@ -36,7 +38,10 @@ describe('build from fixtures', { timeout: 180_000 }, () => {
     const { status, output } = build('invalid');
     expect(status).not.toBe(0);
     expect(output).toMatch(/tests[\\/]fixtures[\\/]content[\\/]invalid[\\/]projects[\\/]/);
-    expect(output).toMatch(/texte alternatif|n'existe pas|manquant|dossier|après le début|cover/);
+    // Astro stops at the first schema error, which depends on the file order of the system:
+    // check that it names one of the invalid elements and the field in cause.
+    expect(output).toMatch(/missing-translation|broken-ref|dup-copy|bad-period|no-alt/);
+    expect(output).toMatch(/\b(title\.en|cover\.alt|period\.end|categories\[0\]|description|id)\b/);
   });
 
   it('builds valid content and leaves drafts out everywhere (US6-3)', () => {
