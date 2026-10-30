@@ -1,0 +1,77 @@
+---
+// Minimal layout for the pages that belong to no language: the root `x-default` page and the
+// not-found page. Content is written in both languages, each part tagged with its `lang`.
+import '../styles/fonts.css';
+import '../styles/tokens.css';
+import '../styles/base.css';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Root page only: hreflang links to both home pages. */
+  alternates?: boolean;
+  noindex?: boolean;
+}
+
+const { title, description, alternates = false, noindex = false } = Astro.props;
+const url = (path: string) => new URL(path, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    {alternates && (
+      <>
+        <link rel="canonical" href={url('/')} />
+        <link rel="alternate" hreflang="fr" href={url('/fr/')} />
+        <link rel="alternate" hreflang="en" href={url('/en/')} />
+        <link rel="alternate" hreflang="x-default" href={url('/')} />
+      </>
+    )}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <slot name="head" />
+  </head>
+  <body>
+    <main id="main" class="container bilingual">
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style>
+  .bilingual {
+    display: grid;
+    gap: var(--space-xl);
+    align-content: center;
+    min-height: 100vh;
+    padding-block: var(--space-2xl);
+  }
+  .bilingual :global(section) {
+    max-width: var(--text-width);
+  }
+  .bilingual :global(.choices) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-m);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .bilingual :global(.choices a) {
+    display: inline-block;
+    padding: var(--space-s) var(--space-l);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .bilingual :global(.choices a:hover) {
+    border-color: var(--color-accent);
+  }
+</style>

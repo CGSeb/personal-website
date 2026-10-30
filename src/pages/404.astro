@@ -1,0 +1,37 @@
+---
+// Not-found page, in both languages: a static host serves one 404 page for every language.
+import BilingualLayout from '../layouts/BilingualLayout.astro';
+import { urlFor } from '../i18n/routes';
+import { t } from '../i18n/ui';
+---
+
+<BilingualLayout
+  title={`${t('fr', 'notFound.title')} · ${t('en', 'notFound.title')}`}
+  description={t('en', 'notFound.text')}
+  noindex
+>
+  <section lang="fr">
+    <h1>{t('fr', 'notFound.title')}</h1>
+    <p>{t('fr', 'notFound.text')}</p>
+    <ul class="choices">
+      <li>
+        <a href={urlFor('home', 'fr')}>{t('fr', 'nav.home')}</a>
+      </li>
+      <li>
+        <a href={urlFor('projects', 'fr')}>{t('fr', 'nav.projects')}</a>
+      </li>
+    </ul>
+  </section>
+  <section lang="en">
+    <h2>{t('en', 'notFound.title')}</h2>
+    <p>{t('en', 'notFound.text')}</p>
+    <ul class="choices">
+      <li>
+        <a href={urlFor('home', 'en')}>{t('en', 'nav.home')}</a>
+      </li>
+      <li>
+        <a href={urlFor('projects', 'en')}>{t('en', 'nav.projects')}</a>
+      </li>
+    </ul>
+  </section>
+</BilingualLayout>

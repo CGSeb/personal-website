@@ -1,0 +1,35 @@
+---
+// Root page (`x-default`, FR-015): sends French browsers to /fr/ and the others to /en/.
+// Without JavaScript the visitor picks a language; search engines index both through hreflang.
+import BilingualLayout from '../layouts/BilingualLayout.astro';
+import { getSite } from '../content';
+
+const { profile } = await getSite();
+---
+
+<BilingualLayout
+  title={profile.name}
+  description={`${profile.headline.en} — ${profile.headline.fr}`}
+  alternates
+>
+  <script is:inline slot="head">
+    {
+      const langs = navigator.languages?.length ? navigator.languages : [navigator.language];
+      const fr = langs.some((l) => l && l.toLowerCase().startsWith('fr'));
+      location.replace(fr ? '/fr/' : '/en/');
+    }
+  </script>
+  <h1>{profile.name}</h1>
+  <ul class="choices">
+    <li>
+      <a href="/fr/" hreflang="fr" lang="fr">
+        Français →
+      </a>
+    </li>
+    <li>
+      <a href="/en/" hreflang="en" lang="en">
+        English →
+      </a>
+    </li>
+  </ul>
+</BilingualLayout>
