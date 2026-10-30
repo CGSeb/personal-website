@@ -25,7 +25,12 @@ export default defineConfig({
   },
   projects: [
     { name: 'desktop-chromium', use: chromium },
-    { name: 'mobile-webkit', use: { ...devices['iPhone 15'] } },
+    {
+      name: 'mobile-webkit',
+      use: { ...devices['iPhone 15'] },
+      // Starts its own browser with Chromium-only flags, which WebKit refuses to launch with.
+      testIgnore: /scene-nowebgl\.spec\.ts/,
+    },
     { name: 'chromium-320', use: { ...chromium, viewport: { width: 320, height: 640 } } },
     { name: 'chromium-nojs', use: { ...chromium, javaScriptEnabled: false } },
   ],

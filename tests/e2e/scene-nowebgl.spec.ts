@@ -9,7 +9,7 @@ test('without WebGL: message, written version, list and panels still work', asyn
   browserName,
   javaScriptEnabled,
 }) => {
-  test.skip(browserName !== 'chromium', 'WebGL can only be switched off in Chromium');
+  test.skip(browserName !== 'chromium', 'WebGL can only be switched off in Chromium'); // see playwright.config.ts
   test.skip(!javaScriptEnabled, 'covered by scene-nojs.spec.ts');
   await page.goto('/fr/explorer/');
   const status = page.locator('#scene .scene-status');
