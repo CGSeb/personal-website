@@ -47,6 +47,24 @@ for (const lang of ['fr', 'en'] as const) {
       await expect(ongoing.locator('.period time')).toHaveCount(1);
     });
 
+    test('the ongoing dot pulses, except with reduced motion', async ({ page }) => {
+      const dot = (selector: string) =>
+        page.locator(selector).evaluate((el) => {
+          const s = getComputedStyle(el, '::before');
+          return { bg: s.backgroundColor, animation: s.animationName };
+        });
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      await page.goto(L[lang].path);
+      const ongoing = await dot('#experience .timeline-entry.ongoing');
+      const past = await dot('#experience .timeline-entry:not(.ongoing)');
+      expect(ongoing.animation).toBe('pulse');
+      expect(ongoing.bg).not.toBe(past.bg);
+      expect(past.animation).toBe('none');
+
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      expect((await dot('#experience .timeline-entry.ongoing')).animation).toBe('none');
+    });
+
     test('a diploma page shows its details', async ({ page }) => {
       await page.goto(L[lang].path);
       await page.locator('#education .timeline-entry a').first().click();

@@ -23,7 +23,7 @@ const { lang, entries } = Astro.props;
 
 <ol class="timeline">
   {entries.map((entry) => (
-    <li class="timeline-entry">
+    <li class:list={['timeline-entry', { ongoing: !entry.period.end }]}>
       <h3 class="entry-title">
         <a href={entry.href}>{entry.title}</a>
       </h3>
@@ -60,6 +60,26 @@ const { lang, entries } = Astro.props;
     height: 12px;
     border-radius: 50%;
     background: var(--color-accent);
+  }
+  /* Ongoing entry: green dot with a soft pulse. */
+  .timeline-entry.ongoing::before {
+    background: var(--color-ongoing);
+    box-shadow: 0 0 0 0 var(--color-ongoing);
+    animation: pulse 1.8s ease-out infinite;
+  }
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-ongoing) 70%, transparent);
+    }
+    70%,
+    100% {
+      box-shadow: 0 0 0 8px transparent;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .timeline-entry.ongoing::before {
+      animation: none;
+    }
   }
   h3 {
     margin-bottom: var(--space-2xs);
