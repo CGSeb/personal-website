@@ -58,6 +58,8 @@ const fr = {
   'experienceType.apprenticeship': 'Alternance',
   'experienceType.volunteer': 'Bénévolat',
   'notFound.title': 'Page introuvable',
+  'notFound.text':
+    'Cette adresse n’existe pas ou plus. Repartez de l’accueil ou de la liste des projets.',
 };
 
 const en = {
@@ -116,6 +118,8 @@ const en = {
   'experienceType.apprenticeship': 'Apprenticeship',
   'experienceType.volunteer': 'Volunteering',
   'notFound.title': 'Page not found',
+  'notFound.text':
+    'This address does not exist, or no longer does. Start again from the home page or the project list.',
 } satisfies Record<keyof typeof fr, string>;
 
 export type UiKey = keyof typeof fr;

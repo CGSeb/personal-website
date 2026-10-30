@@ -2,13 +2,15 @@
 import { SECTIONS, urlFor, type Lang } from '../i18n/routes';
 import { t } from '../i18n/ui';
 import { getSite } from '../content';
+import LanguageSwitcher from './LanguageSwitcher.astro';
 
 interface Props {
   lang: Lang;
   currentPath: string;
+  alternatePath: string;
 }
 
-const { lang, currentPath } = Astro.props;
+const { lang, currentPath, alternatePath } = Astro.props;
 const { profile } = await getSite();
 
 const items = [
@@ -41,6 +43,7 @@ const isCurrent = (item: { href: string; exact?: boolean }) =>
         ))}
       </ul>
     </nav>
+    <LanguageSwitcher lang={lang} alternatePath={alternatePath} />
   </div>
 </header>
 
@@ -53,9 +56,11 @@ const isCurrent = (item: { href: string; exact?: boolean }) =>
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
     gap: var(--space-xs) var(--space-l);
     padding-block: var(--space-s);
+  }
+  nav {
+    margin-left: auto;
   }
   .brand {
     font-weight: 700;

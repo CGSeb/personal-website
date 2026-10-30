@@ -1,0 +1,35 @@
+---
+// Link to the same page in the other language (FR-014).
+import { otherLang, type Lang } from '../i18n/routes';
+
+interface Props {
+  lang: Lang;
+  alternatePath: string;
+}
+
+const LANGUAGE_NAMES: Record<Lang, string> = { fr: 'Français', en: 'English' };
+
+const { lang, alternatePath } = Astro.props;
+const other = otherLang(lang);
+---
+
+<a class="language-switcher" href={alternatePath} hreflang={other} lang={other}>
+  <span aria-hidden="true">{other.toUpperCase()}</span>
+  <span class="visually-hidden">{LANGUAGE_NAMES[other]}</span>
+</a>
+
+<style>
+  .language-switcher {
+    display: inline-block;
+    padding: var(--space-2xs) var(--space-s);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-text);
+    font-size: var(--step--1);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .language-switcher:hover {
+    border-color: var(--color-accent);
+  }
+</style>

@@ -133,14 +133,14 @@ testing of each story.
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T042 [P] [US3] E2E test in `tests/e2e/language.spec.ts`: on every page type the switcher leads to the same page in the other language (US3-1); `/` redirects to `/fr/` with a French browser locale and to `/en/` otherwise, and shows both links without JavaScript (US3-2); each page has `<html lang>` and reciprocal `hreflang` fr/en/x-default links (US3-3)
+- [X] T042 [P] [US3] E2E test in `tests/e2e/language.spec.ts`: on every page type the switcher leads to the same page in the other language (US3-1); `/` redirects to `/fr/` with a French browser locale and to `/en/` otherwise, and shows both links without JavaScript (US3-2); each page has `<html lang>` and reciprocal `hreflang` fr/en/x-default links (US3-3)
 
 ### Implementation for User Story 3
 
-- [ ] T043 [P] [US3] `LanguageSwitcher` component in `src/components/LanguageSwitcher.astro`: link to `alternateOf(...)` with `hreflang` and `lang` attributes, included in `Header.astro` (FR-014)
-- [ ] T044 [US3] Pass `alternates` from every page to `BaseLayout.astro` and render `<link rel="alternate" hreflang="fr|en|x-default">` (FR-013)
-- [ ] T045 [US3] Root page in `src/pages/index.astro`: `x-default`, links to `/fr/` and `/en/`, `hreflang` links, inline script < 1 KB redirecting via `navigator.languages` (French → `/fr/`, else `/en/`) (FR-015, research § 5)
-- [ ] T046 [US3] Not-found page in `src/pages/404.astro`: bilingual message, links to both home pages and project lists (edge case "adresse qui n'existe pas")
+- [X] T043 [P] [US3] `LanguageSwitcher` component in `src/components/LanguageSwitcher.astro`: link to `alternateOf(...)` with `hreflang` and `lang` attributes, included in `Header.astro` (FR-014)
+- [X] T044 [US3] Pass `alternates` from every page to `BaseLayout.astro` and render `<link rel="alternate" hreflang="fr|en|x-default">` (FR-013)
+- [X] T045 [US3] Root page in `src/pages/index.astro`: `x-default`, links to `/fr/` and `/en/`, `hreflang` links, inline script < 1 KB redirecting via `navigator.languages` (French → `/fr/`, else `/en/`) (FR-015, research § 5)
+- [X] T046 [US3] Not-found page in `src/pages/404.astro` (with the root page, uses `src/layouts/BilingualLayout.astro`): bilingual message, links to both home pages and project lists (edge case "adresse qui n'existe pas")
 
 **Checkpoint**: both languages are complete and linked everywhere
 
