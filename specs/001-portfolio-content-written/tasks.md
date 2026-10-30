@@ -217,13 +217,13 @@ testing of each story.
 
 **Purpose**: constitution quality gates and final checks across all stories
 
-- [ ] T066 [P] Privacy E2E test in `tests/e2e/privacy.spec.ts`: on every page, record network requests and cookies; zero request outside the site origin and zero cookie; the video iframe loads only after a click (FR-023, SC-006)
-- [ ] T067 [P] Lighthouse CI config in `lighthouserc.json`: mobile profile, one URL per page type in both languages, assertions ≥ 0.9 for performance, accessibility, best-practices, SEO; budgets LCP < 2500 ms, CLS < 0.1, total JS ≤ 50 KB compressed (SC-002, SC-004)
-- [ ] T068 [P] External link check in `scripts/check-links.mjs`: checks every `links[].url` and `*Url` field, reports failures as warnings without failing the build (edge case "lien externe ne répond plus")
-- [ ] T069 [P] Images and performance pass: verify AVIF/WebP output, explicit dimensions, lazy loading below the fold, LCP image not lazy and `fetchpriority="high"` (FR-022)
-- [ ] T070 [P] CI workflow in `.github/workflows/ci.yml`: install, `npm test`, `npm run build`, `npm run check:seo`, `npm run test:e2e`, `npm run lhci`, `npm run check:links` (non-blocking)
-- [ ] T071 Project README in `README.md`: what the site is, commands, where content lives (link to `content/README.md`), quality checks, hosting still to choose
-- [ ] T072 Run every scenario in `specs/001-portfolio-content-written/quickstart.md` and record the results; fix any failure
+- [X] T066 [P] Privacy E2E test in `tests/e2e/privacy.spec.ts`: on every page, record network requests and cookies; zero request outside the site origin and zero cookie; the video iframe loads only after a click (FR-023, SC-006)
+- [X] T067 [P] Lighthouse CI config in `lighthouserc.json`: mobile profile, one URL per page type in both languages, assertions ≥ 0.9 for performance, accessibility, best-practices, SEO; budgets LCP < 2500 ms, CLS < 0.1, total JS ≤ 50 KB compressed (SC-002, SC-004)
+- [X] T068 [P] External link check in `scripts/check-links.mjs`: checks every `links[].url` and `*Url` field, reports failures as warnings without failing the build (edge case "lien externe ne répond plus")
+- [X] T069 [P] Images and performance pass (checked with Lighthouse; fixed the font-swap layout shift with a metric-matched fallback and a preload): verify AVIF/WebP output, explicit dimensions, lazy loading below the fold, LCP image not lazy and `fetchpriority="high"` (FR-022)
+- [X] T070 [P] CI workflow in `.github/workflows/ci.yml`: install, `npm test`, `npm run build`, `npm run check:seo`, `npm run test:e2e`, `npm run lhci`, `npm run check:links` (non-blocking)
+- [X] T071 Project README in `README.md`: what the site is, commands, where content lives (link to `content/README.md`), quality checks, hosting still to choose
+- [X] T072 Run every scenario in `specs/001-portfolio-content-written/quickstart.md` and record the results; fix any failure
 
 ---
 
