@@ -202,12 +202,12 @@ testing of each story.
 
 ### Tests for User Story 5 ⚠️
 
-- [ ] T063 [P] [US5] E2E test in `tests/e2e/contact.spec.ts`: contact page has a working `mailto:` link and the profile links (US5-1); the plain e-mail address does not appear in the raw HTML of any page in `dist/` (US5-2, FR-026); contact is reachable from navigation and footer on every page (US5-3)
+- [X] T063 [P] [US5] E2E test in `tests/e2e/contact.spec.ts`: contact page has a working `mailto:` link and the profile links (US5-1); the plain e-mail address does not appear in the raw HTML of any page in `dist/` (US5-2, FR-026); contact is reachable from navigation and footer on every page (US5-3)
 
 ### Implementation for User Story 5
 
-- [ ] T064 [P] [US5] E-mail obfuscation helper in `src/lib/email.ts`: encodes the address and link text as numeric HTML entities (research § 11), with a unit test in `tests/unit/email.test.ts`
-- [ ] T065 [US5] Contact page in `src/pages/[lang]/contact/index.astro`: intro from `content/pages/contact/<lang>.md`, protected `mailto:` link, profile links from `profile.profiles` with network labels, no form (FR-026)
+- [X] T064 [P] [US5] E-mail obfuscation helper in `src/lib/email.ts`: encodes the address and link text as numeric HTML entities (research § 11), with a unit test in `tests/unit/email.test.ts`
+- [X] T065 [US5] Contact page in `src/views/ContactView.astro`, rendered by `src/pages/fr/contact/index.astro` and `src/pages/en/contact/index.astro`: intro from `content/pages/contact/<lang>.md`, protected `mailto:` link, profile links from `profile.profiles` with network labels, no form (FR-026)
 
 **Checkpoint**: all user stories are independently functional
 
