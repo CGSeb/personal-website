@@ -13,6 +13,8 @@ export interface ScreenPoint {
 export interface PanelEvents {
   /** The open item changed (null when closed). */
   onChange?: (key: string | null) => void;
+  /** A list entry is focused or hovered (null when it no longer is): highlight its object. */
+  onPreview?: (key: string | null) => void;
 }
 
 export class Panels {
@@ -38,11 +40,14 @@ export class Panels {
       if (e.key === 'Escape' && this.openKey) this.close();
     });
     // Click outside an open panel (and outside the list and the canvas, which handle their own) closes it.
+    // Not the language switcher: closing would drop the open item from its link before it is followed.
     document.addEventListener('pointerdown', (e) => {
       const target = e.target as HTMLElement;
       if (
         !this.openKey ||
-        target.closest('.scene-panel, .scene-list, #scene canvas, [data-recenter]')
+        target.closest(
+          '.scene-panel, .scene-list, #scene canvas, [data-recenter], .language-switcher',
+        )
       )
         return;
       this.close();
@@ -89,6 +94,13 @@ export class Panels {
       button.dataset.key = link.dataset.key!;
       button.textContent = link.textContent;
       button.addEventListener('click', () => this.open(button.dataset.key!, null, button));
+      // US5: the keyboard and the mouse on the list show where the item is in the scene.
+      const preview = () => this.events.onPreview?.(button.dataset.key!);
+      const leave = () => this.events.onPreview?.(null);
+      button.addEventListener('focus', preview);
+      button.addEventListener('mouseenter', preview);
+      button.addEventListener('blur', leave);
+      button.addEventListener('mouseleave', leave);
       link.replaceWith(button);
     }
   }

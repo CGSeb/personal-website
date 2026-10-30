@@ -32,6 +32,8 @@ export interface SceneHandle {
   screenPosition(key: string): { x: number; y: number } | null;
   frames(): number;
   quality(): QualityLevel;
+  /** Item whose object is highlighted (hover or list focus). */
+  highlighted(): string | null;
 }
 
 export interface SceneOptions {
@@ -139,16 +141,24 @@ export async function createScene(
     },
   });
 
-  // Bring an item into view when it is opened from the list or the fragment.
-  panels.events.onChange = (key) => {
-    tooltip.hidden = true;
-    refreshStates();
-    if (!key) return;
+  const bringIntoView = (key: string) => {
     const object = objectFor(key);
     const at = screenPosition(key);
     if (object && at && !isVisible(at)) {
       stage.moveTo(object.hit.getWorldPosition(new THREE.Vector3()));
     }
+  };
+  // Bring an item into view when it is opened from the list or the fragment.
+  panels.events.onChange = (key) => {
+    tooltip.hidden = true;
+    refreshStates();
+    if (key) bringIntoView(key);
+  };
+  // US5: focusing or hovering a list entry highlights its object (or its overflow box).
+  panels.events.onPreview = (key) => {
+    hovered = key ? (objectFor(key)?.key ?? null) : null;
+    refreshStates();
+    if (key) bringIntoView(key);
   };
   stage.onRender(() => {
     if (panels.current) panels.reposition(screenPosition(panels.current));
@@ -187,5 +197,10 @@ export async function createScene(
     }
   });
 
-  return { screenPosition, frames: stage.frames, quality: () => governor.level };
+  return {
+    screenPosition,
+    frames: stage.frames,
+    quality: () => governor.level,
+    highlighted: () => hovered,
+  };
 }

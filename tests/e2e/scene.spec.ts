@@ -214,3 +214,71 @@ test.describe('scene on phones (US3)', () => {
     expect(p!.y).toBeLessThan(box.height);
   });
 });
+
+test.describe('keyboard, screen readers and languages (US5)', () => {
+  test.skip(({ isMobile }) => isMobile, 'keyboard navigation is a desktop journey');
+
+  test('Tab moves through the list and highlights each object in the scene (US5-1)', async ({
+    page,
+  }) => {
+    await openScene(page);
+    const list = page.locator('.scene-list button');
+    const keys = await list.evaluateAll((buttons) =>
+      buttons.map((b) => b.getAttribute('data-key')),
+    );
+    expect(keys.slice(0, 3)).toEqual([
+      'project/portfolio-3d',
+      'project/lesson-folk',
+      'project/ambient-videos',
+    ]);
+    await list.first().focus();
+    for (const key of keys.slice(0, 4)) {
+      await expect(page.locator(`.scene-list button[data-key="${key}"]`)).toBeFocused();
+      await expect.poll(() => page.evaluate(() => window.__scene!.highlighted())).toBe(key);
+      await page.keyboard.press('Tab');
+    }
+    // A visible focus ring on the buttons.
+    await list.first().focus();
+    const outline = await list.first().evaluate((b) => getComputedStyle(b).outlineStyle);
+    expect(outline).not.toBe('none');
+  });
+
+  test('Enter opens and focuses the panel, Escape closes it and returns focus (US5-2)', async ({
+    page,
+  }) => {
+    await openScene(page);
+    const button = page.locator('.scene-list button[data-key="education/master-informatique"]');
+    await button.focus();
+    await page.keyboard.press('Enter');
+    const panel = page.locator('#panel-education-master-informatique');
+    await expect(panel).toBeVisible();
+    await expect(panel).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(panel).toBeHidden();
+    await expect(button).toBeFocused();
+  });
+
+  test('panels and the scene are announced (US5-3)', async ({ page }) => {
+    await openScene(page);
+    await expect(page.locator('#scene')).toHaveAttribute('role', 'application');
+    await expect(page.locator('#scene')).toHaveAttribute('aria-label', /Scène 3D du portfolio/);
+    await page.locator('.scene-list').getByRole('button', { name: 'LessonFolk' }).click();
+    await expect(page.getByRole('dialog', { name: 'LessonFolk' })).toBeVisible();
+    await expect(page.locator('[data-announce]')).toHaveText('LessonFolk ouvert');
+  });
+
+  test('the language switcher keeps the open item (US5-4, FR-018)', async ({ page }) => {
+    await openScene(page);
+    await page
+      .locator('.scene-list')
+      .getByRole('button', { name: 'Master en informatique' })
+      .click();
+    const switcher = page.locator('.language-switcher');
+    await expect(switcher).toHaveAttribute('href', '/en/explore/#education/master-informatique');
+    await switcher.click();
+    await sceneReady(page);
+    await expect(page).toHaveURL(/\/en\/explore\/#education\/master-informatique$/);
+    await expect(page.locator('#panel-education-master-informatique')).toBeVisible();
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  });
+});

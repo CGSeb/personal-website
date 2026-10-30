@@ -89,6 +89,7 @@ export async function start() {
     screenPosition: (key) => handle?.screenPosition(key) ?? null,
     quality: (): QualityLevel => handle?.quality() ?? 'high',
     frames: () => handle?.frames() ?? 0,
+    highlighted: () => handle?.highlighted() ?? null,
   });
 
   const load = async () => {
