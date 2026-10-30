@@ -1,0 +1,41 @@
+---
+import { findById, getSite } from '../content';
+import { slugFor, urlFor, type Lang } from '../i18n/routes';
+import { t } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  /** Ids of published projects. */
+  ids: string[];
+}
+
+const { lang, ids } = Astro.props;
+const { projects } = await getSite();
+const related = ids.map((id) => findById(projects, id)).filter((p) => p !== undefined);
+---
+
+{related.length > 0 && (
+  <section class="related-projects" aria-labelledby="related-projects-title">
+    <h2 id="related-projects-title">{t(lang, 'career.relatedProjects')}</h2>
+    <ul>
+      {related.map((p) => (
+        <li>
+          <a href={urlFor('project', lang, slugFor(p, lang))}>{p.title[lang]}</a>
+          <span> — {p.summary[lang]}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}
+
+<style>
+  .related-projects {
+    margin-top: var(--space-xl);
+  }
+  li {
+    margin-bottom: var(--space-xs);
+  }
+  span {
+    color: var(--color-muted);
+  }
+</style>

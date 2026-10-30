@@ -1,0 +1,158 @@
+---
+// Detail page of an experience or a diploma.
+import { render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Period from '../components/Period.astro';
+import RelatedProjects from '../components/RelatedProjects.astro';
+import { findById, getSite, labelOf } from '../content';
+import { alternateOf, slugFor, urlFor, type Lang } from '../i18n/routes';
+import { formatYearMonth, t } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  kind: 'experience' | 'education';
+  id: string;
+}
+
+const { lang, kind, id } = Astro.props;
+const site = await getSite();
+
+const item = kind === 'experience' ? findById(site.experience, id)! : findById(site.education, id)!;
+const { Content } = await render(item.bodies[lang]);
+
+let title: string;
+let organization: { name: string; url?: string | undefined };
+const meta: { label: string; value: string }[] = [];
+let technologies: string[] = [];
+let skills: string[] = [];
+
+if (kind === 'experience') {
+  const e = findById(site.experience, id)!;
+  title = e.position[lang];
+  organization = { name: e.organization, url: e.organizationUrl };
+  meta.push({ label: t(lang, 'career.type'), value: t(lang, `experienceType.${e.type}`) });
+  technologies = e.technologies.map((tech) => labelOf(site.technologies, tech, lang));
+} else {
+  const d = findById(site.education, id)!;
+  title = d.title[lang];
+  organization = { name: d.institution, url: d.institutionUrl };
+  if (d.level) meta.push({ label: t(lang, 'career.level'), value: d.level[lang] });
+  skills = d.skills.map((s) => s[lang]);
+}
+
+// A diploma with `obtained: true` and no end date shows its obtention date.
+const obtainedOnly =
+  kind === 'education' && 'obtained' in item && item.obtained && !item.period.end;
+const description = `${title} — ${organization.name}, ${item.location[lang]}.`;
+---
+
+<BaseLayout
+  lang={lang}
+  title={title}
+  description={description}
+  canonicalPath={urlFor(kind, lang, slugFor(item, lang))}
+  alternatePath={alternateOf(kind, lang, item)}
+>
+  <article class="container career-item">
+    <header>
+      <h1>{title}</h1>
+      <p class="org">
+        {organization.url ? (
+          <a href={organization.url} rel="noopener">
+            {organization.name}
+          </a>
+        ) : (
+          organization.name
+        )}
+      </p>
+    </header>
+
+    <dl class="entry-meta">
+      <div>
+        <dt>{obtainedOnly ? t(lang, 'career.obtained') : t(lang, 'career.period')}</dt>
+        <dd>
+          {obtainedOnly ? (
+            <time datetime={item.period.start}>{formatYearMonth(lang, item.period.start)}</time>
+          ) : (
+            <Period lang={lang} period={item.period} />
+          )}
+        </dd>
+      </div>
+      <div>
+        <dt>{t(lang, 'career.location')}</dt>
+        <dd>{item.location[lang]}</dd>
+      </div>
+      {meta.map((m) => (
+        <div>
+          <dt>{m.label}</dt>
+          <dd>{m.value}</dd>
+        </div>
+      ))}
+      {technologies.length > 0 && (
+        <div>
+          <dt>{t(lang, 'career.technologies')}</dt>
+          <dd>
+            <ul class="tags">
+              {technologies.map((label) => (
+                <li>{label}</li>
+              ))}
+            </ul>
+          </dd>
+        </div>
+      )}
+      {skills.length > 0 && (
+        <div>
+          <dt>{t(lang, 'career.skills')}</dt>
+          <dd>
+            <ul class="tags">
+              {skills.map((label) => (
+                <li>{label}</li>
+              ))}
+            </ul>
+          </dd>
+        </div>
+      )}
+    </dl>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <RelatedProjects lang={lang} ids={item.projects} />
+
+    <p class="back">
+      <a href={urlFor('career', lang)}>← {t(lang, 'career.back')}</a>
+    </p>
+  </article>
+</BaseLayout>
+
+<style>
+  .career-item {
+    padding-top: var(--space-xl);
+  }
+  .org {
+    font-size: var(--step-1);
+    font-weight: 600;
+  }
+  .entry-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    gap: var(--space-m) var(--space-l);
+    margin: var(--space-l) 0 var(--space-xl);
+  }
+  dt {
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  dd {
+    margin: var(--space-2xs) 0 0;
+  }
+  .back {
+    margin-top: var(--space-2xl);
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-l);
+  }
+</style>

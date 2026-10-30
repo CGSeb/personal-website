@@ -112,14 +112,14 @@ testing of each story.
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T037 [P] [US2] E2E test in `tests/e2e/career.spec.ts`: career page lists experiences and diplomas most recent first with title, organization, location, period (US2-1); experience page lists and links its projects (US2-2); ongoing experience shows the ongoing label instead of an end date (US2-3)
+- [X] T037 [P] [US2] E2E test in `tests/e2e/career.spec.ts`: career page lists experiences and diplomas most recent first with title, organization, location, period (US2-1); experience page lists and links its projects (US2-2); ongoing experience shows the ongoing label instead of an end date (US2-3)
 
 ### Implementation for User Story 2
 
-- [ ] T038 [P] [US2] `Timeline` component in `src/components/Timeline.astro`: semantic `<ol>` of entries with title, organization/institution, location, `Period`, link to the detail page
-- [ ] T039 [US2] Career page in `src/pages/[lang]/[career]/index.astro`: intro from `content/pages/career/<lang>.md`, experiences timeline then education timeline
-- [ ] T040 [P] [US2] Experience detail page in `src/pages/[lang]/[career]/[experiences]/[slug].astro`: position, organization (linked when `organizationUrl`), location, type label, period, technologies, description from `<lang>.md`, related projects (computed reverse relation)
-- [ ] T041 [P] [US2] Diploma detail page in `src/pages/[lang]/[career]/[education]/[slug].astro`: title, institution, location, period or obtained date, level, skills, description, related projects
+- [X] T038 [P] [US2] `Timeline` component in `src/components/Timeline.astro`: semantic `<ol>` of entries with title, organization/institution, location, `Period`, link to the detail page
+- [X] T039 [US2] Career page in `src/views/CareerView.astro`, rendered by `src/pages/fr/parcours/index.astro` and `src/pages/en/career/index.astro`: intro from `content/pages/career/<lang>.md`, experiences timeline then education timeline
+- [X] T040 [P] [US2] Experience detail page in `src/views/CareerItemView.astro` (shared with diplomas, related projects in `src/components/RelatedProjects.astro`), rendered by `src/pages/fr/parcours/experiences/[slug].astro` and `src/pages/en/career/experience/[slug].astro`: position, organization (linked when `organizationUrl`), location, type label, period, technologies, description from `<lang>.md`, related projects (computed reverse relation)
+- [X] T041 [P] [US2] Diploma detail page in `src/views/CareerItemView.astro`, rendered by `src/pages/fr/parcours/diplomes/[slug].astro` and `src/pages/en/career/education/[slug].astro`: title, institution, location, period or obtained date, level, skills, description, related projects
 
 **Checkpoint**: User Stories 1 and 2 both work independently
 
