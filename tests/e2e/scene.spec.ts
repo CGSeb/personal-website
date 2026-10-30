@@ -12,7 +12,7 @@ async function sceneReady(page: Page) {
 /** Opens the scene with the test hook enabled and waits until it is ready. */
 async function openScene(page: Page, path = '/fr/explorer/') {
   await page.addInitScript(() => {
-    document.documentElement.dataset.sceneTest = '';
+    window.__sceneTest = true;
   });
   await page.goto(path);
   await expect(page.locator('#scene canvas')).toBeVisible({ timeout: 30_000 });
@@ -44,7 +44,7 @@ async function clickObject(page: Page, key: string) {
 test.describe('scene (US1)', () => {
   test('home link opens the scene, which loads (US1-1)', async ({ page }) => {
     await page.addInitScript(() => {
-      document.documentElement.dataset.sceneTest = '';
+      window.__sceneTest = true;
     });
     await page.goto('/fr/');
     await page.getByRole('link', { name: 'Explorer le portfolio en 3D' }).click();

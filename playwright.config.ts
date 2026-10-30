@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const port = 4321;
+// PORT lets the suite run on the built site while a dev server uses 4321.
+const port = Number(process.env.PORT ?? 4321);
 
 // CI machines have no GPU, and recent headless Chromium no longer falls back to software WebGL
 // on its own: without these flags the 3D scene shows its "no WebGL" fallback in every test.

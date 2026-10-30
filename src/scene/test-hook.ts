@@ -1,5 +1,5 @@
 // Test hook (contracts/scene-page.md): only in development, or when Playwright sets
-// `data-scene-test` on <html> before the page loads. Never active on the published site.
+// `window.__sceneTest` before the page loads. Never active on the published site.
 
 export interface SceneTestHook {
   ready: Promise<void>;
@@ -11,11 +11,11 @@ export interface SceneTestHook {
 declare global {
   interface Window {
     __scene?: SceneTestHook;
+    __sceneTest?: boolean;
   }
 }
 
-export const testHookEnabled = () =>
-  import.meta.env.DEV || document.documentElement.dataset.sceneTest !== undefined;
+export const testHookEnabled = () => import.meta.env.DEV || window.__sceneTest === true;
 
 export function installTestHook(hook: SceneTestHook) {
   if (testHookEnabled()) window.__scene = hook;

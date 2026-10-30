@@ -46,8 +46,8 @@ Dans cet ordre, dans `<main>` :
 
 ## Crochet de test
 
-En développement et dans les tests seulement (`import.meta.env.DEV` ou attribut
-`data-scene-test` posé par Playwright avant le chargement) :
+En développement et dans les tests seulement (`import.meta.env.DEV` ou drapeau
+`window.__sceneTest = true` posé par Playwright avant le chargement) :
 
 ```ts
 window.__scene = {
@@ -58,4 +58,4 @@ window.__scene = {
 };
 ```
 
-Jamais présent dans la construction publiée sans cet attribut.
+Jamais présent dans la construction publiée sans ce drapeau.
