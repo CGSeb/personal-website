@@ -77,7 +77,8 @@ const jsonLd = graph(
         <p class="scene-status" role="status">
           <span class="when-js">{t(lang, 'scene.loading')}</span>
           <span class="when-no-js">
-            {t(lang, 'scene.noscript')} <a href={urlFor('home', lang)}>{t(lang, 'scene.written')}</a>
+            {t(lang, 'scene.noscript')}{' '}
+            <a href={urlFor('home', lang)}>{t(lang, 'scene.written')}</a>
           </span>
         </p>
       </div>
@@ -130,7 +131,6 @@ const jsonLd = graph(
       <p class="visually-hidden" aria-live="polite" data-announce></p>
     </div>
 
-
     <SceneItemList lang={lang} items={items} />
   </div>
 
@@ -146,6 +146,11 @@ const jsonLd = graph(
       fallbackWebgl: t(lang, 'scene.fallback.webgl'),
       fallbackError: t(lang, 'scene.fallback.error'),
       retry: t(lang, 'scene.fallback.retry'),
+      slow: t(lang, 'scene.fallback.slow'),
+      stay: t(lang, 'scene.fallback.stay'),
+      choiceTitle: t(lang, 'scene.choice.title'),
+      choiceText: t(lang, 'scene.choice.text'),
+      choiceContinue: t(lang, 'scene.choice.continue'),
       written: t(lang, 'scene.written'),
       writtenHref: urlFor('home', lang),
       overflow: {
@@ -194,7 +199,8 @@ const jsonLd = graph(
     height: 100%;
     outline: none;
   }
-  .scene-status {
+  /* Global: boot.ts also creates this box, without the component's scoped attribute. */
+  .scene :global(.scene-status) {
     position: absolute;
     inset: 0;
     display: grid;
@@ -203,6 +209,55 @@ const jsonLd = graph(
     padding: var(--space-l);
     text-align: center;
     color: var(--color-muted);
+  }
+  /* Choice screen, fallback messages and the "too slow" notice (US4), built by boot.ts. */
+  .scene :global(.scene-status h2) {
+    font-size: var(--step-1);
+  }
+  .scene :global(.scene-status > div) {
+    max-width: 30rem;
+  }
+  :global(.scene-actions) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-s);
+    margin: var(--space-s) 0 0;
+  }
+  :global(.scene-actions button),
+  :global(.scene-actions a) {
+    display: inline-block;
+    padding: var(--space-xs) var(--space-m);
+    font: inherit;
+    font-weight: 600;
+    color: var(--color-text);
+    text-decoration: none;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  :global(.scene-actions button:first-child) {
+    color: var(--color-bg);
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+  .scene-wrap :global(.scene-notice) {
+    position: absolute;
+    z-index: 4;
+    top: var(--space-s);
+    left: 50%;
+    width: min(26rem, calc(100% - 2 * var(--space-s)));
+    padding: var(--space-s) var(--space-m);
+    text-align: center;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.15);
+    transform: translateX(-50%);
+  }
+  .scene-wrap :global(.scene-notice p) {
+    margin: 0;
   }
   .scene-recenter {
     position: absolute;

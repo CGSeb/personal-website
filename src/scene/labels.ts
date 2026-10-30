@@ -9,6 +9,11 @@ export interface SceneLabels {
   fallbackWebgl: string;
   fallbackError: string;
   retry: string;
+  slow: string;
+  stay: string;
+  choiceTitle: string;
+  choiceText: string;
+  choiceContinue: string;
   written: string;
   writtenHref: string;
   overflow: Record<ItemType, string>;
