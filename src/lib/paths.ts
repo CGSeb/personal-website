@@ -17,3 +17,12 @@ export async function categoryPaths() {
     .filter((c) => projects.some((p) => p.categories.includes(c.id)))
     .map((c) => ({ params: { cat: c.id }, props: { id: c.id } }));
 }
+
+/** One page per published experience or diploma. */
+export async function careerItemPaths(kind: 'experience' | 'education', lang: Lang) {
+  const site = await getSite();
+  return site[kind].map((item) => ({
+    params: { slug: slugFor(item, lang) },
+    props: { id: item.id },
+  }));
+}

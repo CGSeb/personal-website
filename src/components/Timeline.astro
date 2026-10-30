@@ -1,0 +1,92 @@
+---
+import type { PeriodT } from '../content/schemas';
+import type { Lang } from '../i18n/routes';
+import Period from './Period.astro';
+
+export interface TimelineEntry {
+  title: string;
+  organization: string;
+  location: string;
+  period: PeriodT;
+  href: string;
+  /** Short extra label, e.g. the experience type. */
+  tag?: string;
+}
+
+interface Props {
+  lang: Lang;
+  entries: TimelineEntry[];
+}
+
+const { lang, entries } = Astro.props;
+---
+
+<ol class="timeline">
+  {entries.map((entry) => (
+    <li class="timeline-entry">
+      <h3 class="entry-title">
+        <a href={entry.href}>{entry.title}</a>
+      </h3>
+      <p class="entry-org">
+        {entry.organization}
+        {entry.tag && <span class="entry-tag">{entry.tag}</span>}
+      </p>
+      <p class="entry-details">
+        <Period lang={lang} period={entry.period} />
+        <span aria-hidden="true"> · </span>
+        <span class="entry-location">{entry.location}</span>
+      </p>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 var(--space-l);
+    border-left: 2px solid var(--color-border);
+  }
+  .timeline-entry {
+    position: relative;
+    padding-bottom: var(--space-l);
+  }
+  .timeline-entry::before {
+    content: '';
+    position: absolute;
+    left: calc(-1 * var(--space-l) - 7px);
+    top: 0.45em;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--color-accent);
+  }
+  h3 {
+    margin-bottom: var(--space-2xs);
+  }
+  h3 a {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+  h3 a:hover,
+  h3 a:focus-visible {
+    text-decoration: underline;
+  }
+  .entry-org {
+    margin: 0;
+    font-weight: 600;
+  }
+  .entry-tag {
+    margin-left: var(--space-xs);
+    font-size: var(--step--1);
+    font-weight: 400;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: 0.05em 0.6em;
+  }
+  .entry-details {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: var(--step--1);
+  }
+</style>

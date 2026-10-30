@@ -1,0 +1,9 @@
+---
+import CareerItemView from '../../../../views/CareerItemView.astro';
+import { careerItemPaths } from '../../../../lib/paths';
+
+export const getStaticPaths = () => careerItemPaths('education', 'en');
+const { id } = Astro.props;
+---
+
+<CareerItemView lang="en" kind="education" id={id} />

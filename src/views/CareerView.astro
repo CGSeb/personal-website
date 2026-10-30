@@ -1,0 +1,74 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Timeline from '../components/Timeline.astro';
+import { getSite } from '../content';
+import { alternateOf, slugFor, urlFor, type Lang } from '../i18n/routes';
+import { t } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const { experience, education, pages } = await getSite();
+const page = pages.career[lang];
+const { Content } = await render(page);
+
+const experienceEntries = experience.map((e) => ({
+  title: e.position[lang],
+  organization: e.organization,
+  location: e.location[lang],
+  period: e.period,
+  href: urlFor('experience', lang, slugFor(e, lang)),
+  tag: t(lang, `experienceType.${e.type}`),
+}));
+const educationEntries = education.map((e) => ({
+  title: e.title[lang],
+  organization: e.institution,
+  location: e.location[lang],
+  period: e.period,
+  href: urlFor('education', lang, slugFor(e, lang)),
+  tag: e.level?.[lang],
+}));
+---
+
+<BaseLayout
+  lang={lang}
+  title={page.data.title}
+  description={page.data.description}
+  canonicalPath={urlFor('career', lang)}
+  alternatePath={alternateOf('career', lang)}
+>
+  <div class="container career">
+    <h1>{page.data.title}</h1>
+    <div class="prose intro">
+      <Content />
+    </div>
+
+    {experienceEntries.length > 0 && (
+      <section id="experience" aria-labelledby="experience-title">
+        <h2 id="experience-title">{t(lang, 'career.experience')}</h2>
+        <Timeline lang={lang} entries={experienceEntries} />
+      </section>
+    )}
+    {educationEntries.length > 0 && (
+      <section id="education" aria-labelledby="education-title">
+        <h2 id="education-title">{t(lang, 'career.education')}</h2>
+        <Timeline lang={lang} entries={educationEntries} />
+      </section>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .career {
+    padding-top: var(--space-xl);
+  }
+  .intro {
+    color: var(--color-muted);
+  }
+  section {
+    margin-top: var(--space-xl);
+  }
+</style>

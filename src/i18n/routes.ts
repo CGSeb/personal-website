@@ -16,10 +16,10 @@ export const SEGMENTS = {
 } as const satisfies Record<string, Record<Lang, string>>;
 
 /**
- * Sections whose pages exist. Career and contact arrive with User Stories 2 and 5;
+ * Sections whose pages exist. Contact arrives with User Story 5;
  * until then navigation does not link to them.
  */
-export const SECTIONS = { career: false, contact: false };
+export const SECTIONS = { career: true, contact: false };
 
 export type PageType =
   'home' | 'projects' | 'category' | 'project' | 'career' | 'education' | 'experience' | 'contact';
