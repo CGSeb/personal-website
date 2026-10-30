@@ -6,6 +6,7 @@ import ProjectCard from '../components/ProjectCard.astro';
 import { getSite, labelOf } from '../content';
 import { alternateOf, urlFor, type Lang } from '../i18n/routes';
 import { t } from '../i18n/ui';
+import { breadcrumb, graph } from '../lib/jsonld';
 
 interface Props {
   lang: Lang;
@@ -25,6 +26,13 @@ const description = category
   ? t(lang, 'projects.categoryDescription', { category: categoryLabel })
   : t(lang, 'projects.description');
 const canonicalPath = category ? urlFor('category', lang, category) : urlFor('projects', lang);
+const jsonLd = graph(
+  breadcrumb(Astro.site!, [
+    { name: t(lang, 'nav.home'), path: urlFor('home', lang) },
+    { name: t(lang, 'projects.title'), path: urlFor('projects', lang) },
+    ...(category ? [{ name: categoryLabel, path: canonicalPath }] : []),
+  ]),
+);
 ---
 
 <BaseLayout
@@ -33,6 +41,7 @@ const canonicalPath = category ? urlFor('category', lang, category) : urlFor('pr
   description={description}
   canonicalPath={canonicalPath}
   alternatePath={category ? alternateOf('category', lang, category) : alternateOf('projects', lang)}
+  jsonLd={jsonLd}
 >
   <div class="container">
     <h1>{title}</h1>

@@ -5,6 +5,7 @@ import Timeline from '../components/Timeline.astro';
 import { getSite } from '../content';
 import { alternateOf, slugFor, urlFor, type Lang } from '../i18n/routes';
 import { t } from '../i18n/ui';
+import { breadcrumb, graph } from '../lib/jsonld';
 
 interface Props {
   lang: Lang;
@@ -31,6 +32,12 @@ const educationEntries = education.map((e) => ({
   href: urlFor('education', lang, slugFor(e, lang)),
   tag: e.level?.[lang],
 }));
+const jsonLd = graph(
+  breadcrumb(Astro.site!, [
+    { name: t(lang, 'nav.home'), path: urlFor('home', lang) },
+    { name: page.data.title, path: urlFor('career', lang) },
+  ]),
+);
 ---
 
 <BaseLayout
@@ -39,6 +46,7 @@ const educationEntries = education.map((e) => ({
   description={page.data.description}
   canonicalPath={urlFor('career', lang)}
   alternatePath={alternateOf('career', lang)}
+  jsonLd={jsonLd}
 >
   <div class="container career">
     <h1>{page.data.title}</h1>
