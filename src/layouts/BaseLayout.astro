@@ -4,9 +4,10 @@ import '../styles/tokens.css';
 import '../styles/base.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { otherLang, type Lang } from '../i18n/routes';
+import type { Lang } from '../i18n/routes';
 import { t } from '../i18n/ui';
 import { getSite } from '../content';
+import { seoTags } from '../lib/seo';
 
 interface Props {
   lang: Lang;
@@ -16,18 +17,36 @@ interface Props {
   /** Path of the same page in the other language (language switcher and hreflang). */
   alternatePath: string;
   jsonLd?: object;
+  /** Share image; defaults to the generated image of the language. */
   ogImage?: string;
+  ogImageAlt?: string;
+  ogType?: 'website' | 'article' | 'profile';
 }
 
-const { lang, title, description, canonicalPath, alternatePath, jsonLd } = Astro.props;
+const {
+  lang,
+  title,
+  description,
+  canonicalPath,
+  alternatePath,
+  jsonLd,
+  ogImage,
+  ogImageAlt,
+  ogType,
+} = Astro.props;
 const { profile } = await getSite();
-const fullTitle = title === profile.name ? title : `${title} — ${profile.name}`;
-const canonical = new URL(canonicalPath, Astro.site);
-const alternates = [
-  { hreflang: lang, href: canonical },
-  { hreflang: otherLang(lang), href: new URL(alternatePath, Astro.site) },
-  { hreflang: 'x-default', href: new URL('/', Astro.site) },
-];
+const seo = seoTags({
+  site: Astro.site!,
+  lang,
+  siteName: profile.name,
+  title,
+  description,
+  canonicalPath,
+  alternatePath,
+  image: ogImage ?? `/og/${lang}.png`,
+  imageAlt: ogImageAlt,
+  type: ogType,
+});
 ---
 
 <!doctype html>
@@ -35,11 +54,17 @@ const alternates = [
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{fullTitle}</title>
+    <title>{seo.fullTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
-    {alternates.map((a) => (
+    <link rel="canonical" href={seo.canonical} />
+    {seo.alternates.map((a) => (
       <link rel="alternate" hreflang={a.hreflang} href={a.href} />
+    ))}
+    {seo.og.map((m) => (
+      <meta property={m.property} content={m.content} />
+    ))}
+    {seo.twitter.map((m) => (
+      <meta name={m.name} content={m.content} />
     ))}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}

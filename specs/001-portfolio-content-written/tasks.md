@@ -154,19 +154,19 @@ testing of each story.
 
 ### Tests for User Story 4 ⚠️
 
-- [ ] T047 [P] [US4] Unit tests in `tests/unit/jsonld.test.ts`: each generator returns the expected `@type` (`Person` + `ProfilePage`, `SoftwareSourceCode` or `CreativeWork` by `kind`, `EducationalOccupationalCredential`, `EmployeeRole`/`OrganizationRole`, `BreadcrumbList`) linked to the `Person`
-- [ ] T048 [P] [US4] Unit tests in `tests/unit/llms.test.ts`: `llms.txt` follows the llmstxt.org layout (H1 name, blockquote summary, sections with absolute links), FR then EN, drafts absent; `llms-full.txt` contains every long description
-- [ ] T049 [P] [US4] SEO check script in `scripts/check-seo.mjs` (run on `dist/`): every HTML page has a unique `<title>` and meta description, a canonical URL, OG tags, one `<h1>`, parsable JSON-LD; sitemap URLs = all HTML pages except redirects (SC-003)
+- [X] T047 [P] [US4] Unit tests in `tests/unit/jsonld.test.ts`: each generator returns the expected `@type` (`Person` + `ProfilePage`, `SoftwareSourceCode` or `CreativeWork` by `kind`, `EducationalOccupationalCredential`, `EmployeeRole`/`OrganizationRole`, `BreadcrumbList`) linked to the `Person`
+- [X] T048 [P] [US4] Unit tests in `tests/unit/llms.test.ts`: `llms.txt` follows the llmstxt.org layout (H1 name, blockquote summary, sections with absolute links), FR then EN, drafts absent; `llms-full.txt` contains every long description
+- [X] T049 [P] [US4] SEO check script in `scripts/check-seo.mjs` (run on `dist/`): every HTML page has a unique `<title>` and meta description, a canonical URL, OG tags, one `<h1>`, parsable JSON-LD; sitemap URLs = all HTML pages except redirects (SC-003)
 
 ### Implementation for User Story 4
 
-- [ ] T050 [P] [US4] SEO helper in `src/lib/seo.ts`: builds title (`<page> — <name>`), description, canonical, alternates and Open Graph / Twitter tags; rendered by `BaseLayout.astro` (FR-016)
-- [ ] T051 [P] [US4] JSON-LD generators in `src/lib/jsonld.ts` typed with `schema-dts` (FR-017, research § 7), injected via the `jsonLd` prop of `BaseLayout.astro` on every page type
-- [ ] T052 [US4] Default Open Graph image generated at build time in `src/pages/og/[lang]/default.png.ts` (name + headline); project pages use their cover (US4-4)
-- [ ] T053 [US4] Sitemap: configure `@astrojs/sitemap` in `astro.config.mjs` with `i18n` alternates (`fr`, `en`) and a filter excluding redirect pages (FR-018)
-- [ ] T054 [P] [US4] `src/pages/robots.txt.ts`: allow all, reference `sitemap-index.xml` with the absolute site URL
-- [ ] T055 [US4] `src/lib/llms.ts` and endpoints `src/pages/llms.txt.ts`, `src/pages/llms-full.txt.ts` generated from the published collections (FR-019)
-- [ ] T056 [US4] Audit semantic HTML across page templates (FR-020): one `<h1>`, ordered headings, landmarks, alt on every meaningful image; fix findings in the components and pages
+- [X] T050 [P] [US4] SEO helper in `src/lib/seo.ts`: builds title (`<page> — <name>`), description, canonical, alternates and Open Graph / Twitter tags; rendered by `BaseLayout.astro` (FR-016)
+- [X] T051 [P] [US4] JSON-LD generators in `src/lib/jsonld.ts` typed with `schema-dts` (FR-017, research § 7), injected via the `jsonLd` prop of `BaseLayout.astro` on every page type
+- [X] T052 [US4] Default Open Graph image generated at build time in `src/pages/og/[lang].png.ts` (name + headline); project pages use their cover (US4-4)
+- [X] T053 [US4] Sitemap: endpoint `src/pages/sitemap.xml.ts` built from `src/lib/pages.ts`, with `xhtml:link` hreflang alternates (FR-018). `@astrojs/sitemap` pairs languages by identical paths, so it cannot link translated slugs
+- [X] T054 [P] [US4] `src/pages/robots.txt.ts`: allow all, reference `sitemap.xml` with the absolute site URL
+- [X] T055 [US4] `src/lib/llms.ts` and endpoints `src/pages/llms.txt.ts`, `src/pages/llms-full.txt.ts` generated from the published collections (FR-019)
+- [X] T056 [US4] Audit semantic HTML across page templates (FR-020): one `<h1>`, ordered headings, landmarks, alt on every meaningful image; fix findings in the components and pages
 
 **Checkpoint**: the site is fully indexable and readable by AI agents
 

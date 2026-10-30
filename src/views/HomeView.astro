@@ -1,11 +1,12 @@
 ---
-import { Picture } from 'astro:assets';
+import { getImage, Picture } from 'astro:assets';
 import { render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import { getSite } from '../content';
 import { alternateOf, urlFor, type Lang } from '../i18n/routes';
 import { t } from '../i18n/ui';
+import { graph, personLd, profilePageLd } from '../lib/jsonld';
 
 interface Props {
   lang: Lang;
@@ -19,14 +20,23 @@ const { profile, projects, pages } = await getSite();
 const page = pages.home[lang];
 const { Content } = await render(page);
 const featured = projects.filter((p) => p.featured);
+
+const photo = await getImage({ src: profile.photo.image, width: 400, format: 'webp' });
+const ctx = { site: Astro.site!, lang };
+const jsonLd = graph(
+  profilePageLd(profile, ctx, urlFor('home', lang)),
+  personLd(profile, ctx, new URL(photo.src, Astro.site).href),
+);
 ---
 
 <BaseLayout
   lang={lang}
-  title={page.data.title}
+  title={profile.headline[lang]}
   description={page.data.description}
   canonicalPath={urlFor('home', lang)}
   alternatePath={alternateOf('home', lang)}
+  jsonLd={jsonLd}
+  ogType="profile"
 >
   <section class="hero container">
     <Picture

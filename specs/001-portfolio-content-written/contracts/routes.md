@@ -21,7 +21,7 @@ l'`id` de l'élément. Chaque page HTML porte `<html lang>`, une URL canonique e
 
 | Adresse | Contenu |
 |---|---|
-| `/sitemap-index.xml` (+ `sitemap-*.xml`) | toutes les pages HTML publiques, avec alternates `hreflang` |
+| `/sitemap.xml` | toutes les pages HTML publiques, avec alternates `hreflang` |
 | `/robots.txt` | autorise tout, référence le sitemap |
 | `/llms.txt` | résumé pour agents IA, format llmstxt.org, sections FR puis EN, liens absolus |
 | `/llms-full.txt` | tout le contenu publié en Markdown, deux langues |

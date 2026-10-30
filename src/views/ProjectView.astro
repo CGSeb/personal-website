@@ -1,5 +1,5 @@
 ---
-import { Picture } from 'astro:assets';
+import { getImage, Picture } from 'astro:assets';
 import { render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Period from '../components/Period.astro';
@@ -7,6 +7,7 @@ import ProjectLinks from '../components/ProjectLinks.astro';
 import { findById, getSite, labelOf } from '../content';
 import { alternateOf, SECTIONS, slugFor, urlFor, type Lang } from '../i18n/routes';
 import { t } from '../i18n/ui';
+import { breadcrumb, graph, projectLd } from '../lib/jsonld';
 
 interface Props {
   lang: Lang;
@@ -28,6 +29,22 @@ const linkedEducation = project.education.map((ref) => findById(education, ref)!
 const projectUrl = (p: { id: string; slug?: { fr?: string; en?: string } }) =>
   urlFor('project', lang, slugFor(p, lang));
 const imageSizes = '(min-width: 72rem) 72rem, 100vw';
+
+// Share image: the cover, resized; otherwise the layout's default image.
+const ogImage = project.cover
+  ? new URL(
+      (await getImage({ src: project.cover.image, width: 1200, format: 'jpg' })).src,
+      Astro.site,
+    ).href
+  : undefined;
+const jsonLd = graph(
+  projectLd(project, { site: Astro.site!, lang }, { url: projectUrl(project), image: ogImage }),
+  breadcrumb(Astro.site!, [
+    { name: t(lang, 'nav.home'), path: urlFor('home', lang) },
+    { name: t(lang, 'projects.title'), path: urlFor('projects', lang) },
+    { name: project.title[lang], path: projectUrl(project) },
+  ]),
+);
 ---
 
 <BaseLayout
@@ -36,6 +53,10 @@ const imageSizes = '(min-width: 72rem) 72rem, 100vw';
   description={project.summary[lang]}
   canonicalPath={projectUrl(project)}
   alternatePath={alternateOf('project', lang, project)}
+  jsonLd={jsonLd}
+  ogImage={ogImage}
+  ogImageAlt={project.cover?.alt[lang]}
+  ogType="article"
 >
   <article class="container project">
     <header>

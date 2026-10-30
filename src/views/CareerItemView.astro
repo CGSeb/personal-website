@@ -7,6 +7,7 @@ import RelatedProjects from '../components/RelatedProjects.astro';
 import { findById, getSite, labelOf } from '../content';
 import { alternateOf, slugFor, urlFor, type Lang } from '../i18n/routes';
 import { formatYearMonth, t } from '../i18n/ui';
+import { breadcrumb, educationLd, experienceLd, graph } from '../lib/jsonld';
 
 interface Props {
   lang: Lang;
@@ -25,6 +26,9 @@ let organization: { name: string; url?: string | undefined };
 const meta: { label: string; value: string }[] = [];
 let technologies: string[] = [];
 let skills: string[] = [];
+const path = urlFor(kind, lang, slugFor(item, lang));
+const ctx = { site: Astro.site!, lang };
+let nodes: ReturnType<typeof experienceLd> | ReturnType<typeof educationLd>;
 
 if (kind === 'experience') {
   const e = findById(site.experience, id)!;
@@ -32,26 +36,37 @@ if (kind === 'experience') {
   organization = { name: e.organization, url: e.organizationUrl };
   meta.push({ label: t(lang, 'career.type'), value: t(lang, `experienceType.${e.type}`) });
   technologies = e.technologies.map((tech) => labelOf(site.technologies, tech, lang));
+  nodes = experienceLd(e, ctx, path);
 } else {
   const d = findById(site.education, id)!;
   title = d.title[lang];
   organization = { name: d.institution, url: d.institutionUrl };
   if (d.level) meta.push({ label: t(lang, 'career.level'), value: d.level[lang] });
   skills = d.skills.map((s) => s[lang]);
+  nodes = educationLd(d, ctx, path);
 }
 
 // A diploma with `obtained: true` and no end date shows its obtention date.
 const obtainedOnly =
   kind === 'education' && 'obtained' in item && item.obtained && !item.period.end;
 const description = `${title} — ${organization.name}, ${item.location[lang]}.`;
+const jsonLd = graph(
+  ...nodes,
+  breadcrumb(Astro.site!, [
+    { name: t(lang, 'nav.home'), path: urlFor('home', lang) },
+    { name: t(lang, 'nav.career'), path: urlFor('career', lang) },
+    { name: title, path },
+  ]),
+);
 ---
 
 <BaseLayout
   lang={lang}
   title={title}
   description={description}
-  canonicalPath={urlFor(kind, lang, slugFor(item, lang))}
+  canonicalPath={path}
   alternatePath={alternateOf(kind, lang, item)}
+  jsonLd={jsonLd}
 >
   <article class="container career-item">
     <header>
