@@ -46,8 +46,15 @@ export async function start() {
   const data = readPageData();
   const panels = new Panels(data.lang, data.items, data.labels);
 
+  // Rejected when the scene falls back, so tests fail at once with the reason instead of
+  // waiting for a time-out.
   let resolveReady!: () => void;
-  const ready = new Promise<void>((resolve) => (resolveReady = resolve));
+  let rejectReady!: (reason: Error) => void;
+  const ready = new Promise<void>((resolve, reject) => {
+    resolveReady = resolve;
+    rejectReady = reject;
+  });
+  ready.catch(() => {}); // nobody may be listening outside tests
   let handle: {
     screenPosition(key: string): { x: number; y: number } | null;
     frames(): number;
@@ -62,6 +69,7 @@ export async function start() {
   if (!webglAvailable()) {
     showMessage(data, data.labels.fallbackWebgl);
     panels.openFromHash();
+    rejectReady(new Error('scene fallback: WebGL is not available'));
     return;
   }
 
@@ -74,6 +82,7 @@ export async function start() {
       console.error(error);
       showMessage(data, data.labels.fallbackError, () => void load());
       panels.openFromHash();
+      rejectReady(new Error(`scene failed to load: ${String(error)}`));
     }
   };
   await load();
