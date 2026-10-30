@@ -21,6 +21,7 @@ testing of each story.
 - **[Story]**: Which user story this task belongs to (US1–US6, from spec.md)
 - Same Astro project as spec 001: views in `src/views/`, one thin page per language under
   `src/pages/fr/` and `src/pages/en/`, client code of the scene in `src/scene/`
+- Client code added beyond the plan: `src/scene/labels.ts` (page data), `src/scene/scene3d.ts` (assembles the scene, imported dynamically by `boot.ts`); the list of model files present in `public/models/` is passed by `SceneView.astro`, so the browser never requests a missing model. US5 parts already in place: `role="application"`, accessible name and live region (T040), header switcher fragment (T039)
 - Check the exact Three.js 0.187 API names (addons import paths, `MapControls`, `MeshoptDecoder`)
   in the installed package before using them
 
@@ -30,10 +31,10 @@ testing of each story.
 
 **Purpose**: dependencies, folders and the scene route
 
-- [ ] T001 Install `three@^0.187` and `@types/three@^0.187` in `package.json`; add `gltfpack@^1.3` as a dev dependency and an npm script `models:optimize` that runs `gltfpack -cc -tc` on every `assets-src/models/**/*.glb` into `public/models/` (contracts/scene-model.md)
-- [ ] T002 [P] Create folders `src/scene/`, `src/components/scene/`, `public/models/featured/`, `assets-src/models/` (with a `README.md` stating that `.blend` sources and raw exports live here and are not published); add `assets-src/**/*.blend1` to `.gitignore`
-- [ ] T003 [P] Add the page type `scene` to `src/i18n/routes.ts`: segments `explorer` (fr) / `explore` (en), `urlFor('scene', lang)` → `/fr/explorer/`, `/en/explore/`; extend `tests/unit/routes.test.ts` with both rows (contracts/scene-page.md)
-- [ ] T004 [P] Add scene labels FR/EN to `src/i18n/ui.ts`: page title and intro, "Voir la version écrite", loading, list heading and type groups, close, "En savoir plus", recenter, choice screen texts ("Continuer en 3D" / "Version écrite"), fallback messages (no WebGL, load error + "Réessayer", too slow), overflow box labels ("Autres projets", "Autres diplômes", "Autres expériences"), canvas accessible name
+- [X] T001 Install `three@^0.187` and `@types/three@^0.187` in `package.json`; add `gltfpack@^1.3` as a dev dependency and an npm script `models:optimize` (`scripts/optimize-models.mjs`) that runs `gltfpack -cc -tc` on every `assets-src/models/**/*.glb` into `public/models/` (contracts/scene-model.md)
+- [X] T002 [P] Create folders `src/scene/`, `src/components/scene/`, `public/models/featured/`, `assets-src/models/` (with a `README.md` stating that `.blend` sources and raw exports live here and are not published); add `assets-src/**/*.blend1` to `.gitignore`
+- [X] T003 [P] Add the page type `scene` to `src/i18n/routes.ts`: segments `explorer` (fr) / `explore` (en), `urlFor('scene', lang)` → `/fr/explorer/`, `/en/explore/`; extend `tests/unit/routes.test.ts` with both rows (contracts/scene-page.md)
+- [X] T004 [P] Add scene labels FR/EN to `src/i18n/ui.ts`: page title and intro, "Voir la version écrite", loading, list heading and type groups, close, "En savoir plus", recenter, choice screen texts ("Continuer en 3D" / "Version écrite"), fallback messages (no WebGL, load error + "Réessayer", too slow), overflow box labels ("Autres projets", "Autres diplômes", "Autres expériences"), canvas accessible name
 
 ---
 
@@ -45,25 +46,25 @@ testing of each story.
 
 ### Pure logic (with tests)
 
-- [ ] T005 [P] Unit tests in `tests/unit/scene-layout.test.ts` for `layout(items, slots)` per data-model.md rules 1–6: featured project with `featured.<id>` slot; featured project without dedicated model falls back to a generic model at the same slot; projects fill `slot.project.NN` by ascending `NN` in `order`; overflow turns the last project slot into `overflow/projects`; education and experience fill their slots in order with the same overflow rule; unused slots stay empty; same input → same output
-- [ ] T006 [P] Implement `layout()` in `src/scene/layout.ts` (pure, no Three.js import), types `SceneItem`, `Slot`, `Placement` with `Placement.model` one of `generic-project | generic-education | generic-experience | featured:<id> | overflow`
-- [ ] T007 [P] Unit tests in `tests/unit/scene-hash.test.ts` and implementation in `src/scene/hash.ts`: parse and build `#<type-traduit>/<id>` with types `projet|project`, `diplome|education`, `experience|experience`; unknown fragment → `null`; translate a fragment to the other language
-- [ ] T008 [P] Unit tests in `tests/unit/scene-manifest.test.ts` and implementation in `src/lib/scene-manifest.ts`: build `SceneItem[]` from the site model for one language — `key` = `<type>/<id>` unique, `label` (project title; diploma title; "position — organization"), `order`, `featured` (projects only), `image` (optimized cover URL or `null`), `badge` "≤ 40" characters (year, short title), `href` (written page, same language), `panelId` = `panel-<type>-<id>`; drafts absent
+- [X] T005 [P] Unit tests in `tests/unit/scene-layout.test.ts` for `layout(items, slots)` per data-model.md rules 1–6: featured project with `featured.<id>` slot; featured project without dedicated model falls back to a generic model at the same slot; projects fill `slot.project.NN` by ascending `NN` in `order`; overflow turns the last project slot into `overflow/projects`; education and experience fill their slots in order with the same overflow rule; unused slots stay empty; same input → same output
+- [X] T006 [P] Implement `layout()` in `src/scene/layout.ts` (pure, no Three.js import), types `SceneItem`, `Slot`, `Placement` with `Placement.model` one of `generic-project | generic-education | generic-experience | featured:<id> | overflow`
+- [X] T007 [P] Unit tests in `tests/unit/scene-hash.test.ts` and implementation in `src/scene/hash.ts`: parse and build `#<type-traduit>/<id>` with types `projet|project`, `diplome|education`, `experience|experience`; unknown fragment → `null`; translate a fragment to the other language
+- [X] T008 [P] Unit tests in `tests/unit/scene-manifest.test.ts` and implementation in `src/lib/scene-manifest.ts`: build `SceneItem[]` from the site model for one language — `key` = `<type>/<id>` unique, `label` (project title; diploma title; "position — organization"), `order`, `featured` (projects only), `image` (optimized cover URL or `null`), `badge` "≤ 40" characters (year, short title), `href` (written page, same language), `panelId` = `panel-<type>-<id>`; drafts absent
 
 ### Scene page (HTML first)
 
-- [ ] T009 Create `src/views/SceneView.astro` and `src/pages/fr/explorer/index.astro`, `src/pages/en/explore/index.astro`: `BaseLayout` with title, description, canonical, alternates and breadcrumb JSON-LD; in `<main>`, in this order: `<h1>` + intro + link to the written home; `#scene` container with loading indicator; `<noscript>` message with link to the written version; the manifest as `<script type="application/json" id="scene-manifest">` (contracts/scene-page.md)
-- [ ] T010 [P] `src/components/scene/SceneItemList.astro`: `<nav aria-label>` grouped by type (projects, education, experience), one entry per item; without JavaScript each entry is a link to the written page, enhanced into a `<button data-key>` by the script (FR-020)
-- [ ] T011 [P] `src/components/scene/ScenePanel.astro`: one `<article id="panel-<type>-<id>" hidden aria-labelledby>` per item with close button and "En savoir plus" link to `href`; project content per FR-009 (title, summary, role, period, categories, technologies, cover, links with the existing `VideoFacade`), diploma per FR-010 (title, institution, location, period or obtained date, level, skills), experience per FR-011 (position, organization, type, location, period with ongoing label, technologies); reuse `Period` and `ProjectLinks`
-- [ ] T012 Add the scene page pair to `src/lib/pages.ts` so it is in the sitemap; turn on the home entry in `src/views/HomeView.astro` (`SHOW_3D_ENTRY = true`, link to `urlFor('scene', lang)`) (FR-001)
+- [X] T009 Create `src/views/SceneView.astro` and `src/pages/fr/explorer/index.astro`, `src/pages/en/explore/index.astro`: `BaseLayout` with title, description, canonical, alternates and breadcrumb JSON-LD; in `<main>`, in this order: `<h1>` + intro + link to the written home; `#scene` container with loading indicator; `<noscript>` message with link to the written version; the manifest as `<script type="application/json" id="scene-manifest">` (contracts/scene-page.md)
+- [X] T010 [P] `src/components/scene/SceneItemList.astro`: `<nav aria-label>` grouped by type (projects, education, experience), one entry per item; without JavaScript each entry is a link to the written page, enhanced into a `<button data-key>` by the script (FR-020)
+- [X] T011 [P] `src/components/scene/ScenePanel.astro`: one `<article id="panel-<type>-<id>" hidden aria-labelledby>` per item with close button and "En savoir plus" link to `href`; project content per FR-009 (title, summary, role, period, categories, technologies, cover, links with the existing `VideoFacade`), diploma per FR-010 (title, institution, location, period or obtained date, level, skills), experience per FR-011 (position, organization, type, location, period with ongoing label, technologies); reuse `Period` and `ProjectLinks`
+- [X] T012 Add the scene page pair to `src/lib/pages.ts` so it is in the sitemap; turn on the home entry in `src/views/HomeView.astro` (`SHOW_3D_ENTRY = true`, link to `urlFor('scene', lang)`) (FR-001)
 
 ### 3D core
 
-- [ ] T013 `src/scene/boot.ts`: entry module loaded by `SceneView.astro` after the page content (`<script>` that calls `import('./…')` on idle); reads the manifest, enhances the list into buttons, decides the path (3D, choice screen or fallback — stubs filled in US4), then imports `src/scene/renderer.ts`
-- [ ] T014 `src/scene/renderer.ts`: WebGL renderer sized to `#scene` (device pixel ratio capped by quality level), `OrthographicCamera` at isometric angles (azimuth 45°, elevation ≈ 35.26°), `MapControls` with rotation disabled and pan / zoom limited to the `bounds` box, **render on demand** (only on camera change, state change or running animation), resize handling, rendering stopped when `document.hidden` (FR-025)
-- [ ] T015 `src/scene/room.ts`: load `public/models/room.glb` with `GLTFLoader` + `MeshoptDecoder` when it exists; otherwise build the **provisional room in code** (floor, west and north walls, shelf, wall area, board) with the same named empties: 6 `slot.project.NN`, 4 `slot.education.NN`, 4 `slot.experience.NN`, `camera.home`, `bounds`; read empties into `Slot[]` (contracts/scene-model.md)
-- [ ] T016 `src/scene/objects.ts`: instantiate the model of each `Placement` (`generic-*.glb`, `featured/<id>.glb`, `overflow.glb`, or simple coded stand-ins while files are missing) at its slot transform; apply the project image to the `screen` material and a generated texture with `badge` to the `label` material; add an invisible larger hit shape per object; highlight state (outline or emissive) for `idle | highlighted | selected`
-- [ ] T017 [P] `src/scene/test-hook.ts`: when `import.meta.env.DEV` or `document.documentElement.dataset.sceneTest` is set, expose `window.__scene = { ready, screenPosition(key), quality(), frames() }`; never in a published build without the attribute (contracts/scene-page.md)
+- [X] T013 `src/scene/boot.ts`: entry module loaded by `SceneView.astro` after the page content (`<script>` that calls `import('./…')` on idle); reads the manifest, enhances the list into buttons, decides the path (3D, choice screen or fallback — stubs filled in US4), then imports `src/scene/renderer.ts`
+- [X] T014 `src/scene/renderer.ts`: WebGL renderer sized to `#scene` (device pixel ratio capped by quality level), `OrthographicCamera` at isometric angles (azimuth 45°, elevation ≈ 35.26°), `MapControls` with rotation disabled and pan / zoom limited to the `bounds` box, **render on demand** (only on camera change, state change or running animation), resize handling, rendering stopped when `document.hidden` (FR-025)
+- [X] T015 `src/scene/room.ts`: load `public/models/room.glb` with `GLTFLoader` + `MeshoptDecoder` when it exists; otherwise build the **provisional room in code** (floor, west and north walls, shelf, wall area, board) with the same named empties: 6 `slot.project.NN`, 4 `slot.education.NN`, 4 `slot.experience.NN`, `camera.home`, `bounds`; read empties into `Slot[]` (contracts/scene-model.md)
+- [X] T016 `src/scene/objects.ts`: instantiate the model of each `Placement` (`generic-*.glb`, `featured/<id>.glb`, `overflow.glb`, or simple coded stand-ins while files are missing) at its slot transform; apply the project image to the `screen` material and a generated texture with `badge` to the `label` material; add an invisible larger hit shape per object; highlight state (outline or emissive) for `idle | highlighted | selected`
+- [X] T017 [P] `src/scene/test-hook.ts`: when `import.meta.env.DEV` or `window.__sceneTest` is set before load, expose `window.__scene = { ready, screenPosition(key), quality(), frames() }`; never in a published build without that flag (contracts/scene-page.md)
 
 **Checkpoint**: `/fr/explorer/` shows its HTML list and panels, then the provisional room with every published item placed
 
@@ -77,14 +78,14 @@ testing of each story.
 
 ### Tests for User Story 1 ⚠️
 
-- [ ] T018 [P] [US1] E2E in `tests/e2e/scene.spec.ts` (with `data-scene-test`): home link opens `/fr/explorer/` with a loading indicator then `__scene.ready` (US1-1); hovering an object shows its name (US1-2); clicking at `__scene.screenPosition('project/lesson-folk')` opens `#panel-project-lesson-folk` with the FR-009 fields and sets the fragment `#projet/lesson-folk` (US1-4); same for a diploma (US1-3) and an experience (US1-5); close button, Escape and click outside close it and return to exploration (US1-6)
+- [X] T018 [P] [US1] E2E in `tests/e2e/scene.spec.ts` (with `data-scene-test`): home link opens `/fr/explorer/` with a loading indicator then `__scene.ready` (US1-1); hovering an object shows its name (US1-2); clicking at `__scene.screenPosition('project/lesson-folk')` opens `#panel-project-lesson-folk` with the FR-009 fields and sets the fragment `#projet/lesson-folk` (US1-4); same for a diploma (US1-3) and an experience (US1-5); close button, Escape and click outside close it and return to exploration (US1-6)
 
 ### Implementation for User Story 1
 
-- [ ] T019 [US1] `src/scene/picking.ts`: raycast on pointer move (hover → `highlighted` + name tooltip near the cursor) and on click / tap (→ `selected`); ignore a click that ends a drag (movement > 6 px) and double clicks (edge case)
-- [ ] T020 [US1] `src/scene/panels.ts`: open the item's `<article>` as a non-modal panel anchored next to the object's screen position on wide screens (kept inside the viewport), update the fragment with `history.replaceState`, move focus to the panel; close on button, Escape or outside click; one panel at a time; re-render the scene on state change (FR-008, FR-013)
-- [ ] T021 [US1] Recenter button in `SceneView.astro` wired in `src/scene/renderer.ts`: animate back to `camera.home` (instant with reduced motion) (FR-007)
-- [ ] T022 [US1] Overflow box: selecting `overflow/projects` (and the education / experience variants) opens a list panel of the remaining items, each opening its own panel (data-model.md rule 3)
+- [X] T019 [US1] `src/scene/picking.ts`: raycast on pointer move (hover → `highlighted` + name tooltip near the cursor) and on click / tap (→ `selected`); ignore a click that ends a drag (movement > 6 px) and double clicks (edge case)
+- [X] T020 [US1] `src/scene/panels.ts`: open the item's `<article>` as a non-modal panel anchored next to the object's screen position on wide screens (kept inside the viewport), update the fragment with `history.replaceState`, move focus to the panel; close on button, Escape or outside click; one panel at a time; re-render the scene on state change (FR-008, FR-013)
+- [X] T021 [US1] Recenter button in `SceneView.astro` wired in `src/scene/renderer.ts`: animate back to `camera.home` (instant with reduced motion) (FR-007)
+- [X] T022 [US1] Overflow box: selecting `overflow/projects` (and the education / experience variants) opens a list panel of the remaining items, each opening its own panel (data-model.md rule 3)
 
 **Checkpoint**: the scene is usable on desktop with the provisional room — publishable MVP
 
@@ -98,12 +99,12 @@ testing of each story.
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T023 [P] [US2] E2E in `tests/e2e/scene.spec.ts`: selecting objects never changes the page URL path (US2-2); "En savoir plus" goes to the written page of the item in the same language (US2-1); back restores the camera view and reopens the panel from the fragment (US2-3); a link to the written home is always visible (US2-4); opening `/en/explore/#education/master-informatique` directly opens that panel (FR-014)
+- [X] T023 [P] [US2] E2E in `tests/e2e/scene.spec.ts`: selecting objects never changes the page URL path (US2-2); "En savoir plus" goes to the written page of the item in the same language (US2-1); back restores the camera view and reopens the panel from the fragment (US2-3); a link to the written home is always visible (US2-4); opening `/en/explore/#education/master-informatique` directly opens that panel (FR-014)
 
 ### Implementation for User Story 2
 
-- [ ] T024 [US2] Save the camera view `{ x, z, zoom }` to `sessionStorage` key `scene.camera` on change (throttled) and restore it on load, all accesses wrapped in try/catch, in `src/scene/renderer.ts`
-- [ ] T025 [US2] Open the panel from the fragment on load and on `hashchange` in `src/scene/boot.ts` / `src/scene/panels.ts`, focusing the object in the camera if it is out of view
+- [X] T024 [US2] Save the camera view `{ x, z, zoom }` to `sessionStorage` key `scene.camera` on change (throttled) and restore it on load, all accesses wrapped in try/catch, in `src/scene/renderer.ts`
+- [X] T025 [US2] Open the panel from the fragment on load and on `hashchange` in `src/scene/boot.ts` / `src/scene/panels.ts`, focusing the object in the camera if it is out of view
 
 **Checkpoint**: both P1 stories work; the link between the two experiences is complete
 

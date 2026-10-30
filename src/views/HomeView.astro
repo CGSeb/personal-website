@@ -12,8 +12,8 @@ interface Props {
   lang: Lang;
 }
 
-/** Shown once the 3D experience exists (FR-012, spec 002). */
-const SHOW_3D_ENTRY = false;
+/** Entry to the 3D scene (spec 001 FR-012, spec 002 FR-001). */
+const SHOW_3D_ENTRY = true;
 
 const { lang } = Astro.props;
 const { profile, projects, pages } = await getSite();
@@ -55,7 +55,7 @@ const jsonLd = graph(
       <p class="headline">{profile.headline[lang]}</p>
       <p class="summary">{profile.summary[lang]}</p>
       {SHOW_3D_ENTRY && (
-        <a class="explore-3d" href={`/${lang}/3d/`}>
+        <a class="explore-3d" href={urlFor('scene', lang)}>
           {t(lang, 'home.explore3d')}
         </a>
       )}

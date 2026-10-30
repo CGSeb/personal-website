@@ -13,6 +13,7 @@ export const SEGMENTS = {
   education: { fr: 'diplomes', en: 'education' },
   experience: { fr: 'experiences', en: 'experience' },
   contact: { fr: 'contact', en: 'contact' },
+  scene: { fr: 'explorer', en: 'explore' },
 } as const satisfies Record<string, Record<Lang, string>>;
 
 /**
@@ -21,7 +22,15 @@ export const SEGMENTS = {
 export const SECTIONS = { career: true, contact: true };
 
 export type PageType =
-  'home' | 'projects' | 'category' | 'project' | 'career' | 'education' | 'experience' | 'contact';
+  | 'home'
+  | 'projects'
+  | 'category'
+  | 'project'
+  | 'career'
+  | 'education'
+  | 'experience'
+  | 'contact'
+  | 'scene';
 
 interface Sluggable {
   id: string;
@@ -56,6 +65,8 @@ export function urlFor(type: PageType, lang: Lang, slug?: string): string {
       return `/${lang}/${s('career')}/${s('experience')}/${need()}/`;
     case 'contact':
       return `/${lang}/${s('contact')}/`;
+    case 'scene':
+      return `/${lang}/${s('scene')}/`;
   }
 }
 

@@ -11,6 +11,7 @@ const table: [PageType, string | undefined, string, string][] = [
   ['education', 'master', '/fr/parcours/diplomes/master/', '/en/career/education/master/'],
   ['experience', 'job', '/fr/parcours/experiences/job/', '/en/career/experience/job/'],
   ['contact', undefined, '/fr/contact/', '/en/contact/'],
+  ['scene', undefined, '/fr/explorer/', '/en/explore/'],
 ];
 
 describe('urlFor', () => {

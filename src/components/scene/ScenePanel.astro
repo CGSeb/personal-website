@@ -1,0 +1,132 @@
+---
+// In-scene panel of one item (FR-009 to FR-011). Rendered hidden at build time; the script
+// shows it next to the selected object. "Learn more" is the only way to the written page.
+import { Picture } from 'astro:assets';
+import Period from '../Period.astro';
+import ProjectLinks from '../ProjectLinks.astro';
+import type { EducationItem, ExperienceItem, ProjectItem } from '../../content';
+import { getSite, labelOf } from '../../content';
+import type { Lang } from '../../i18n/routes';
+import { formatYearMonth, t } from '../../i18n/ui';
+import type { SceneItem } from '../../scene/layout';
+
+type Props = { lang: Lang; item: SceneItem } & (
+  | { type: 'project'; project: ProjectItem }
+  | { type: 'education'; education: EducationItem }
+  | { type: 'experience'; experience: ExperienceItem }
+);
+
+const props = Astro.props;
+const { lang, item } = props;
+const { categories, technologies } = await getSite();
+const titleId = `${item.panelId}-title`;
+const tags = (ids: string[], list: typeof technologies) => ids.map((id) => labelOf(list, id, lang));
+---
+
+<article id={item.panelId} class="scene-panel" data-key={item.key} aria-labelledby={titleId} hidden>
+  <button type="button" class="close" data-close aria-label={t(lang, 'scene.close')}>
+    ×
+  </button>
+  {props.type === 'project' && (
+    <>
+      {props.project.cover && (
+        <Picture
+          src={props.project.cover.image}
+          formats={['avif', 'webp']}
+          fallbackFormat="webp"
+          widths={[320, 640]}
+          sizes="(min-width: 40rem) 22rem, 100vw"
+          alt={props.project.cover.alt[lang]}
+          loading="lazy"
+          class="cover"
+        />
+      )}
+      <h2 id={titleId}>{props.project.title[lang]}</h2>
+      <p class="summary">{props.project.summary[lang]}</p>
+      <dl>
+        <dt>{t(lang, 'project.role')}</dt>
+        <dd>{props.project.role[lang]}</dd>
+        <dt>{t(lang, 'project.period')}</dt>
+        <dd>
+          <Period lang={lang} period={props.project.period} />
+        </dd>
+      </dl>
+      <ul class="tags">
+        {tags(props.project.categories, categories).map((label) => (
+          <li>{label}</li>
+        ))}
+        {tags(props.project.technologies, technologies).map((label) => (
+          <li>{label}</li>
+        ))}
+      </ul>
+      {props.project.links.length > 0 && (
+        <ProjectLinks
+          lang={lang}
+          links={props.project.links}
+          projectTitle={props.project.title[lang]}
+        />
+      )}
+    </>
+  )}
+  {props.type === 'education' && (
+    <>
+      <h2 id={titleId}>{props.education.title[lang]}</h2>
+      <p class="org">{props.education.institution}</p>
+      <dl>
+        <dt>
+          {props.education.obtained && !props.education.period.end
+            ? t(lang, 'career.obtained')
+            : t(lang, 'career.period')}
+        </dt>
+        <dd>
+          {props.education.obtained && !props.education.period.end ? (
+            formatYearMonth(lang, props.education.period.start)
+          ) : (
+            <Period lang={lang} period={props.education.period} />
+          )}
+        </dd>
+        <dt>{t(lang, 'career.location')}</dt>
+        <dd>{props.education.location[lang]}</dd>
+        {props.education.level && (
+          <>
+            <dt>{t(lang, 'career.level')}</dt>
+            <dd>{props.education.level[lang]}</dd>
+          </>
+        )}
+      </dl>
+      {props.education.skills.length > 0 && (
+        <ul class="tags">
+          {props.education.skills.map((s) => (
+            <li>{s[lang]}</li>
+          ))}
+        </ul>
+      )}
+    </>
+  )}
+  {props.type === 'experience' && (
+    <>
+      <h2 id={titleId}>{props.experience.position[lang]}</h2>
+      <p class="org">{props.experience.organization}</p>
+      <dl>
+        <dt>{t(lang, 'career.type')}</dt>
+        <dd>{t(lang, `experienceType.${props.experience.type}`)}</dd>
+        <dt>{t(lang, 'career.period')}</dt>
+        <dd>
+          <Period lang={lang} period={props.experience.period} />
+        </dd>
+        <dt>{t(lang, 'career.location')}</dt>
+        <dd>{props.experience.location[lang]}</dd>
+      </dl>
+      {props.experience.technologies.length > 0 && (
+        <ul class="tags">
+          {tags(props.experience.technologies, technologies).map((label) => (
+            <li>{label}</li>
+          ))}
+        </ul>
+      )}
+    </>
+  )}
+  <p class="more">
+    <a href={item.href}>{t(lang, 'scene.more')} →</a>
+  </p>
+</article>
