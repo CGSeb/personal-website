@@ -1,21 +1,30 @@
 // Cross-checks that a schema alone cannot express (data-model.md, rules 1-7). Pure function:
 // the build calls it with the loaded collections, unit tests with fixtures.
-import type { Education, Experience, ImageT, Lang, Project, Taxonomy } from './schemas';
+import type { Education, Experience, Lang, Project, Taxonomy } from './schemas';
 import { LANGS } from './schemas';
 
 export type ElementCollection = 'projects' | 'education' | 'experience';
 
+/** A project whose images are paths (unit tests) or already resolved by Astro (build). */
+type ProjectLike = Omit<Project, 'cover' | 'gallery'> & {
+  cover?: { src: unknown } | undefined;
+  gallery: { src: unknown }[];
+};
+
 export interface ContentInput {
-  projects: { folder: string; data: Project }[];
+  projects: { folder: string; data: ProjectLike }[];
   education: { folder: string; data: Education }[];
   experience: { folder: string; data: Experience }[];
   categories: Taxonomy[];
   technologies: Taxonomy[];
   /** Keys `<collection>/<id>/<lang>` of long descriptions that exist and are not blank. */
   bodies: Set<string>;
-  /** Whether an image path (relative to its element folder) resolves to a file. */
-  imageExists: (collection: ElementCollection | 'profile', folder: string, src: string) => boolean;
-  profilePhoto?: ImageT;
+  /**
+   * Whether an image path (relative to its element folder) resolves to a file. Unit tests pass
+   * it; the build leaves it out because Astro's `image()` already fails on a missing file.
+   */
+  imageExists?: (collection: ElementCollection | 'profile', folder: string, src: string) => boolean;
+  profilePhoto?: { src: unknown } | undefined;
 }
 
 export interface ValidationResult {
@@ -112,9 +121,9 @@ export function validateContent(input: ContentInput): ValidationResult {
     collection: ElementCollection,
     folder: string,
     field: string,
-    img: ImageT,
+    img: { src: unknown },
   ) => {
-    if (!input.imageExists(collection, folder, img.src)) {
+    if (input.imageExists && !input.imageExists(collection, folder, String(img.src))) {
       errors.push(
         `${where(collection, folder)} : ${field}.src — fichier « ${img.src} » introuvable`,
       );
@@ -134,10 +143,9 @@ export function validateContent(input: ContentInput): ValidationResult {
   for (const { folder, data } of input.experience) {
     checkRefs('experience', folder, 'technologies', data.technologies, technologyIds, false);
   }
-  if (input.profilePhoto && !input.imageExists('profile', '', input.profilePhoto.src)) {
-    errors.push(
-      `content/profile.yaml : photo.src — fichier « ${input.profilePhoto.src} » introuvable`,
-    );
+  const photo = input.profilePhoto;
+  if (photo && input.imageExists && !input.imageExists('profile', '', String(photo.src))) {
+    errors.push(`content/profile.yaml : photo.src — fichier « ${String(photo.src)} » introuvable`);
   }
 
   return { errors, warnings };

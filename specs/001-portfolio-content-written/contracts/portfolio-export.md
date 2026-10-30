@@ -54,6 +54,7 @@ externe (FR-006). Encodage UTF-8, `Content-Type: application/json`.
   le résumé et renvoie vers la page écrite (`urls`), conformément au principe I. Elles restent
   disponibles dans `/llms-full.txt`.
 - Les relations inverses (`projects` d'un diplôme ou d'une expérience) sont incluses, calculées.
+- `order` est la position du projet dans l'ordre du site (`order` explicite, puis du plus récent au plus ancien), à partir de 0.
 - Les URL d'images pointent vers les fichiers optimisés générés ; les URL de pages sont
   relatives à `site.baseUrl`.
 - `id` est stable et identique à celui de la source de contenu.

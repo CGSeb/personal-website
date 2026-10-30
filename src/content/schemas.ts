@@ -41,16 +41,26 @@ export const Period = z
     path: ['end'],
   });
 
-export const Image = z
-  .object({
-    src: z.string().regex(/\.(jpe?g|png|webp|avif)$/i, 'image jpg, png, webp ou avif attendue'),
-    alt: LocalizedText.optional(),
-    decorative: z.boolean().optional(),
-  })
-  .refine((img) => img.decorative === true || img.alt !== undefined, {
-    message: 'texte alternatif FR/EN obligatoire (ou decorative: true)',
-    path: ['alt'],
-  });
+/**
+ * An image with its alternative text. `src` is a path checked by extension in unit tests, and
+ * Astro's `image()` in the collections, which resolves the file next to the entry and fails the
+ * build when it is missing.
+ */
+export const imageSchema = <S extends z.ZodType>(src: S) =>
+  z
+    .object({
+      src,
+      alt: LocalizedText.optional(),
+      decorative: z.boolean().optional(),
+    })
+    .refine((img) => img.decorative === true || img.alt !== undefined, {
+      message: 'texte alternatif FR/EN obligatoire (ou decorative: true)',
+      path: ['alt'],
+    });
+
+export const Image = imageSchema(
+  z.string().regex(/\.(jpe?g|png|webp|avif)$/i, 'image jpg, png, webp ou avif attendue'),
+);
 
 export const Link = z.object({
   kind: z.enum(['demo', 'code', 'video', 'article', 'other']),
@@ -60,49 +70,60 @@ export const Link = z.object({
 
 export const Status = z.enum(['published', 'draft']).default('published');
 
-export const profileSchema = z.object({
-  name: nonBlank,
-  headline: LocalizedText,
-  summary: localizedTextMax(300),
-  photo: Image,
-  location: LocalizedText.optional(),
-  languages: z
-    .array(z.object({ code: z.string().regex(/^[a-z]{2}$/), level: LocalizedText }))
-    .optional(),
-  email: z.email('adresse e-mail invalide'),
-  profiles: z
-    .array(
-      z.object({
-        network: z.enum(['linkedin', 'github', 'youtube', 'x', 'mastodon', 'other']),
-        url: z.url({ protocol: /^https$/ }),
-        label: z.string().optional(),
-      }),
-    )
-    .optional(),
-  jobTitle: LocalizedText.optional(),
-});
+const buildProfile = <I extends z.ZodType>(Img: I) =>
+  z.object({
+    name: nonBlank,
+    headline: LocalizedText,
+    summary: localizedTextMax(300),
+    photo: Img,
+    location: LocalizedText.optional(),
+    languages: z
+      .array(z.object({ code: z.string().regex(/^[a-z]{2}$/), level: LocalizedText }))
+      .optional(),
+    email: z.email('adresse e-mail invalide'),
+    profiles: z
+      .array(
+        z.object({
+          network: z.enum(['linkedin', 'github', 'youtube', 'x', 'mastodon', 'other']),
+          url: z.url({ protocol: /^https$/ }),
+          label: z.string().optional(),
+        }),
+      )
+      .optional(),
+    jobTitle: LocalizedText.optional(),
+  });
 
 export const taxonomySchema = z.object({ id: Id, label: LocalizedText });
 
-export const projectSchema = z.object({
-  id: Id,
-  title: localizedTextMax(80),
-  summary: localizedTextRange(50, 160),
-  role: LocalizedText,
-  period: Period,
-  categories: z.array(Id).min(1, 'au moins une catégorie'),
-  technologies: z.array(Id).default([]),
-  cover: Image.optional(),
-  gallery: z.array(Image).default([]),
-  links: z.array(Link).default([]),
-  experience: z.array(Id).default([]),
-  education: z.array(Id).default([]),
-  featured: z.boolean().default(false),
-  order: z.number().int().optional(),
-  slug: LocalizedSlug.optional(),
-  status: Status,
-  kind: z.enum(['software', 'creative']).default('software'),
-});
+const buildProject = <I extends z.ZodType>(Img: I) =>
+  z.object({
+    id: Id,
+    title: localizedTextMax(80),
+    summary: localizedTextRange(50, 160),
+    role: LocalizedText,
+    period: Period,
+    categories: z.array(Id).min(1, 'au moins une catégorie'),
+    technologies: z.array(Id).default([]),
+    cover: Img.optional(),
+    gallery: z.array(Img).default([]),
+    links: z.array(Link).default([]),
+    experience: z.array(Id).default([]),
+    education: z.array(Id).default([]),
+    featured: z.boolean().default(false),
+    order: z.number().int().optional(),
+    slug: LocalizedSlug.optional(),
+    status: Status,
+    kind: z.enum(['software', 'creative']).default('software'),
+  });
+
+export const profileSchema = buildProfile(Image);
+export const projectSchema = buildProject(Image);
+
+/** Profile and project schemas whose image `src` is Astro's `image()` (collections). */
+export const withImageSource = <S extends z.ZodType>(src: S) => {
+  const Img = imageSchema(src);
+  return { profile: buildProfile(Img), project: buildProject(Img) };
+};
 
 export const educationSchema = z.object({
   id: Id,

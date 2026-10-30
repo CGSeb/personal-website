@@ -60,8 +60,9 @@ describe('llms.txt', () => {
     );
   });
 
-  it('points to the full version', () => {
+  it('points to the full version and the JSON export', () => {
     expect(text).toContain('https://example.com/llms-full.txt');
+    expect(text).toContain('https://example.com/data/portfolio.json');
   });
 
   it('does not include long descriptions', () => {
