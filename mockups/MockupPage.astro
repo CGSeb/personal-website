@@ -12,6 +12,10 @@ import roomBureau from './models/room-bureau.glb?url';
 import roomTour from './models/room-tour.glb?url';
 import tourDay from './models/room-tour-day.webp?url';
 import tourNight from './models/room-tour-night.webp?url';
+import tourEducation from './models/tour/generic-education.glb?url';
+import tourExperience from './models/tour/generic-experience.glb?url';
+import tourLessonFolk from './models/tour/featured/lesson-folk.glb?url';
+import tourVoxelShift from './models/tour/featured/voxelshift.glb?url';
 import HomeView from '../src/views/HomeView.astro';
 import SceneView from '../src/views/SceneView.astro';
 import type { Lang } from '../src/i18n/routes';
@@ -21,11 +25,27 @@ type View = 'home' | 'scene';
 
 const STYLES: Record<
   Style,
-  { name: string; room: string; baked?: { day: string; night: string } }
+  {
+    name: string;
+    room: string;
+    baked?: { day: string; night: string };
+    /** The room's own objects, by model file name. */
+    models?: Record<string, string>;
+  }
 > = {
   atelier: { name: 'Atelier', room: roomAtelier },
   bureau: { name: 'Bureau moderne', room: roomBureau },
-  tour: { name: 'Tour', room: roomTour, baked: { day: tourDay, night: tourNight } },
+  tour: {
+    name: 'Tour',
+    room: roomTour,
+    baked: { day: tourDay, night: tourNight },
+    models: {
+      'generic-education.glb': tourEducation,
+      'generic-experience.glb': tourExperience,
+      'featured/lesson-folk.glb': tourLessonFolk,
+      'featured/voxelshift.glb': tourVoxelShift,
+    },
+  },
 };
 
 const pathOf = (style: Style, lang: Lang, view: View) =>
@@ -79,7 +99,12 @@ Astro.locals.mockup = {
 ---
 
 {view === 'scene' ? (
-  <SceneView lang={lang} roomUrl={STYLES[style].room} bakedMaps={STYLES[style].baked} />
+  <SceneView
+    lang={lang}
+    roomUrl={STYLES[style].room}
+    bakedMaps={STYLES[style].baked}
+    modelUrls={STYLES[style].models}
+  />
 ) : (
   <HomeView lang={lang} />
 )}

@@ -47,6 +47,10 @@ export function createLighting(scene: THREE.Scene, room: Room): Lighting {
   // LED glows take the colour of the room's strips.
   const neonColor = room.neonMaterials[0]?.color ?? glow;
   for (const light of neonPoints) light.color.copy(neonColor);
+  // A baked room is drawn as bright as its render; the objects placed in it get a warm fill so
+  // they match it, stronger at night when the real-time lights alone leave them dark.
+  const fill = new THREE.AmbientLight(glow, 0);
+  if (room.baked) scene.add(fill);
 
   const glows: THREE.MeshBasicMaterial[] = [];
   let glowMap: THREE.Texture | undefined;
@@ -95,6 +99,7 @@ export function createLighting(scene: THREE.Scene, room: Room): Lighting {
       for (const m of room.lampMaterials) m.emissiveIntensity = s.lampEmissive;
       for (const m of room.neonMaterials) m.emissiveIntensity = s.neonEmissive;
       room.baked?.setNight(s.bakedNight);
+      fill.intensity = 0.4 + 1.4 * s.bakedNight;
       for (const m of room.windowMaterials) {
         m.emissive.setStyle(s.window.color);
         m.emissiveIntensity = s.window.intensity;

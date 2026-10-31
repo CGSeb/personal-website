@@ -137,6 +137,8 @@ def tower_materials():
     mat_emit("city-light", "#ffcf8a", 0.0)
     mat_emit("city-neon", "#46e0ff", 0.0)
     mat_noise("city", "#1b2230", "#232c3c", scale=20, rough=0.8)
+    mat_noise("cork", "#a97f4f", "#c29a66", scale=90, rough=0.9, detail=10)
+    mat_plain("brass", "#b08a4a", rough=0.35, metal=1.0)
 
 
 # ---------------------------------------------------------------------------------------------
@@ -305,13 +307,17 @@ def build_tower_geometry():
     _books(b, -H + 0.16, 2.0175, -1.25, -0.75, axis="x", depth=0.18)
     b.cylinder("ceramic", 0.06, 0.16, -0.62, 2.1, -H + 0.15, 16)
 
-    # North wall, east part: a shelf with jars and a snake plant; the experience frames above
-    # it are placed by the scene (slots).
-    b.box("walnut", 1.15, 0.035, 0.22, 1.45, 1.38, -H + 0.11)
-    b.box("led", 1.1, 0.008, 0.008, 1.45, 1.358, -H + 0.2)
-    for jx in (1.0, 1.13):
-        b.cylinder("black", 0.045, 0.1, jx, 1.448, -H + 0.11, 16)
-    _snake_plant(b, 1.85, 1.3975, -H + 0.11, 0.6)
+    # North wall, east part: the experience board, a large cork board in a walnut frame under a
+    # brass picture lamp (the cards and their red string are placed by the scene); a snake
+    # plant on the floor beside it.
+    bx0, bx1, by0, by1 = 0.35, 2.05, 1.05, 2.55
+    bxc, byc = (bx0 + bx1) / 2, (by0 + by1) / 2
+    b.box("walnut", bx1 - bx0 + 0.08, by1 - by0 + 0.08, 0.03, bxc, byc, -H + 0.015)
+    b.box("cork", bx1 - bx0, by1 - by0, 0.02, bxc, byc, -H + 0.035)
+    b.box("brass", 0.02, 0.02, 0.16, bxc, by1 + 0.12, -H + 0.08)
+    b.box("brass", 0.9, 0.04, 0.06, bxc, by1 + 0.12, -H + 0.17)
+    b.box("led", 0.86, 0.008, 0.03, bxc, by1 + 0.097, -H + 0.17)
+    _snake_plant(b, 1.85, 0, -1.75, 1.1)
 
     # Large grey rug.
     b.box("rug", 3.3, 0.02, 2.9, 0.05, 0.01, 0.45)
@@ -352,23 +358,35 @@ def build_tower_geometry():
     b.cylinder("lampshade", 0.18, 0.28, lx, 1.55, lz, 24, r2=0.15)
 
     b.build("room")
-    return {"floor_lamp": (lx, 1.5, lz), "desk_lamp": (dlx, top + 0.36, dlz)}
+    return {
+        "floor_lamp": (lx, 1.5, lz),
+        "desk_lamp": (dlx, top + 0.36, dlz),
+        # Picture lamps: over the board, and over each diploma frame (see tower_markers).
+        "spot_board": (bxc, by1 + 0.08, -H + 0.25),
+        "spot_diploma_1": (-H + 0.25, 2.3, -1.65),
+        "spot_diploma_2": (-H + 0.25, 2.3, -0.8),
+    }
 
 
 def tower_markers(lights):
     H = TOWER_H
     top = 0.77
     room_markers(
-        lamps=(lights["floor_lamp"], lights["desk_lamp"], (-0.9, 2.5, -H + 0.4)),
-        # Featured projects in the middle of the desk's north arm, other projects at its east
-        # end and on the west arm.
+        lamps=(lights["floor_lamp"], lights["desk_lamp"], lights["spot_board"]),
+        # Dedicated objects on the desk's north arm (LessonFolk's cap, this portfolio's
+        # diorama, Voxel Shift's logo); other projects on the west arm.
         featured={
             "lesson-folk": (-0.95, top, -H + 0.38, 0.0),
             "portfolio-3d": (-0.15, top, -H + 0.36, 0.0),
+            "voxelshift": (0.5, top, -H + 0.36, 0.0),
         },
-        projects=[(0.5, top, -H + 0.36, 0.0), (-H + 0.36, top, -1.05, math.pi / 2)],
-        education=[(-H + 0.01, y, z, math.pi / 2) for y in (2.3, 1.82) for z in (-1.6, -0.95)],
-        experience=[(x, y, -H + 0.01, 0.0) for y in (2.42, 1.95) for x in (1.1, 1.75)],
+        projects=[(-H + 0.36, top, -1.05, math.pi / 2)],
+        # Two large lit frames above the desk's west arm.
+        education=[(-H + 0.01, 1.85, z, math.pi / 2) for z in (-1.65, -0.8)],
+        # The board: a zigzag timeline, the most recent card (slot 01) on the right.
+        experience=[
+            (1.82 - i * 0.248, 2.15 if i % 2 == 0 else 1.55, -H + 0.046, 0.0) for i in range(6)
+        ],
         neon_lights=(),
     )
     # The camera frames the smaller room (Blender axes: x, depth, up).
@@ -391,7 +409,15 @@ AMBIANCES = {
         "world": ("#16203a", 0.35),
         "sun": None,
         "emit": {"led": 30.0, "lampshade": 6.0, "sky": 0.12, "city-light": 5.0, "city-neon": 7.0},
-        "lights": {"floor_lamp": 260.0, "desk_lamp": 35.0, "window": 18.0, "fill": 60.0},
+        "lights": {
+            "floor_lamp": 260.0,
+            "desk_lamp": 35.0,
+            "window": 18.0,
+            "fill": 60.0,
+            "spot_board": 40.0,
+            "spot_diploma_1": 18.0,
+            "spot_diploma_2": 18.0,
+        },
         "exposure": 0.8,
     },
 }
@@ -460,6 +486,17 @@ def _setup_lights(ambiance, lights):
             light = bpy.data.objects.new("window", data)
             light.location = P(-TOWER_H + 0.05, 1.6, 0.4)
             light.rotation_euler = (0, math.radians(-90), 0)  # facing the room (+X)
+        elif key.startswith("spot"):
+            # Picture lamp: a small warm area light pointing down at the wall below it.
+            data = bpy.data.lights.new(key, "AREA")
+            data.shape = "RECTANGLE"
+            data.size, data.size_y = 0.5, 0.08
+            data.color = _rgb("#ffcf94")[:3]
+            data.energy = power
+            light = bpy.data.objects.new(key, data)
+            light.location = P(*lights[key])
+            if "diploma" in key:
+                light.rotation_euler = (0, 0, math.radians(90))
         else:
             data = bpy.data.lights.new(key, "POINT")
             data.color = _rgb("#ffc98a")[:3]
@@ -527,3 +564,120 @@ def build_tower_room_baked(out=None, bake=True):
     tower_markers(lights)
     save("room-tour", out)
     return paths
+
+
+# ---------------------------------------------------------------------------------------------
+# The room's objects, placed by the scene at the slots: lit diploma frames, experience cards,
+# and the dedicated objects of LessonFolk (a graduation cap) and Voxel Shift (its logo). They
+# keep real-time materials; the scene reads the names label, pin, lamp, neon and glow.
+
+
+def tower_object_materials():
+    for m in list(bpy.data.materials):
+        bpy.data.materials.remove(m)
+    mat_plain("frame-dark", "#3a2416", rough=0.4)
+    mat_plain("mat", "#f4f1ea", rough=0.8)
+    mat_plain("label", "#fbf8f1", rough=0.8)
+    mat_plain("gold", "#c9a227", rough=0.3, metal=1.0)
+    mat_plain("brass", "#b08a4a", rough=0.35, metal=1.0)
+    mat_plain("lamp", "#ffe2b8", rough=0.4)
+    mat_plain("glow", "#ffffff", rough=1.0)
+    mat_plain("paper", "#fffdf6", rough=0.9)
+    mat_plain("pin", "#c0392b", rough=0.4)
+    mat_plain("cap", "#1b1b1f", rough=0.8)
+    mat_plain("tassel", "#f2c230", rough=0.6)
+    mat_plain("book-purple", "#5b4cf0", rough=0.7)
+    mat_plain("book-cream", "#efe6d2", rough=0.7)
+    mat_plain("base", "#141518", rough=0.4)
+    mat_plain("neon", "#01e675", rough=0.4)
+
+
+def _capsule(b, material, x0, y0, x1, y1, w, depth, z=0.0):
+    """A stroke with rounded ends from (x0, y0) to (x1, y1), in the plane facing +Z."""
+    length = math.hypot(x1 - x0, y1 - y0)
+    angle = math.atan2(y1 - y0, x1 - x0)
+    # In Blender axes the facing plane is X / Z: turn about Y (negative turns X towards up).
+    m = (
+        Matrix.Translation(P((x0 + x1) / 2, (y0 + y1) / 2, z))
+        @ Matrix.Rotation(-angle, 4, "Y")
+        @ Matrix.Diagonal((length, depth, w, 1))
+    )
+    bmesh.ops.create_cube(b._bm(material), size=1, matrix=m)
+    for x, y in ((x0, y0), (x1, y1)):
+        b.cylinder(material, w / 2, depth, x, y, z, 16, tilt=math.radians(90))
+
+
+def build_tower_education():
+    b = Builder(collections.defaultdict(lambda: None))
+    b.box("frame-dark", 0.8, 0.6, 0.04, 0, 0, 0.02)
+    b.box("mat", 0.72, 0.52, 0.01, 0, 0, 0.045)
+    b.plane("label", 0.56, 0.38, 0, 0, 0.051)
+    b.cylinder("gold", 0.035, 0.006, 0.22, -0.15, 0.053, 24, tilt=math.radians(90))
+    # Picture lamp above the frame, and its halo on the frame (lit at night by the scene).
+    b.box("brass", 0.02, 0.02, 0.12, 0, 0.36, 0.06)
+    b.box("brass", 0.46, 0.035, 0.05, 0, 0.36, 0.13)
+    b.box("lamp", 0.42, 0.008, 0.03, 0, 0.34, 0.13)
+    b.plane("glow", 0.86, 0.66, 0, 0.02, 0.058)
+    b.build("generic-education", flat=("label", "glow"))
+
+
+def build_tower_experience():
+    b = Builder(collections.defaultdict(lambda: None))
+    b.box("paper", 0.3, 0.2, 0.003, 0, 0, 0.0015)
+    b.plane("label", 0.28, 0.18, 0, -0.005, 0.0035)
+    b.sphere("pin", 0.012, 0, 0.08, 0.012)
+    b.build("generic-experience", bevel=0, flat=("label",))
+
+
+def build_tower_lesson_folk():
+    """LessonFolk: a graduation cap on two books in the project's colours."""
+    b = Builder(collections.defaultdict(lambda: None))
+    b.box("book-purple", 0.3, 0.05, 0.22, 0, 0.025, 0)
+    b.box("book-cream", 0.27, 0.045, 0.2, 0.01, 0.0725, 0.005, rot=math.radians(6))
+    b.cylinder("cap", 0.1, 0.07, 0, 0.13, 0, 24, r2=0.105)
+    turn = math.radians(20)
+    b.box("cap", 0.32, 0.014, 0.32, 0, 0.172, 0, rot=turn)
+    b.cylinder("tassel", 0.016, 0.012, 0, 0.185, 0, 12)
+    # Cord from the button to the front corner, tassel hanging over the edge.
+    cx = 0.152 * (math.cos(turn) + math.sin(turn))
+    cz = 0.152 * (math.cos(turn) - math.sin(turn))
+    b.box("tassel", math.hypot(cx, cz), 0.006, 0.008, cx / 2, 0.181, cz / 2, rot=math.atan2(cz, cx))
+    b.cylinder("tassel", 0.004, 0.06, cx, 0.15, cz, 6)
+    b.cylinder("tassel", 0.014, 0.07, cx, 0.09, cz, 12, r2=0.008)
+    b.build("lesson-folk", bevel=0.003)
+
+
+def build_tower_voxelshift():
+    """Voxel Shift: its logo (a green V and three speed lines) on a black stand; the logo uses
+    the `neon` material, so it glows a little by day and more at night."""
+    b = Builder(collections.defaultdict(lambda: None))
+    b.box("base", 0.36, 0.03, 0.1, 0, 0.015, 0)
+    s = 0.3 / 256  # the logo drawn on a 256 px grid, y downwards (src-tauri/icons/VSLogo.svg)
+    w = 24 * s
+    pt = lambda px, py: (-0.15 + px * s, 0.03 + w / 2 + (235 - py) * s)
+    v = (pt(45, 20), pt(160, 235), pt(230, 20))
+    _capsule(b, "neon", *v[0], *v[1], w, 0.03)
+    _capsule(b, "neon", *v[1], *v[2], w, 0.03)
+    for py, px1 in ((145, 75), (185, 98), (218, 120)):
+        _capsule(b, "neon", *pt(15, py), *pt(px1, py), w * 0.95, 0.03)
+    b.build("voxelshift", bevel=0.002)
+
+
+# Model file -> builder and scale: the desk objects are drawn larger than life so they read
+# from the isometric view.
+TOWER_OBJECTS = {
+    "tour/generic-education": (build_tower_education, 1.0),
+    "tour/generic-experience": (build_tower_experience, 1.0),
+    "tour/featured/lesson-folk": (build_tower_lesson_folk, 1.5),
+    "tour/featured/voxelshift": (build_tower_voxelshift, 1.4),
+}
+
+
+def build_tower_objects(out=None):
+    for name, (build, scale) in TOWER_OBJECTS.items():
+        reset()
+        tower_object_materials()
+        build()
+        for o in bpy.data.objects:
+            o.scale = (scale, scale, scale)
+        save(name, out or ROOT)

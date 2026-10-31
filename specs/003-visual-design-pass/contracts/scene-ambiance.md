@@ -75,4 +75,20 @@ Une pièce peut porter sa lumière dans des textures plutôt que dans des lumiè
 - le code (`src/scene/baked.ts`) affiche ce maillage sans éclairage et mélange les deux textures
   selon `bakedNight` (0 le jour, 1 la nuit, interpolé pendant le fondu) ; les objets placés
   (projets, diplômes, expériences) restent éclairés en temps réel par les réglages ci-dessus ;
-- budget : modèle et textures ensemble ≤ 1,5 Mo ; textures en 2048 px au plus.
+- budget : modèle et textures ensemble ≤ 1,5 Mo ; textures en 2048 px au plus ;
+- une lumière d'ambiance chaude remet les objets placés au niveau de la pièce précalculée
+  (`0,4 + 1,4 × bakedNight`), sinon ils paraîtraient presque noirs la nuit.
+
+## Objets placés : lampes, LED et halos
+
+Les objets placés (`lighting.adopt`) suivent aussi l'ambiance : matériau `lamp` (s'allume la
+nuit), `neon` (brille dans sa couleur), `glow` (plan remplacé par un halo additif chaud, comme la
+lumière d'une lampe de tableau sur un cadre, invisible le jour). La mise en évidence (survol,
+sélection) ne touche pas à ces matériaux. Les fiches d'expérience sont reliées par un fil rouge,
+de la plus ancienne à la plus récente, d'une punaise (matériau `pin`) à l'autre.
+
+## Objets propres à une pièce
+
+Une page peut servir ses propres modèles d'objets (`SceneView` `modelUrls`, par nom de fichier :
+`generic-education.glb`, `featured/<id>.glb`…). Tout projet qui a une place réservée
+`featured.<id>` dans la pièce reçoit son objet dédié, qu'il soit mis en avant ou non.

@@ -556,6 +556,7 @@ MODELS = {
 
 def main(names=None, style=None, out=None):
     if style == "tour":
+        build_tower_objects(out)
         build_tower_room_baked(out)
         return
     if style:
