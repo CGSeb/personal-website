@@ -5,3 +5,4 @@ location: { fr: Lyon, en: Lyon }
 type: employment
 period: { start: 2018-01, end: 2022-12 }
 technologies: [typescript]
+organizationUrl: https://example.com/societe-a

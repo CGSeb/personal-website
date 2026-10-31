@@ -134,18 +134,28 @@ async function fetchModel(url: string): Promise<THREE.Object3D | null> {
   }
 }
 
-async function loadModel(
-  placement: Placement,
-  available: Set<string>,
-): Promise<THREE.Object3D | null> {
-  const file = placement.model.startsWith('featured:')
-    ? `featured/${placement.model.slice('featured:'.length)}.glb`
-    : `${placement.model}.glb`;
+async function loadFile(file: string, available: Set<string>): Promise<THREE.Object3D | null> {
   if (!available.has(file)) return null;
   const url = `/models/${file}`;
   if (!models.has(url)) models.set(url, fetchModel(url));
   const model = await models.get(url)!;
   return model ? model.clone(true) : null;
+}
+
+/**
+ * The model of a placement. A featured project whose dedicated file is missing or broken gets
+ * the generic project model (US6-3); null means the coded stand-in.
+ */
+async function loadModel(
+  placement: Placement,
+  available: Set<string>,
+): Promise<THREE.Object3D | null> {
+  if (!placement.model.startsWith('featured:'))
+    return loadFile(`${placement.model}.glb`, available);
+  const id = placement.model.slice('featured:'.length);
+  return (
+    (await loadFile(`featured/${id}.glb`, available)) ?? loadFile('generic-project.glb', available)
+  );
 }
 
 /** Applies a project image or a badge to the replaceable surfaces of a loaded model. */

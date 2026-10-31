@@ -30,9 +30,11 @@ function fixtureSite(): ExportSite<string> {
     },
     categories: input.categories,
     technologies: input.technologies,
-    projects: projects.map(({ cover, gallery: _gallery, ...p }) => ({
+    projects: projects.map(({ cover, gallery, ...p }) => ({
       ...p,
       cover: cover && { image: cover.src, alt: cover.alt! },
+      // As the content loader resolves them: decorative images get an empty alt.
+      gallery: gallery.map((img) => ({ image: img.src, alt: img.alt ?? { fr: '', en: '' } })),
     })),
     education: input.education.map((e) => ({
       ...e.data,
@@ -81,5 +83,43 @@ describe('portfolio.json export', () => {
     expect(beta.cover).toBeNull();
     expect(beta.period.end).toBeNull();
     expect(exported.projects[0]!.cover?.url).toBe('/_astro/cover.webp');
+  });
+
+  it('carries what the scene panels show (contracts/export-additions.md)', () => {
+    const [alpha, beta] = exported.projects;
+    expect(alpha!.kind).toBe('software');
+    expect(alpha!.gallery).toEqual([
+      { url: '/_astro/cover.webp', alt: { fr: 'Capture', en: 'Screenshot' } },
+      { url: '/_astro/cover.webp', alt: null },
+    ]);
+    expect(alpha!.links).toEqual([
+      { kind: 'demo', url: 'https://example.com/alpha', label: { fr: 'Essayer', en: 'Try it' } },
+      { kind: 'code', url: 'https://example.com/alpha-code', label: null },
+    ]);
+    expect(beta!.gallery).toEqual([]);
+
+    const degree = exported.education[0]!;
+    expect(degree.skills).toEqual([{ fr: 'Algorithmique', en: 'Algorithms' }]);
+    expect(degree.obtained).toBe(true);
+    expect(degree.institutionUrl).toBe('https://example.com/universite');
+
+    const [jobA, jobB] = exported.experience;
+    expect(jobA!.organizationUrl).toBe('https://example.com/societe-a');
+    expect(jobB!.organizationUrl).toBeNull();
+  });
+
+  it('gives the scene address with the item open, per language', () => {
+    expect(exported.projects[0]!.scene).toEqual({
+      fr: '/fr/explorer/#projet/alpha',
+      en: '/en/explore/#project/alpha',
+    });
+    expect(exported.education[0]!.scene).toEqual({
+      fr: '/fr/explorer/#diplome/degree',
+      en: '/en/explore/#education/degree',
+    });
+    expect(exported.experience[1]!.scene).toEqual({
+      fr: '/fr/explorer/#experience/job-b',
+      en: '/en/explore/#experience/job-b',
+    });
   });
 });

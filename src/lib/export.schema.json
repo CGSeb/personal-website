@@ -42,7 +42,17 @@
       "additionalProperties": false,
       "properties": { "id": { "$ref": "#/$defs/id" }, "label": { "$ref": "#/$defs/text" } }
     },
-    "ids": { "type": "array", "items": { "$ref": "#/$defs/id" } }
+    "ids": { "type": "array", "items": { "$ref": "#/$defs/id" } },
+    "httpsUrl": { "oneOf": [{ "type": "string", "format": "uri", "pattern": "^https://" }, { "type": "null" }] },
+    "scene": {
+      "type": "object",
+      "required": ["fr", "en"],
+      "additionalProperties": false,
+      "properties": {
+        "fr": { "type": "string", "pattern": "^/fr/[a-z-]+/#[a-z]+/[a-z0-9]+(-[a-z0-9]+)*$" },
+        "en": { "type": "string", "pattern": "^/en/[a-z-]+/#[a-z]+/[a-z0-9]+(-[a-z0-9]+)*$" }
+      }
+    }
   },
   "properties": {
     "schemaVersion": { "const": 1 },
@@ -82,26 +92,40 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "title", "summary", "role", "period", "categories", "technologies", "cover", "links", "experience", "education", "featured", "order", "urls"],
+        "required": ["id", "title", "summary", "role", "kind", "period", "categories", "technologies", "cover", "gallery", "links", "experience", "education", "featured", "order", "urls", "scene"],
         "additionalProperties": false,
         "properties": {
           "id": { "$ref": "#/$defs/id" },
           "title": { "$ref": "#/$defs/text" },
           "summary": { "$ref": "#/$defs/text" },
           "role": { "$ref": "#/$defs/text" },
+          "kind": { "enum": ["software", "creative"] },
           "period": { "$ref": "#/$defs/period" },
           "categories": { "$ref": "#/$defs/ids" },
           "technologies": { "$ref": "#/$defs/ids" },
           "cover": { "oneOf": [{ "$ref": "#/$defs/image" }, { "type": "null" }] },
+          "gallery": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["url", "alt"],
+              "additionalProperties": false,
+              "properties": {
+                "url": { "type": "string" },
+                "alt": { "oneOf": [{ "$ref": "#/$defs/text" }, { "type": "null" }] }
+              }
+            }
+          },
           "links": {
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["kind", "url"],
+              "required": ["kind", "url", "label"],
               "additionalProperties": false,
               "properties": {
                 "kind": { "enum": ["demo", "code", "video", "article", "other"] },
-                "url": { "type": "string", "format": "uri" }
+                "url": { "type": "string", "format": "uri" },
+                "label": { "oneOf": [{ "$ref": "#/$defs/text" }, { "type": "null" }] }
               }
             }
           },
@@ -109,7 +133,8 @@
           "education": { "$ref": "#/$defs/ids" },
           "featured": { "type": "boolean" },
           "order": { "type": "integer", "minimum": 0 },
-          "urls": { "$ref": "#/$defs/urls" }
+          "urls": { "$ref": "#/$defs/urls" },
+          "scene": { "$ref": "#/$defs/scene" }
         }
       }
     },
@@ -117,17 +142,21 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "title", "institution", "location", "period", "level", "projects", "urls"],
+        "required": ["id", "title", "institution", "institutionUrl", "location", "period", "obtained", "level", "skills", "projects", "urls", "scene"],
         "additionalProperties": false,
         "properties": {
           "id": { "$ref": "#/$defs/id" },
           "title": { "$ref": "#/$defs/text" },
           "institution": { "type": "string" },
+          "institutionUrl": { "$ref": "#/$defs/httpsUrl" },
           "location": { "$ref": "#/$defs/text" },
           "period": { "$ref": "#/$defs/period" },
+          "obtained": { "type": "boolean" },
           "level": { "oneOf": [{ "$ref": "#/$defs/text" }, { "type": "null" }] },
+          "skills": { "type": "array", "items": { "$ref": "#/$defs/text" } },
           "projects": { "$ref": "#/$defs/ids" },
-          "urls": { "$ref": "#/$defs/urls" }
+          "urls": { "$ref": "#/$defs/urls" },
+          "scene": { "$ref": "#/$defs/scene" }
         }
       }
     },
@@ -135,18 +164,20 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "position", "organization", "location", "type", "period", "technologies", "projects", "urls"],
+        "required": ["id", "position", "organization", "organizationUrl", "location", "type", "period", "technologies", "projects", "urls", "scene"],
         "additionalProperties": false,
         "properties": {
           "id": { "$ref": "#/$defs/id" },
           "position": { "$ref": "#/$defs/text" },
           "organization": { "type": "string" },
+          "organizationUrl": { "$ref": "#/$defs/httpsUrl" },
           "location": { "$ref": "#/$defs/text" },
           "type": { "enum": ["employment", "freelance", "internship", "apprenticeship", "volunteer"] },
           "period": { "$ref": "#/$defs/period" },
           "technologies": { "$ref": "#/$defs/ids" },
           "projects": { "$ref": "#/$defs/ids" },
-          "urls": { "$ref": "#/$defs/urls" }
+          "urls": { "$ref": "#/$defs/urls" },
+          "scene": { "$ref": "#/$defs/scene" }
         }
       }
     }
