@@ -41,12 +41,13 @@ export class Panels {
     });
     // Click outside an open panel (and outside the list and the canvas, which handle their own) closes it.
     // Not the language switcher: closing would drop the open item from its link before it is followed.
+    // Not the theme button: day / night changes around the open panel (spec 003).
     document.addEventListener('pointerdown', (e) => {
       const target = e.target as HTMLElement;
       if (
         !this.openKey ||
         target.closest(
-          '.scene-panel, .scene-list, #scene canvas, [data-recenter], .language-switcher',
+          '.scene-panel, .scene-list, #scene canvas, [data-recenter], .language-switcher, [data-theme-toggle]',
         )
       )
         return;

@@ -25,14 +25,17 @@ export interface AmbianceSettings {
   bakedNight: number;
 }
 
-/** Colour the lamps glow with, at night. */
-export const LAMP_GLOW = '#ffcf8a';
+/** Colour the lamps glow with, at night: the amber of the room's LED strip and lamps. */
+export const LAMP_GLOW = '#ffc27a';
 
 export const ambianceFor = (theme: 'light' | 'dark'): Ambiance =>
   theme === 'dark' ? 'night' : 'day';
 
+// The room's own light is baked (room-day.webp, room-night.webp); these lights fall on the placed
+// objects (diplomas, cards, the desk's objects) so they match it. By day: daylight from the
+// window, a warm bounce from the walnut and the rug.
 const DAY: AmbianceSettings = {
-  hemisphere: { sky: '#ffffff', ground: '#b9a68f', intensity: 1.6 },
+  hemisphere: { sky: '#ffffff', ground: '#b09074', intensity: 1.6 },
   sun: { color: '#fff3e0', intensity: 1.8, position: [5, 9, 6] },
   lampEmissive: 0,
   neonEmissive: 0.6,
@@ -42,11 +45,11 @@ const DAY: AmbianceSettings = {
   bakedNight: 0,
 };
 
-// Moonlight comes in through the window on the north wall; pools of warm light from the lamps
-// and cyan glows from the LED strips light the room, so the ambient light stays low.
+// At night the room is lit by its lamps and the amber LED strip, with a little city light
+// through the window: a warm, low ambient light and warm pools from the lamps.
 const NIGHT: AmbianceSettings = {
-  hemisphere: { sky: '#3c4670', ground: '#1a1820', intensity: 0.55 },
-  sun: { color: '#9fb4ff', intensity: 0.45, position: [-3, 7, -8] },
+  hemisphere: { sky: '#5a4a3c', ground: '#1c1712', intensity: 0.6 },
+  sun: { color: '#b8c4ff', intensity: 0.35, position: [-3, 7, -8] },
   lampEmissive: 2.2,
   neonEmissive: 2.6,
   window: { color: '#1b2440', intensity: 0.5 },

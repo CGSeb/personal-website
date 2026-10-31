@@ -1,4 +1,5 @@
-# « Tour » room (spec 003, style mockup), after Sébastien's reference renders of 31/10/2026: a
+# The room, style « tour » (spec 003, decision.md), after Sébastien's reference renders of
+# 31/10/2026: a
 # small, furnished study high up in a tower. A dark wall with a window over the city, a wall of
 # lit wooden slats, an L-shaped walnut desk with drawer units (the featured projects on it),
 # floating shelves with plants, frames, a large rug, a plant stand and an armchair.
@@ -543,9 +544,9 @@ def _bake(room, ambiance, out, name):
     return path
 
 
-def build_tower_room_baked(out=None, bake=True):
-    """Builds, bakes (day and night) and exports the « tour » room as room-tour.glb plus
-    room-tour-day.png and room-tour-night.png in `out`."""
+def build_tower_room_baked(out=None, bake=True, name="room"):
+    """Builds, bakes (day and night) and exports the room as <name>.glb plus <name>-day.png and
+    <name>-night.png in `out`."""
     out = out or ROOT
     reset()
     tower_materials()
@@ -555,7 +556,7 @@ def build_tower_room_baked(out=None, bake=True):
     if bake:
         for ambiance in ("day", "night"):
             _setup_lights(ambiance, lights)
-            paths.append(_bake(room, ambiance, out, "room-tour"))
+            paths.append(_bake(room, ambiance, out, name))
     for o in [o for o in bpy.data.objects if o.type == "LIGHT"]:
         bpy.data.objects.remove(o)
     # The export carries one plain material: the scene code replaces it with the baked maps.
@@ -563,7 +564,7 @@ def build_tower_room_baked(out=None, bake=True):
     room.data.materials.clear()
     room.data.materials.append(baked)
     tower_markers(lights)
-    save("room-tour", out)
+    save(name, out)
     return paths
 
 
@@ -682,21 +683,21 @@ def build_tower_monitor(name):
 # Model file -> builder and scale: the desk objects are drawn larger than life so they read
 # from the isometric view.
 TOWER_OBJECTS = {
-    "tour/generic-education": (build_tower_education, 1.0),
-    "tour/generic-experience": (build_tower_experience, 1.0),
-    "tour/generic-project": (lambda: build_tower_monitor("generic-project"), 1.0),
-    "tour/featured/lesson-folk": (build_tower_lesson_folk, 1.5),
-    "tour/featured/voxelshift": (build_tower_voxelshift, 1.4),
+    "generic-education": (build_tower_education, 1.0),
+    "generic-experience": (build_tower_experience, 1.0),
+    "generic-project": (lambda: build_tower_monitor("generic-project"), 1.0),
+    "featured/lesson-folk": (build_tower_lesson_folk, 1.5),
+    "featured/voxelshift": (build_tower_voxelshift, 1.4),
     # This portfolio: the main computer's screen, showing the site.
-    "tour/featured/portfolio-3d": (lambda: build_tower_monitor("portfolio-3d"), 1.1),
+    "featured/portfolio-3d": (lambda: build_tower_monitor("portfolio-3d"), 1.1),
 }
 
 
-def build_tower_objects(out=None):
-    for name, (build, scale) in TOWER_OBJECTS.items():
-        reset()
-        tower_object_materials()
-        build()
-        for o in bpy.data.objects:
-            o.scale = (scale, scale, scale)
-        save(name, out or ROOT)
+def build_tower_object(name, out=None):
+    build, scale = TOWER_OBJECTS[name]
+    reset()
+    tower_object_materials()
+    build()
+    for o in bpy.data.objects:
+        o.scale = (scale, scale, scale)
+    save(name, out or ROOT)

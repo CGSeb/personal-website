@@ -27,8 +27,13 @@ export interface GovernorOptions {
   cooldown?: number;
 }
 
-/** Frames further apart than this are idle gaps (render on demand), not slow frames. */
+/**
+ * Without the request time, frames further apart than this are idle gaps (render on demand),
+ * not slow frames. With it, only a stall longer than MAX_FRAME is left out (a lost context, a
+ * long pause of the page).
+ */
 const IDLE_GAP = 250;
+const MAX_FRAME = 2000;
 /**
  * Enough to judge: this many frames in the window, or frames covering this share of it (a
  * device below 10 fps never gets 20 frames in 2 s, and must not escape the governor).
@@ -56,14 +61,19 @@ export class QualityGovernor {
     this.cooldown = options.cooldown ?? 3000;
   }
 
-  /** Call once per rendered frame with its timestamp (ms). */
-  frame(now: number): QualityAction {
+  /**
+   * Call once per rendered frame with its timestamp (ms) and, when known, the time the frame was
+   * asked for. The interval then starts at the later of the previous frame and the request: a
+   * pause of the scene does not count, but a frame that takes long to draw does, however long.
+   */
+  frame(now: number, requestedAt?: number): QualityAction {
     this.start ??= now;
     const previous = this.last;
     this.last = now;
     if (previous === null || now - this.start < this.warmup) return { type: 'none' };
-    const interval = now - previous;
-    if (interval > IDLE_GAP) return { type: 'none' };
+    const interval =
+      requestedAt === undefined ? now - previous : now - Math.max(previous, requestedAt);
+    if (interval > (requestedAt === undefined ? IDLE_GAP : MAX_FRAME)) return { type: 'none' };
 
     this.samples.push({ at: now, interval });
     this.samples = this.samples.filter((s) => now - s.at <= this.window);

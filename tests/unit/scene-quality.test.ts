@@ -57,6 +57,29 @@ describe('quality governor', () => {
     expect(actions.every((a) => a.type === 'none')).toBe(true);
   });
 
+  it('with request times, catches a device far too slow to draw (4 fps)', () => {
+    // Each frame is asked for as soon as the previous one is drawn (the scene keeps moving).
+    const g = new QualityGovernor({ level: 'high', minFps: 50 });
+    const actions: QualityAction[] = [];
+    for (let t = 0; t <= 30_000; t += 250) actions.push(g.frame(t, t - 250));
+    expect(actions.filter((a) => a.type !== 'none').map((a) => a.type)).toEqual([
+      'down',
+      'down',
+      'propose-written',
+    ]);
+  });
+
+  it('with request times, still ignores pauses between gestures', () => {
+    const g = new QualityGovernor({ level: 'high', minFps: 50 });
+    const actions: QualityAction[] = [];
+    for (let burst = 0; burst < 20; burst++) {
+      const start = burst * 2000;
+      // The first frame of a burst is asked for after a pause, then each frame right away.
+      for (let i = 0; i < 30; i++) actions.push(g.frame(start + i * 16, start + (i - 1) * 16));
+    }
+    expect(actions.every((a) => a.type === 'none')).toBe(true);
+  });
+
   it('uses the phone threshold (30 fps) and the desktop threshold (50 fps)', () => {
     expect(run(new QualityGovernor({ level: 'medium', minFps: 30 }), 0, 10_000, 28)).toEqual([]);
     expect(run(new QualityGovernor({ level: 'high', minFps: 50 }), 0, 10_000, 28)).not.toEqual([]);

@@ -24,7 +24,8 @@ export interface Stage {
   setPixelRatio(ratio: number): void;
   /** World position -> pixels inside the canvas. */
   toScreen(position: THREE.Vector3): { x: number; y: number };
-  onRender(listener: () => void): void;
+  /** After each frame, with the time that frame was asked for (performance.now()). */
+  onRender(listener: (requestedAt: number) => void): void;
   /** Reads `--scene-bg` again (after a theme change). */
   refreshBackground(): void;
   dispose(): void;
@@ -70,7 +71,8 @@ export function createStage(
 
   let frameCount = 0;
   let pending = false;
-  const listeners: (() => void)[] = [];
+  const listeners: ((requestedAt: number) => void)[] = [];
+  let requestedAt = 0;
 
   const placeCamera = () => {
     camera.position.copy(controls.target).addScaledVector(ISO, DISTANCE);
@@ -82,11 +84,12 @@ export function createStage(
     if (document.hidden) return; // FR-025: nothing drawn in the background
     renderer.render(scene, camera);
     frameCount++;
-    for (const l of listeners) l();
+    for (const l of listeners) l(requestedAt);
   };
   const requestRender = () => {
     if (pending) return;
     pending = true;
+    requestedAt = performance.now();
     requestAnimationFrame(render);
   };
 

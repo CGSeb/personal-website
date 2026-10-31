@@ -1,15 +1,15 @@
 id: exia-cesi
 title:
-  fr: Ingénieur en ingénierie logicielle
+  fr: Ingénieur conception logicielle
   en: Engineering degree in software engineering
 institution: exia.CESI
-location: { fr: Saint-Nazaire, France, en: "Saint-Nazaire, France" }
+location: { fr: "Saint-Nazaire, France", en: "Saint-Nazaire, France" }
 period: { start: 2016-09, end: 2019-07 }
 obtained: true
 level: { fr: Bac+5, en: Master's level }
 skills:
   - { fr: Programmation C#, en: C# programming }
-  - { fr: Gestion de projet (agile, estimation budgétaire), en: Project management (agile, budget estimation) }
+  - { fr: "Gestion de projet (agile, estimation budgétaire)", en: "Project management (agile, budget estimation)" }
   - { fr: Intégration et déploiement continus, en: Continuous integration and delivery }
   - { fr: Bases en DevOps, en: DevOps fundamentals }
   - { fr: Virtualisation (Hyper-V), en: Virtualisation (Hyper-V) }

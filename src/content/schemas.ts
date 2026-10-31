@@ -12,23 +12,36 @@ export const Id = z
   .max(60)
   .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'identifiant kebab-case attendu (a-z, 0-9, tirets)');
 
-export const LocalizedText = z.object({ fr: nonBlank, en: nonBlank }, 'texte FR/EN attendu');
+// FR / EN texts accept no other key: in a YAML one-line object, an unquoted comma cuts the
+// text and turns the rest into a key (`{ fr: Saint-Nazaire, France }`).
+const localized = <T extends z.ZodType>(fr: T, en: T, message?: string) =>
+  z.strictObject(
+    { fr, en },
+    {
+      error: (issue) =>
+        issue.code === 'unrecognized_keys'
+          ? `clé inattendue « ${issue.keys.join(', ')} » : un texte qui contient une virgule doit être entre guillemets`
+          : message,
+    },
+  );
+
+export const LocalizedText = localized(nonBlank, nonBlank, 'texte FR/EN attendu');
 
 const localizedTextMax = (max: number) =>
-  z.object({
-    fr: nonBlank.pipe(z.string().max(max, `${max} caractères au plus`)),
-    en: nonBlank.pipe(z.string().max(max, `${max} caractères au plus`)),
-  });
+  localized(
+    nonBlank.pipe(z.string().max(max, `${max} caractères au plus`)),
+    nonBlank.pipe(z.string().max(max, `${max} caractères au plus`)),
+  );
 
 const localizedTextRange = (min: number, max: number) =>
-  z.object({
-    fr: nonBlank.pipe(
+  localized(
+    nonBlank.pipe(
       z.string().min(min, `${min} caractères au moins`).max(max, `${max} caractères au plus`),
     ),
-    en: nonBlank.pipe(
+    nonBlank.pipe(
       z.string().min(min, `${min} caractères au moins`).max(max, `${max} caractères au plus`),
     ),
-  });
+  );
 
 export const LocalizedSlug = z.object({ fr: Id.optional(), en: Id.optional() });
 

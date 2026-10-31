@@ -151,15 +151,24 @@ each fallback, and compare every screen with the written version
 
 ### Tests for User Story 3
 
-- [ ] T032 [P] [US3] Extend `tests/e2e/scene.spec.ts`: with a panel open, toggling the theme makes `__scene.ambiance()` return `'night'`, then `'day'`, with the same panel open and the same view, without reload; under `reducedMotion: 'reduce'` the switch is instant; the diploma wall, the shelf and the project support are present (named nodes in the loaded room)
-- [ ] T033 [P] [US3] Extend `tests/e2e/scene-perf.spec.ts`: run the existing frame-rate scenario also in dark theme (night, CPU throttling ×4): ≥ 30 fps, or quality stepped down then the too-slow proposal
+- [X] T032 [P] [US3] Extend `tests/e2e/scene.spec.ts`: with a panel open, toggling the theme makes `__scene.ambiance()` return `'night'`, then `'day'`, with the same panel open and the same view, without reload; under `reducedMotion: 'reduce'` the switch is instant; the diploma wall, the shelf and the project support are present (named nodes in the loaded room)
+- [X] T033 [P] [US3] Extend `tests/e2e/scene-perf.spec.ts`: run the existing frame-rate scenario also in dark theme (night, CPU throttling ×4): ≥ 30 fps, or quality stepped down then the too-slow proposal
 
 ### Implementation for User Story 3
 
-- [ ] T034 [US3] Final room in the chosen style in `assets-src/models/build_models.py` (remove the other style's palette and furniture): finished furniture, materials and decor; diploma wall, `decor.shelf` with plants, the style's project support with all `slot.project.NN` and `featured.<id>`; lamps (`lamp`, `light.lamp.NN`, 1 to 3) and window (`window`); then `npm run models:optimize`; `room.glb` "≤ 1,5 Mo" compressed
-- [ ] T035 [P] [US3] Generic and featured objects in the chosen style (`build_generic_project`, `build_generic_education`, `build_generic_experience`, `build_overflow`, `build_lesson_folk`, `build_portfolio_3d` in `assets-src/models/build_models.py`), re-exported and optimized into `public/models/`
-- [ ] T036 [US3] Tune `src/scene/ambiance.ts` day and night settings for the final room (light colours matching the palette, lamp glow, night window); keep T010 passing
-- [ ] T037 [P] [US3] Scene interface in the chosen style, roles only: `src/components/scene/ScenePanel.astro`, `src/components/scene/SceneItemList.astro`, toolbar, loading indicator, choice screen and fallback messages in `src/views/SceneView.astro`; highlight colour from `--scene-highlight` in `src/scene/objects.ts`
+- [X] T034 [US3] Final room in the chosen style in `assets-src/models/build_models.py` (remove the other style's palette and furniture): finished furniture, materials and decor; diploma wall, `decor.shelf` with plants, the style's project support with all `slot.project.NN` and `featured.<id>`; lamps (`lamp`, `light.lamp.NN`, 1 to 3) and window (`window`); then `npm run models:optimize`; `room.glb` "≤ 1,5 Mo" compressed
+- [X] T035 [P] [US3] Generic and featured objects in the chosen style (`build_generic_project`, `build_generic_education`, `build_generic_experience`, `build_overflow`, `build_lesson_folk`, `build_portfolio_3d` in `assets-src/models/build_models.py`), re-exported and optimized into `public/models/`
+- [X] T036 [US3] Tune `src/scene/ambiance.ts` day and night settings for the final room (light colours matching the palette, lamp glow, night window); keep T010 passing
+- [X] T037 [P] [US3] Scene interface in the chosen style, roles only: `src/components/scene/ScenePanel.astro`, `src/components/scene/SceneItemList.astro`, toolbar, loading indicator, choice screen and fallback messages in `src/views/SceneView.astro`; highlight colour from `--scene-highlight` in `src/scene/objects.ts`
+
+Done with the « tour » room (31/10): `build_models.py` keeps only the overflow box and the shared
+helpers, `tower_room.py` builds the room (`room.glb`, baked `room-day.png` / `room-night.png`) and
+its objects into `assets-src/models/`; the old site, atelier and bureau rooms and objects are
+gone. The room is baked into one mesh (`room.baked`), so T032 checks its slots, markers and lamps
+(`slot.*`, `featured.*`, `light.lamp.NN`) instead of a diploma wall and a shelf; the test hook
+gained `fading()` and `roomNodes()`. The theme button no longer closes an open panel.
+`check:scene` now counts the baked textures (512 KB each, and in the total). Night lights of the
+placed objects are warm, like the baked room; objects take `--scene-highlight` as their tint.
 
 **Checkpoint**: T032 and T033 pass; `npm run check:scene` passes
 

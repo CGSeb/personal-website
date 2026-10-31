@@ -39,6 +39,10 @@ export interface SceneHandle {
   /** Item whose object is highlighted (hover or list focus). */
   highlighted(): string | null;
   ambiance(): Ambiance;
+  /** True while the day / night fade runs. */
+  fading(): boolean;
+  /** Names of the room's named nodes (slots, markers, baked mesh). */
+  roomNodes(): string[];
 }
 
 export interface SceneOptions {
@@ -116,7 +120,7 @@ export async function createScene(
       shown = blend(from, to, t);
       lighting.apply(shown);
       stage.requestRender();
-      if (t < 1) fade = requestAnimationFrame(step);
+      fade = t < 1 ? requestAnimationFrame(step) : 0;
     };
     if (duration > 0) fade = requestAnimationFrame(step);
     else step(start);
@@ -243,8 +247,8 @@ export async function createScene(
   stage.requestRender();
 
   panels.openFromHash(screenPosition);
-  stage.onRender(() => {
-    const action = governor.frame(performance.now());
+  stage.onRender((requestedAt) => {
+    const action = governor.frame(performance.now(), requestedAt);
     if (action.type === 'down') {
       stage.setPixelRatio(QUALITY[action.level].pixelRatio);
       shown = settingsFor(ambiance, action.level);
@@ -265,5 +269,15 @@ export async function createScene(
     quality: () => governor.level,
     highlighted: () => hovered,
     ambiance: () => ambiance,
+    fading: () => fade !== 0,
+    roomNodes: () => {
+      const names: string[] = [];
+      // three.js strips the dots from glTF names; the original stays in userData.
+      room.group.traverse((object) => {
+        const name = (object.userData.name as string | undefined) ?? object.name;
+        if (name) names.push(name);
+      });
+      return names;
+    },
   };
 }

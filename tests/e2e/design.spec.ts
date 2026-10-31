@@ -159,3 +159,23 @@ test('links to other sites open in a new tab, with a note for screen readers', a
   }
   expect(checked).toBeGreaterThan(0);
 });
+
+test('the header offers the 3D version as a raised button, apart from the links', async ({
+  page,
+}) => {
+  for (const [path, label, href] of [
+    ['/fr/projets/', 'Explorer en 3D', '/fr/explorer/'],
+    ['/en/career/', 'Explore in 3D', '/en/explore/'],
+  ] as const) {
+    await page.goto(path);
+    const button = page.getByRole('navigation').getByRole('link', { name: label });
+    await expect(button).toHaveAttribute('href', href);
+    await expect(button).toHaveClass(/nav-3d/);
+    const look = await button.evaluate((el) => {
+      const s = getComputedStyle(el);
+      return { bg: s.backgroundColor, shadow: s.boxShadow };
+    });
+    expect(look.bg).not.toBe('rgba(0, 0, 0, 0)');
+    expect(look.shadow).not.toBe('none');
+  }
+});
