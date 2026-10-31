@@ -1,10 +1,13 @@
 // Builds the 3D scene once the page content is shown: room, placed objects, picking, panels
-// anchoring, recenter, view restore and fragment (US1, US2). Imported dynamically by boot.ts.
+// anchoring, recenter, view restore and fragment (US1, US2), day / night with the theme
+// (spec 003). Imported dynamically by boot.ts.
 import * as THREE from 'three';
+import { ambianceFor, blend, settingsFor, type Ambiance, type AmbianceSettings } from './ambiance';
 import type { PageData } from './labels';
 import { layout } from './layout';
 import { placeObjects, type PlacedObject } from './objects';
 import type { Panels } from './panels';
+import { createLighting } from './lighting';
 import { attachPicking } from './picking';
 import { createStage, HOME_ZOOM, type CameraView } from './renderer';
 import { QUALITY, QualityGovernor, type QualityLevel } from './quality';
@@ -34,12 +37,28 @@ export interface SceneHandle {
   quality(): QualityLevel;
   /** Item whose object is highlighted (hover or list focus). */
   highlighted(): string | null;
+  ambiance(): Ambiance;
 }
 
 export interface SceneOptions {
   /** Called once when the scene stays too slow at the lowest quality. */
   onSlow(): void;
 }
+
+/** Effective theme of the page: the visitor's choice (ThemeScript.astro), else the system. */
+const pageTheme = (): 'light' | 'dark' => {
+  const chosen = document.documentElement.dataset.theme;
+  if (chosen === 'light' || chosen === 'dark') return chosen;
+  return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+};
+
+/** `--duration-theme` in ms (`0s` under reduced motion). */
+const themeDuration = (): number => {
+  const raw = getComputedStyle(document.documentElement).getPropertyValue('--duration-theme');
+  const value = parseFloat(raw);
+  if (!Number.isFinite(value)) return 0;
+  return raw.trim().endsWith('ms') ? value : value * 1000;
+};
 
 const QUALITY_KEY = 'scene.quality';
 const readQuality = (): QualityLevel | null => {
@@ -68,7 +87,7 @@ export async function createScene(
   const initialQuality: QualityLevel = readQuality() ?? (coarse ? 'medium' : 'high');
   const governor = new QualityGovernor({ level: initialQuality, minFps: coarse ? 30 : 50 });
 
-  const room = await loadRoom(data.models);
+  const room = await loadRoom(data.models, data.roomUrl);
   const stage = createStage(container, {
     home: room.home,
     bounds: room.bounds,
@@ -76,6 +95,36 @@ export async function createScene(
     pixelRatio: QUALITY[initialQuality].pixelRatio,
   });
   stage.scene.add(room.group);
+
+  // Day / night (FR-016, FR-022): follows the theme, fades unless motion is reduced; view,
+  // panel and quality are untouched.
+  const lighting = createLighting(stage.scene, room);
+  let ambiance: Ambiance = ambianceFor(pageTheme());
+  let shown: AmbianceSettings = settingsFor(ambiance, initialQuality);
+  lighting.apply(shown);
+  let fade = 0;
+  const switchTo = (next: Ambiance, level: QualityLevel) => {
+    ambiance = next;
+    cancelAnimationFrame(fade);
+    const from = shown;
+    const to = settingsFor(next, level);
+    const duration = reducedMotion ? 0 : themeDuration();
+    const start = performance.now();
+    const step = (now: number) => {
+      const t = duration > 0 ? Math.min(1, (now - start) / duration) : 1;
+      shown = blend(from, to, t);
+      lighting.apply(shown);
+      stage.requestRender();
+      if (t < 1) fade = requestAnimationFrame(step);
+    };
+    if (duration > 0) fade = requestAnimationFrame(step);
+    else step(start);
+  };
+  document.addEventListener('themechange', (event) => {
+    stage.refreshBackground();
+    const theme = (event as CustomEvent<{ theme: 'light' | 'dark' }>).detail.theme;
+    switchTo(ambianceFor(theme), governor.level);
+  });
 
   const placements = layout(data.items, room.slots, (id) =>
     data.models.includes(`featured/${id}.glb`),
@@ -187,6 +236,8 @@ export async function createScene(
     const action = governor.frame(performance.now());
     if (action.type === 'down') {
       stage.setPixelRatio(QUALITY[action.level].pixelRatio);
+      shown = settingsFor(ambiance, action.level);
+      lighting.apply(shown);
       try {
         sessionStorage.setItem(QUALITY_KEY, action.level);
       } catch {
@@ -202,5 +253,6 @@ export async function createScene(
     frames: stage.frames,
     quality: () => governor.level,
     highlighted: () => hovered,
+    ambiance: () => ambiance,
   };
 }

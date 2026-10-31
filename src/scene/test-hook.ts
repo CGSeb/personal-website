@@ -7,6 +7,7 @@ export interface SceneTestHook {
   quality(): 'high' | 'medium' | 'low';
   frames(): number;
   highlighted(): string | null;
+  ambiance(): 'day' | 'night';
 }
 
 declare global {

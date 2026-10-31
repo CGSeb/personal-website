@@ -25,16 +25,20 @@ export interface PageData {
   labels: SceneLabels;
   /** Model files present in public/models/ (e.g. `room.glb`, `featured/<id>.glb`). */
   models: string[];
+  /** Room model of the page (a mockup's); absent: room.glb or the provisional room. */
+  roomUrl?: string;
 }
 
 const json = <T>(id: string): T => JSON.parse(document.getElementById(id)!.textContent!) as T;
 
 export function readPageData(): PageData {
-  const lang = (document.querySelector<HTMLElement>('.scene-page')!.dataset.lang ?? 'fr') as Lang;
+  const page = document.querySelector<HTMLElement>('.scene-page')!;
+  const lang = (page.dataset.lang ?? 'fr') as Lang;
   return {
     lang,
     items: json('scene-manifest'),
     labels: json('scene-labels'),
     models: json('scene-models'),
+    roomUrl: page.dataset.roomUrl || undefined,
   };
 }

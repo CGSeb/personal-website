@@ -8,11 +8,17 @@
 #   MODELS_DIR = r"<repo>/assets-src/models"
 #   exec(open(MODELS_DIR + "/build_models.py", encoding="utf-8").read()); main()
 #
+# Style mockups (spec 003, contracts/mockups.md): only the room, in a candidate style, saved as
+# <out>/room-<style>.blend and .glb:
+#   blender --background --python assets-src/models/build_models.py -- --style atelier --out mockups/models
+#   (from a live session: main(style="atelier", out=r"<repo>/mockups/models"))
+#
 # Coordinates in this file are in the glTF / three.js convention of the contract: Y up, the
 # room's visible walls at -X (west) and -Z (north), objects facing +Z. `P()` converts them to
 # Blender's Z-up axes; the glTF exporter converts back.
 import math
 import os
+import sys
 
 import bmesh
 import bpy
@@ -146,12 +152,13 @@ def reset():
             collection.remove(block)
 
 
-def save(name):
-    path = os.path.join(ROOT, f"{name}.blend")
+def save(name, out=None):
+    out = out or ROOT
+    path = os.path.join(out, f"{name}.blend")
     os.makedirs(os.path.dirname(path), exist_ok=True)
     bpy.ops.wm.save_as_mainfile(filepath=path, copy=True, compress=True)
     bpy.ops.export_scene.gltf(
-        filepath=os.path.join(ROOT, f"{name}.glb"),
+        filepath=os.path.join(out, f"{name}.glb"),
         export_format="GLB",
         export_yup=True,
         export_apply=True,
@@ -179,69 +186,114 @@ ROOM_PALETTE = {
     "rug": "#bf5a40",
     "rug-border": "#efd9b8",
     "fabric": "#3f5b73",
-    "window": "#fbfaf7",
-    "glass": ("#bcd8ea", 0.15),
+    "window-frame": "#fbfaf7",
+    "window": ("#bcd8ea", 0.15),
     "pot": "#cf7b4f",
     "leaf": "#5c8c4a",
     "metal": "#3a3d42",
-    "lampshade": "#f4e3c1",
+    "lamp": "#f4e3c1",
     "book-a": "#2f5d7c",
     "book-b": "#b8483a",
     "book-c": "#e0b34a",
     "book-d": "#4f7a57",
 }
 
+# Candidate styles of spec 003 (research § 6): same room, same slots; their own palette and the
+# piece of furniture that carries the projects. Mockup rooms stay simple.
+ATELIER_PALETTE = {
+    **ROOM_PALETTE,
+    "floor": "#b07a4c",
+    "plank": "#9a6840",
+    "wall": "#eadbc6",
+    "wall-north": "#f1e4d0",
+    "skirting": "#c9b08f",
+    "walnut": "#6b4428",
+    "dark-wood": "#3f2c1f",
+    "oak": "#b8864f",
+    "cork": "#c08a52",
+    "rug": "#a8462e",
+    "rug-border": "#e9cfa4",
+    "fabric": "#7a4a2f",
+    "pot": "#c0663c",
+    "leaf": "#4f7d3c",
+    "metal": "#2f2a26",
+    "lamp": "#f2d6a2",
+    "bench": "#a06a3b",
+    "bench-top": "#c48d55",
+    "tool": "#5b5f63",
+}
 
-def build_room():
-    b = Builder(ROOM_PALETTE)
+BUREAU_PALETTE = {
+    **ROOM_PALETTE,
+    "floor": "#d8d4cd",
+    "plank": "#cbc6be",
+    "wall": "#f4f4f2",
+    "wall-north": "#fafaf8",
+    "skirting": "#e2e2df",
+    "walnut": "#cfc8bd",
+    "dark-wood": "#5b6068",
+    "oak": "#e7e2da",
+    "cork": "#dfe3e6",
+    "rug": "#4d6f8a",
+    "rug-border": "#e3e8ec",
+    "fabric": "#3b4752",
+    "pot": "#f2f2f0",
+    "leaf": "#5f8f63",
+    "metal": "#9aa0a6",
+    "lamp": "#fbfbf8",
+    "desk": "#fcfcfb",
+    "desk-leg": "#2f3439",
+}
 
-    # Floor with plank seams, walls, skirting.
-    b.box("floor", 8, 0.1, 8, 0, -0.05, 0)
-    for i in range(1, 16):
-        b.box("plank", 0.012, 0.004, 8, -4 + i * 0.5, 0.001, 0)
-    b.box("wall", 0.15, 3, 8.15, -4.075, 1.5, -0.075)
-    b.box("wall-north", 8, 3, 0.15, 0, 1.5, -4.075)
-    b.box("skirting", 0.02, 0.1, 8, -3.99, 0.05, 0)
-    b.box("skirting", 8, 0.1, 0.02, 0, 0.05, -3.99)
 
-    # Work table for the projects (6 slots on its top, at y = 0.8).
+def table_support(b):
+    """The walnut work table of the current room."""
     b.box("walnut", 3.2, 0.08, 1.6, 0.6, 0.76, 0.4)
     for x, z in ((-0.9, -0.3), (2.1, -0.3), (-0.9, 1.1), (2.1, 1.1)):
         b.box("dark-wood", 0.08, 0.72, 0.08, x, 0.36, z)
     b.box("dark-wood", 2.9, 0.08, 0.04, 0.6, 0.62, -0.3)
 
-    # Chair behind the table.
-    b.box("fabric", 0.5, 0.08, 0.5, 0.6, 0.46, -0.95)
-    b.box("fabric", 0.5, 0.5, 0.07, 0.6, 0.75, -1.18)
-    for x, z in ((0.38, -0.75), (0.82, -0.75), (0.38, -1.15), (0.82, -1.15)):
-        b.box("metal", 0.035, 0.42, 0.035, x, 0.21, z)
 
-    # Cork board on the north wall (experience cards at z = -3.93).
-    b.box("dark-wood", 2.75, 1.55, 0.03, 1.6, 1.75, -3.985)
-    b.box("cork", 2.6, 1.4, 0.05, 1.6, 1.75, -3.97)
+def workbench_support(b):
+    """Atelier: a thick wooden workbench with a low shelf and a few tools."""
+    b.box("bench-top", 3.4, 0.12, 1.7, 0.6, 0.74, 0.4)
+    for x, z in ((-0.95, -0.35), (2.15, -0.35), (-0.95, 1.15), (2.15, 1.15)):
+        b.box("bench", 0.14, 0.68, 0.14, x, 0.34, z)
+    b.box("bench", 3.1, 0.04, 1.4, 0.6, 0.18, 0.4)
+    b.box("bench", 3.1, 0.1, 0.06, 0.6, 0.6, -0.35)
+    b.box("tool", 0.04, 0.03, 0.32, 2.0, 0.815, 1.0, rot=math.radians(20))
+    b.box("tool", 0.12, 0.06, 0.08, 2.0, 0.83, 0.85, rot=math.radians(20))
+    b.cylinder("dark-wood", 0.12, 0.2, -0.85, 0.28, 0.9, 12)
 
-    # Window and sideboard for the featured projects, north wall, west part.
-    b.box("window", 1.3, 1.1, 0.06, -2.2, 1.95, -3.98)
-    b.box("glass", 1.14, 0.94, 0.02, -2.2, 1.95, -3.95)
-    b.box("window", 0.04, 0.94, 0.04, -2.2, 1.95, -3.94)
-    b.box("window", 1.14, 0.04, 0.04, -2.2, 1.95, -3.94)
-    b.box("window", 1.4, 0.05, 0.16, -2.2, 1.38, -3.92)
-    b.box("oak", 1.8, 0.7, 0.5, -2.2, 0.4, -3.72)
-    b.box("walnut", 1.84, 0.05, 0.54, -2.2, 0.775, -3.72)
-    for x in (-2.65, -1.75):
-        b.box("dark-wood", 0.86, 0.6, 0.01, x, 0.4, -3.465)
-        b.box("metal", 0.12, 0.02, 0.02, x, 0.55, -3.455)
-    for x in (-3.0, -1.4):
-        b.box("dark-wood", 0.05, 0.05, 0.05, x, 0.025, -3.55)
 
-    # Plant in the north-west corner.
-    b.cylinder("pot", 0.2, 0.42, -3.62, 0.21, -3.62, segments=12, r2=0.16)
-    for i, (dx, dz, h) in enumerate(
-        ((0, 0, 0.9), (0.12, 0.05, 0.7), (-0.1, 0.1, 0.75), (0.05, -0.12, 0.8))
-    ):
-        b.cylinder("leaf", 0.13 - i * 0.015, h, -3.62 + dx, 0.42 + h / 2, -3.62 + dz, 6, r2=0.0)
+def desk_support(b):
+    """Bureau moderne: a white thin-top desk on slim dark legs."""
+    b.box("desk", 3.2, 0.03, 1.5, 0.6, 0.785, 0.4)
+    for x in (-0.85, 2.05):
+        b.box("desk-leg", 0.04, 0.77, 0.04, x, 0.385, -0.2)
+        b.box("desk-leg", 0.04, 0.77, 0.04, x, 0.385, 1.0)
+        b.box("desk-leg", 0.04, 0.04, 1.24, x, 0.06, 0.4)
+    b.box("desk-leg", 2.9, 0.03, 0.03, 0.6, 0.7, -0.2)
 
-    # Bookshelf on the west wall, south of the diplomas.
+
+STYLES = {
+    "site": (ROOM_PALETTE, table_support),
+    "atelier": (ATELIER_PALETTE, workbench_support),
+    "bureau": (BUREAU_PALETTE, desk_support),
+}
+
+
+def plant(b, x, y, z, size=1.0):
+    """Small potted plant standing at (x, y, z)."""
+    b.cylinder("pot", 0.09 * size, 0.16 * size, x, y + 0.08 * size, z, segments=10, r2=0.07 * size)
+    for i, (dx, dz, h) in enumerate(((0, 0, 0.32), (0.05, 0.03, 0.26), (-0.04, 0.04, 0.28))):
+        r = (0.06 - i * 0.008) * size
+        b.cylinder("leaf", r, h * size, x + dx * size, y + (0.16 + h / 2) * size, z + dz * size, 6, r2=0.0)
+
+
+def build_shelf(palette):
+    """Bookshelf on the west wall, south of the diplomas, with plants on top (decor.shelf)."""
+    b = Builder(palette)
     # Open at the front (+X): back, sides, top, shelves.
     b.box("oak", 0.02, 1.9, 1.4, -3.98, 0.95, 1.6)
     for z in (0.91, 2.29):
@@ -259,6 +311,57 @@ def build_room():
             z += w + 0.012
             if z > 2.15:
                 break
+    plant(b, -3.83, 1.9, 1.2)
+    plant(b, -3.83, 1.9, 2.05, 0.8)
+    b.build("decor.shelf")
+
+
+def build_room(style="site"):
+    palette, support = STYLES[style]
+    b = Builder(palette)
+
+    # Floor with plank seams, walls, skirting.
+    b.box("floor", 8, 0.1, 8, 0, -0.05, 0)
+    for i in range(1, 16):
+        b.box("plank", 0.012, 0.004, 8, -4 + i * 0.5, 0.001, 0)
+    b.box("wall", 0.15, 3, 8.15, -4.075, 1.5, -0.075)
+    b.box("wall-north", 8, 3, 0.15, 0, 1.5, -4.075)
+    b.box("skirting", 0.02, 0.1, 8, -3.99, 0.05, 0)
+    b.box("skirting", 8, 0.1, 0.02, 0, 0.05, -3.99)
+
+    # Support of the projects, per style (6 slots on its top, at y = 0.8).
+    support(b)
+
+    # Chair behind the table.
+    b.box("fabric", 0.5, 0.08, 0.5, 0.6, 0.46, -0.95)
+    b.box("fabric", 0.5, 0.5, 0.07, 0.6, 0.75, -1.18)
+    for x, z in ((0.38, -0.75), (0.82, -0.75), (0.38, -1.15), (0.82, -1.15)):
+        b.box("metal", 0.035, 0.42, 0.035, x, 0.21, z)
+
+    # Cork board on the north wall (experience cards at z = -3.93).
+    b.box("dark-wood", 2.75, 1.55, 0.03, 1.6, 1.75, -3.985)
+    b.box("cork", 2.6, 1.4, 0.05, 1.6, 1.75, -3.97)
+
+    # Window and sideboard for the featured projects, north wall, west part.
+    b.box("window-frame", 1.3, 1.1, 0.06, -2.2, 1.95, -3.98)
+    b.box("window", 1.14, 0.94, 0.02, -2.2, 1.95, -3.95)
+    b.box("window-frame", 0.04, 0.94, 0.04, -2.2, 1.95, -3.94)
+    b.box("window-frame", 1.14, 0.04, 0.04, -2.2, 1.95, -3.94)
+    b.box("window-frame", 1.4, 0.05, 0.16, -2.2, 1.38, -3.92)
+    b.box("oak", 1.8, 0.7, 0.5, -2.2, 0.4, -3.72)
+    b.box("walnut", 1.84, 0.05, 0.54, -2.2, 0.775, -3.72)
+    for x in (-2.65, -1.75):
+        b.box("dark-wood", 0.86, 0.6, 0.01, x, 0.4, -3.465)
+        b.box("metal", 0.12, 0.02, 0.02, x, 0.55, -3.455)
+    for x in (-3.0, -1.4):
+        b.box("dark-wood", 0.05, 0.05, 0.05, x, 0.025, -3.55)
+
+    # Plant in the north-west corner.
+    b.cylinder("pot", 0.2, 0.42, -3.62, 0.21, -3.62, segments=12, r2=0.16)
+    for i, (dx, dz, h) in enumerate(
+        ((0, 0, 0.9), (0.12, 0.05, 0.7), (-0.1, 0.1, 0.75), (0.05, -0.12, 0.8))
+    ):
+        b.cylinder("leaf", 0.13 - i * 0.015, h, -3.62 + dx, 0.42 + h / 2, -3.62 + dz, 6, r2=0.0)
 
     # Rug, armchair and floor lamp in the reading corner.
     b.box("rug-border", 2.3, 0.012, 1.7, -2.1, 0.006, 2.3)
@@ -274,9 +377,10 @@ def build_room():
         b.box("fabric", 0.14, 0.24, 0.75, cx + sx * side * 0.37, 0.52, cz + sz * side * 0.37, rot=r)
     b.cylinder("metal", 0.16, 0.03, -3.5, 0.015, 3.4)
     b.cylinder("metal", 0.015, 1.5, -3.5, 0.78, 3.4, 8)
-    b.cylinder("lampshade", 0.22, 0.3, -3.5, 1.6, 3.4, 16, r2=0.14)
+    b.cylinder("lamp", 0.22, 0.3, -3.5, 1.6, 3.4, 16, r2=0.14)
 
     b.build("room")
+    build_shelf(palette)
 
     # Slots and markers (same names and places as the provisional room in src/scene/room.ts).
     pad = lambda n: f"{n:02d}"
@@ -294,6 +398,8 @@ def build_room():
         empty(f"slot.experience.{pad(i + 1)}", 0.95 + (i % 2) * 1.3, 2.1 if i < 2 else 1.45, -3.93)
     empty("featured.lesson-folk", -2.7, 0.8, -3.72)
     empty("featured.portfolio-3d", -1.7, 0.8, -3.72)
+    # Night point light inside the floor lamp's shade (contracts/scene-ambiance.md).
+    empty("light.lamp.01", -3.5, 1.55, 3.4)
     empty("camera.home", 0, 0.9, -0.4)
     empty("bounds", 0, 1.5, 0, scale=(4, 1.5, 4))
 
@@ -408,12 +514,31 @@ MODELS = {
 }
 
 
-def main(names=None):
+def main(names=None, style=None, out=None):
+    if style:
+        reset()
+        build_room(style)
+        save(f"room-{style}", out)
+        return
     for name in names or MODELS:
         reset()
         MODELS[name]()
-        save(name)
+        save(name, out)
+
+
+def cli_args():
+    """`--style <name>` and `--out <dir>`, after Blender's own `--`."""
+    args = sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else []
+    options = {}
+    for key in ("style", "out"):
+        if f"--{key}" in args:
+            options[key] = args[args.index(f"--{key}") + 1]
+    if options.get("style") not in (None, *STYLES):
+        raise SystemExit(f"unknown style: {options['style']} (one of {', '.join(STYLES)})")
+    if "out" in options:
+        options["out"] = os.path.abspath(options["out"])
+    return options
 
 
 if __name__ == "__main__":
-    main()
+    main(**cli_args())
