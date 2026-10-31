@@ -1,0 +1,110 @@
+/* Style « atelier » (spec 003, mockup): warm workshop, wood, sand and cream, terracotta accent;
+   at night, warm browns under the lamp. Scoped by `data-style` (set by BaseLayout for the
+   mockups), so it applies over src/styles/tokens.css whatever the order of the stylesheets. */
+@import '@fontsource-variable/figtree/wght.css';
+
+@font-face {
+  font-family: 'Figtree Fallback';
+  src: local('Arial');
+  size-adjust: 98%;
+  ascent-override: 96%;
+  descent-override: 25%;
+  line-gap-override: 0%;
+}
+
+:root[data-style='atelier'] {
+  --palette-cream-50: #f7f1e8;
+  --palette-cream-100: #fffaf2;
+  --palette-sand-200: #f0e6d6;
+  --palette-sand-300: #e3d5c0;
+  --palette-oak-500: #8a735b;
+  --palette-oak-700: #6b5a4a;
+  --palette-walnut-900: #2b2118;
+  --palette-terracotta-500: #b4532a;
+  --palette-terracotta-600: #9a4320;
+  --palette-terracotta-300: #e08a5a;
+  --palette-terracotta-200: #eba57c;
+  --palette-teal-700: #1d6b73;
+  --palette-moss-600: #3f7d3a;
+  --palette-moss-300: #8cc97f;
+  --palette-honey-400: #f2c14e;
+  --palette-ember-950: #1b1510;
+  --palette-ember-900: #241c15;
+  --palette-ember-850: #2e241b;
+  --palette-ember-800: #3a2e23;
+  --palette-ember-500: #8a7560;
+  --palette-linen-100: #f2e8da;
+  --palette-linen-300: #c2ae96;
+  --palette-umber-15: rgb(60 40 20 / 0.14);
+  --palette-umber-20: rgb(60 40 20 / 0.2);
+  --palette-black-50: rgb(0 0 0 / 0.5);
+  --palette-black-55: rgb(0 0 0 / 0.55);
+
+  color-scheme: light;
+
+  --color-bg: var(--palette-cream-50);
+  --color-surface: var(--palette-cream-100);
+  --color-surface-raised: var(--palette-sand-200);
+  --color-text: var(--palette-walnut-900);
+  --color-muted: var(--palette-oak-700);
+  --color-border: var(--palette-sand-300);
+  --color-border-strong: var(--palette-oak-500);
+  --color-accent: var(--palette-terracotta-500);
+  --color-on-accent: var(--palette-cream-100);
+  --color-accent-text: var(--palette-terracotta-600);
+  --color-focus: var(--palette-teal-700);
+  --color-ongoing: var(--palette-moss-600);
+  --scene-bg: var(--palette-sand-200);
+  --scene-highlight: var(--palette-honey-400);
+  --shadow-1: 0 8px 24px var(--palette-umber-15);
+  --shadow-2: 0 14px 36px var(--palette-umber-20);
+
+  --font-sans: 'Figtree Variable', 'Figtree Fallback', system-ui, sans-serif;
+  --font-display: var(--font-sans);
+  --radius: 1rem;
+  --radius-s: 0.625rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-style='atelier']:not([data-theme='light']) {
+    color-scheme: dark;
+
+    --color-bg: var(--palette-ember-950);
+    --color-surface: var(--palette-ember-900);
+    --color-surface-raised: var(--palette-ember-850);
+    --color-text: var(--palette-linen-100);
+    --color-muted: var(--palette-linen-300);
+    --color-border: var(--palette-ember-800);
+    --color-border-strong: var(--palette-ember-500);
+    --color-accent: var(--palette-terracotta-300);
+    --color-on-accent: var(--palette-ember-950);
+    --color-accent-text: var(--palette-terracotta-200);
+    --color-focus: var(--palette-honey-400);
+    --color-ongoing: var(--palette-moss-300);
+    --scene-bg: var(--palette-ember-900);
+    --scene-highlight: var(--palette-honey-400);
+    --shadow-1: 0 8px 24px var(--palette-black-50);
+    --shadow-2: 0 14px 36px var(--palette-black-55);
+  }
+}
+
+:root[data-style='atelier'][data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-bg: var(--palette-ember-950);
+  --color-surface: var(--palette-ember-900);
+  --color-surface-raised: var(--palette-ember-850);
+  --color-text: var(--palette-linen-100);
+  --color-muted: var(--palette-linen-300);
+  --color-border: var(--palette-ember-800);
+  --color-border-strong: var(--palette-ember-500);
+  --color-accent: var(--palette-terracotta-300);
+  --color-on-accent: var(--palette-ember-950);
+  --color-accent-text: var(--palette-terracotta-200);
+  --color-focus: var(--palette-honey-400);
+  --color-ongoing: var(--palette-moss-300);
+  --scene-bg: var(--palette-ember-900);
+  --scene-highlight: var(--palette-honey-400);
+  --shadow-1: 0 8px 24px var(--palette-black-50);
+  --shadow-2: 0 14px 36px var(--palette-black-55);
+}

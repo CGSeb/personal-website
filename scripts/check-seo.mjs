@@ -102,6 +102,20 @@ for (const file of ['robots.txt', 'llms.txt', 'llms-full.txt']) {
   }
 }
 
+// Style mockups of spec 003 are served by `astro dev` only (contracts/mockups.md, FR-004).
+const MOCKUP = /_maquettes|room-atelier|room-bureau/;
+const allFiles = (dir) =>
+  readdirSync(dir).flatMap((name) => {
+    const path = join(dir, name);
+    return statSync(path).isDirectory() ? allFiles(path) : [path];
+  });
+for (const file of allFiles(dist)) {
+  const where = `/${relative(dist, file).split(sep).join('/')}`;
+  if (MOCKUP.test(where)) fail(where, 'fichier de maquette dans la construction');
+  else if (/\.(html|xml|txt|js|css|json)$/.test(file) && MOCKUP.test(readFileSync(file, 'utf8')))
+    fail(where, 'renvoie vers une maquette');
+}
+
 if (errors.length) {
   console.error(`✗ ${errors.length} problème(s) SEO :\n- ${errors.join('\n- ')}`);
   process.exit(1);

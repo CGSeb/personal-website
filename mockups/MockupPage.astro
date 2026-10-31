@@ -1,0 +1,77 @@
+---
+// A style mockup (spec 003, contracts/mockups.md): the real home page or the real scene, with
+// the design values and the room of one candidate style. Served by `astro dev` only.
+//   /_maquettes/<style>/            home, French
+//   /_maquettes/<style>/scene/      the room
+//   /_maquettes/<style>/en/…        same in English
+import './styles/atelier.css';
+import './styles/bureau.css';
+import roomAtelier from './models/room-atelier.glb?url';
+import roomBureau from './models/room-bureau.glb?url';
+import HomeView from '../src/views/HomeView.astro';
+import SceneView from '../src/views/SceneView.astro';
+import type { Lang } from '../src/i18n/routes';
+
+type Style = 'atelier' | 'bureau';
+type View = 'home' | 'scene';
+
+const STYLES: Record<Style, { name: string; room: string }> = {
+  atelier: { name: 'Atelier', room: roomAtelier },
+  bureau: { name: 'Bureau moderne', room: roomBureau },
+};
+
+const pathOf = (style: Style, lang: Lang, view: View) =>
+  [style, lang === 'en' ? 'en' : '', view === 'scene' ? 'scene' : ''].filter(Boolean).join('/');
+
+// getStaticPaths runs on its own: it cannot use the page's other declarations.
+export function getStaticPaths() {
+  return (['atelier', 'bureau'] as const).flatMap((style) =>
+    (['fr', 'en'] as const).flatMap((lang) =>
+      (['home', 'scene'] as const).map((view) => ({
+        params: {
+          path: [style, lang === 'en' ? 'en' : '', view === 'scene' ? 'scene' : '']
+            .filter(Boolean)
+            .join('/'),
+        },
+        props: { style, lang, view },
+      })),
+    ),
+  );
+}
+
+interface Props {
+  style: Style;
+  lang: Lang;
+  view: View;
+}
+
+const { style, lang, view } = Astro.props;
+const other: Style = style === 'atelier' ? 'bureau' : 'atelier';
+const href = (s: Style, l: Lang, v: View) => `/_maquettes/${pathOf(s, l, v)}/`;
+
+// Read by BaseLayout (data-style, noindex, banner); the views stay unchanged.
+Astro.locals.mockup = {
+  style,
+  name: STYLES[style].name,
+  links: [
+    {
+      label: lang === 'fr' ? 'Accueil' : 'Home',
+      href: href(style, lang, 'home'),
+      current: view === 'home',
+    },
+    {
+      label: lang === 'fr' ? 'Pièce' : 'Room',
+      href: href(style, lang, 'scene'),
+      current: view === 'scene',
+    },
+    { label: lang === 'fr' ? 'EN' : 'FR', href: href(style, lang === 'fr' ? 'en' : 'fr', view) },
+    { label: `${STYLES[other].name} →`, href: href(other, lang, view) },
+  ],
+};
+---
+
+{view === 'scene' ? (
+  <SceneView lang={lang} roomUrl={STYLES[style].room} />
+) : (
+  <HomeView lang={lang} />
+)}

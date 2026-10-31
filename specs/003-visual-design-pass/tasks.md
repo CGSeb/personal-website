@@ -94,18 +94,18 @@ and check that nothing of the mockups is in `dist/`
 
 ### Tests for User Story 1
 
-- [ ] T015 [P] [US1] Extend `scripts/check-seo.mjs`: fail if any file path or text in `dist/` contains `_maquettes`, `room-atelier` or `room-bureau` (contracts/mockups.md)
+- [X] T015 [P] [US1] Extend `scripts/check-seo.mjs`: fail if any file path or text in `dist/` contains `_maquettes`, `room-atelier` or `room-bureau` (contracts/mockups.md)
 
 ### Implementation for User Story 1
 
-- [ ] T016 [US1] `mockups/integration.mjs`: Astro integration whose `astro:config:setup` calls `injectRoute({ pattern: '/_maquettes/[style]', entrypoint: './mockups/MockupPage.astro' })` only when `command === 'dev'`; register it in `astro.config.mjs`
-- [ ] T017 [US1] `mockups/MockupPage.astro`: `getStaticPaths` for `atelier` and `bureau`; `<meta name="robots" content="noindex, nofollow">`; banner "Maquette : <style>" with a link to the other mockup; `?lang=fr|en` (default `fr`); renders the real `HomeView` then the real `SceneView` with `roomUrl` = `mockups/models/room-<style>.glb` imported with `?url`; `?vue=scene` shows the room alone, full screen; loads `mockups/styles/<style>.css` after `tokens.css`
-- [ ] T018 [P] [US1] `mockups/styles/atelier.css`: warm palette (wood, sand, cream; ochre or terracotta accent), all roles for light and dark, font Figtree (`@fontsource-variable/figtree`, latin, with an adjusted `local()` fallback); dark = night workshop (warm browns, lit accent); every pair of contracts/design-tokens.md at its threshold
-- [ ] T019 [P] [US1] `mockups/styles/bureau.css`: clean palette (white, light grey, graphite; cool accent such as blue or teal), all roles for light and dark, font Inter (existing); dark = night office (graphite, cool lights); every pair at its threshold
-- [ ] T020 [US1] Extend `tests/unit/design-tokens.test.ts` to also check `mockups/styles/atelier.css` and `mockups/styles/bureau.css` (pairs in both themes) while `mockups/` exists
-- [ ] T021 [P] [US1] Build the atelier room: `blender --background --python assets-src/models/build_models.py -- --style atelier --out mockups/models`, then optimize into `mockups/models/room-atelier.glb` (simplified: shapes, materials, light, diploma wall, shelf with plants, workbench)
-- [ ] T022 [P] [US1] Build the bureau room the same way into `mockups/models/room-bureau.glb` (diploma wall, shelf with plants, white desk)
-- [ ] T023 [US1] Take the captures into `specs/003-visual-design-pass/captures/` named `<style>-<thème>-<largeur>.png`: 2 styles × light / dark × desktop (1440 px) / phone (375 px), each showing the home and the room with a panel open
+- [X] T016 [US1] `mockups/integration.mjs`: Astro integration whose `astro:config:setup` calls `injectRoute({ pattern: '/_maquettes/[...path]', entrypoint: './mockups/MockupPage.astro' })` only when `command === 'dev'`; register it in `astro.config.mjs`
+- [X] T017 [US1] `mockups/MockupPage.astro`: `getStaticPaths` for `atelier` and `bureau` × FR / EN × home / room (`/_maquettes/<style>/`, `…/scene/`, `…/en/`, `…/en/scene/`: path segments, because a static page has no query string); renders the real `HomeView` or the real `SceneView` with `roomUrl` = `mockups/models/room-<style>.glb` imported with `?url`; imports both style sheets, which are scoped by `:root[data-style='<style>']`; sets `Astro.locals.mockup`, which `BaseLayout` reads for `data-style`, `<meta name="robots" content="noindex, nofollow">` and the banner (home, room, other language, other style)
+- [X] T018 [P] [US1] `mockups/styles/atelier.css`: warm palette (wood, sand, cream; ochre or terracotta accent), all roles for light and dark, font Figtree (`@fontsource-variable/figtree`, latin, with an adjusted `local()` fallback); dark = night workshop (warm browns, lit accent); every pair of contracts/design-tokens.md at its threshold
+- [X] T019 [P] [US1] `mockups/styles/bureau.css`: clean palette (white, light grey, graphite; cool accent such as blue or teal), all roles for light and dark, font Inter (existing); dark = night office (graphite, cool lights); every pair at its threshold
+- [X] T020 [US1] Extend `tests/unit/design-tokens.test.ts` to also check `mockups/styles/atelier.css` and `mockups/styles/bureau.css` (pairs in both themes) while `mockups/` exists
+- [X] T021 [P] [US1] Build the atelier room: `blender --background --python assets-src/models/build_models.py -- --style atelier --out mockups/models/raw`, then `node scripts/optimize-models.mjs mockups/models/raw mockups/models` into `mockups/models/room-atelier.glb` (simplified: shapes, materials, light, diploma wall, shelf with plants, workbench); `mockups/models/raw/` is ignored by git
+- [X] T022 [P] [US1] Build the bureau room the same way into `mockups/models/room-bureau.glb` (diploma wall, shelf with plants, white desk)
+- [X] T023 [US1] Take the captures into `specs/003-visual-design-pass/captures/` named `<style>-<thème>-<largeur>-<accueil|piece>.jpg`: 2 styles × light / dark × desktop (1440 px) / phone (375 px) × home / room, so 16 images (JPEG to keep the repository light, 1.7 MB in all); the room with a project panel open on desktop, alone on the phone (the bottom sheet would cover it); comparison table in `captures/README.md`
 - [ ] T024 [US1] **Decision (Sébastien)**: compare the two mockups (desktop and a real phone through `npm run dev -- --host`), then write `specs/003-visual-design-pass/decision.md`: chosen style, date, 3 to 5 reasons, borrowings from the other style (possibly none), links to the captures
 
 **Checkpoint**: `decision.md` exists; `npm run build && npm run check:seo` passes
@@ -193,7 +193,7 @@ language, reopen the site (still light); in the scene, the room switches day / n
 
 ## Phase 8: Polish & Cross-Cutting Concerns
 
-- [ ] T044 Delete `mockups/` and its registration in `astro.config.mjs`; remove the `mockups/styles/*` part of `tests/unit/design-tokens.test.ts`; keep the `check-seo.mjs` rule (FR-005)
+- [ ] T044 Delete `mockups/` and its registration in `astro.config.mjs`; remove the `mockups/styles/*` part of `tests/unit/design-tokens.test.ts`, the mockup part of `src/layouts/BaseLayout.astro` (`data-style`, noindex, banner and its style), `src/env.d.ts` (`App.Locals.mockup`), the `mockup.banner` label in `src/i18n/ui.ts`, the `mockups/models/raw/` line of `.gitignore`, and `@fontsource-variable/figtree` from `devDependencies` unless « atelier » was chosen (then it moves to `dependencies` in T026); keep the `check-seo.mjs` rule (FR-005)
 - [ ] T045 [P] Update `README.md` (design values and roles, theme button, day / night scene, link to spec 003) and `assets-src/models/README.md` (style of the room, lamps and window, contracts/scene-ambiance.md)
 - [ ] T046 [P] Update `specs/002-isometric-3d-scene/contracts/scene-model.md` with a link to `specs/003-visual-design-pass/contracts/scene-ambiance.md` for the `lamp`, `window`, `light.lamp.NN` and `decor.shelf` additions
 

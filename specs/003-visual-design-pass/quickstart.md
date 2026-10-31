@@ -6,8 +6,9 @@ régénérer les pièces ; navigateurs Playwright installés.
 ## A. Exploration des styles (avant la décision)
 
 ```bash
-blender --background --python assets-src/models/build_models.py -- --style atelier --out mockups/models
-blender --background --python assets-src/models/build_models.py -- --style bureau --out mockups/models
+blender --background --python assets-src/models/build_models.py -- --style atelier --out mockups/models/raw
+blender --background --python assets-src/models/build_models.py -- --style bureau --out mockups/models/raw
+node scripts/optimize-models.mjs mockups/models/raw mockups/models
 npm run dev -- --host
 ```
 
@@ -17,7 +18,7 @@ npm run dev -- --host
 | 2 | Thèmes | bouton de thème dans chaque maquette | accueil et pièce passent en sombre, la pièce de nuit | US1-2, FR-016 |
 | 3 | Téléphone | adresse du réseau local sur un téléphone, en portrait | accueil lisible, pièce utilisable au toucher | US1-3 |
 | 4 | Hors production | `npm run build && npm run check:seo` | aucune trace de `_maquettes` ni de `room-atelier` / `room-bureau` dans `dist/` | FR-004, SC-008 |
-| 5 | Décision | remplir `decision.md`, captures dans `captures/` | style retenu, raisons, emprunts, 8 captures (2 styles × 2 thèmes × ordinateur / 375 px) | FR-005, SC-001 |
+| 5 | Décision | remplir `decision.md`, captures dans `captures/` | style retenu, raisons, emprunts ; 16 captures (2 styles × 2 thèmes × ordinateur / 375 px × accueil / pièce) | FR-005, SC-001 |
 
 ## B. Style retenu appliqué
 

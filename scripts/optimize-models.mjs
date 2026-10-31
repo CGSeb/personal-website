@@ -1,5 +1,7 @@
 // Compresses every raw export of assets-src/models/ (.glb) into public/models/ with gltfpack
 // (Meshopt geometry, compressed textures). Usage: npm run models:optimize
+// Other folders: node scripts/optimize-models.mjs <src> <out> (style mockups of spec 003:
+// mockups/models/raw -> mockups/models).
 //   -kn  keeps the named empties (slot.*, featured.*, camera.home, bounds) the scene reads
 //   -km  keeps the named materials (screen, label) the scene fills
 //   -kv  keeps the UVs of untextured surfaces, which receive an image or a badge at runtime
@@ -9,8 +11,8 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, rmSync, statSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 
-const src = 'assets-src/models';
-const out = 'public/models';
+const src = process.argv[2] ?? 'assets-src/models';
+const out = process.argv[3] ?? 'public/models';
 
 const glbFiles = (dir) =>
   readdirSync(dir).flatMap((name) => {
