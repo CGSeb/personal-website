@@ -8,6 +8,8 @@ export interface SceneTestHook {
   frames(): number;
   highlighted(): string | null;
   ambiance(): 'day' | 'night';
+  fading(): boolean;
+  roomNodes(): string[];
 }
 
 declare global {

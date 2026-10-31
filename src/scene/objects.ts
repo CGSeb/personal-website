@@ -13,12 +13,15 @@ export interface PlacedObject {
   setState(state: ObjectState): void;
 }
 
-const HIGHLIGHT = new THREE.Color('#ffb020');
 /** Coded stand-ins are drawn larger than life so they read well from the isometric view. */
 const STAND_IN_SCALE = 1.6;
 /** Hit shapes are larger than the objects, more so for fingers (US3). */
 const HIT_SCALE = matchMedia('(pointer: coarse)').matches ? 1.6 : 1.3;
-const SELECTED = new THREE.Color('#ff7a00');
+/** Highlight tint of the theme (`--scene-highlight`, tokens.css), read at each change. */
+const highlightColor = () =>
+  new THREE.Color().setStyle(
+    getComputedStyle(document.documentElement).getPropertyValue('--scene-highlight').trim(),
+  );
 /** Materials whose light the ambiance drives (contracts/scene-ambiance.md). */
 const GLOWING = new Set(['lamp', 'neon', 'glow']);
 
@@ -246,16 +249,12 @@ export async function placeObjects(
         const m = (o as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined;
         if (m && 'emissive' in m && !GLOWING.has(m.name)) materials.push(m);
       });
+      // Highlighted and selected share the theme's tint; the selected object glows more.
       const setState = (state: ObjectState) => {
+        const tint = state === 'idle' ? new THREE.Color(0) : highlightColor();
         for (const m of materials) {
-          m.emissive.copy(
-            state === 'selected'
-              ? SELECTED
-              : state === 'highlighted'
-                ? HIGHLIGHT
-                : new THREE.Color(0),
-          );
-          m.emissiveIntensity = state === 'idle' ? 0 : 0.35;
+          m.emissive.copy(tint);
+          m.emissiveIntensity = state === 'idle' ? 0 : state === 'selected' ? 0.45 : 0.3;
         }
       };
       return { key: placement.key, root, hit, setState };

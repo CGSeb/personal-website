@@ -49,10 +49,11 @@ const groups: ItemType[] = ['project', 'education', 'experience'];
     gap: var(--space-l);
   }
   h3 {
-    font-size: var(--step-0);
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
     color: var(--color-muted);
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
   }
   ul {
     list-style: none;
@@ -68,13 +69,19 @@ const groups: ItemType[] = ['project', 'education', 'experience'];
     display: inline-block;
     padding: var(--space-2xs) 0;
     font: inherit;
-    color: var(--color-accent-text);
+    color: var(--color-text);
     text-align: left;
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
+    text-decoration: underline 1px var(--color-border-strong);
+    text-underline-offset: 0.25em;
     background: none;
     border: 0;
     cursor: pointer;
+  }
+  a:hover,
+  :global(.scene-list button:hover),
+  :global(.scene-list button[aria-current='true']) {
+    text-decoration-color: var(--color-accent);
+    text-decoration-thickness: 2px;
   }
   :global(.scene-list button[aria-current='true']) {
     font-weight: 700;

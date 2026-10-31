@@ -1,6 +1,7 @@
-// Size budget of the 3D scene (contracts/scene-model.md, SC-002): each model file against its
-// budget, and everything the scene page needs before the first interaction (page, styles,
-// scene JavaScript, models, project images) at 3 MB compressed at most.
+// Size budget of the 3D scene (contracts/scene-model.md, SC-002): each model file and baked
+// texture against its budget, and everything the scene page needs before the first interaction
+// (page, styles, scene JavaScript, models, baked textures, project images) at 3 MB compressed at
+// most.
 // Run after `npm run build`: node scripts/check-scene-budget.mjs [dist]
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
@@ -39,6 +40,20 @@ for (const { path, size } of models) {
   const budget = modelBudget(path);
   rows.push([`models/${path}`, size, budget]);
   if (size > budget) errors.push(`models/${path} : ${format(size)} > ${format(budget)}`);
+}
+
+// Baked lighting of the room (room-day.webp, room-night.webp, spec 003): both are loaded with
+// the room, so the switch to night needs no request.
+const TEXTURE_BUDGET = 512 * KB;
+const textures = existsSync(modelsDir)
+  ? allFiles(modelsDir)
+      .filter((f) => f.endsWith('.webp'))
+      .map((f) => ({ path: relative(modelsDir, f).split(sep).join('/'), size: statSync(f).size }))
+  : [];
+for (const { path, size } of textures) {
+  rows.push([`models/${path}`, size, TEXTURE_BUDGET]);
+  if (size > TEXTURE_BUDGET)
+    errors.push(`models/${path} : ${format(size)} > ${format(TEXTURE_BUDGET)}`);
 }
 
 // 2. What the scene page loads before the first interaction, per language. Text resources
@@ -87,6 +102,7 @@ for (const page of ['fr/explorer', 'en/explore']) {
     styles: styles.reduce((sum, u) => sum + gzipped(asset(u)), 0),
     js,
     models: models.reduce((sum, m) => sum + m.size, 0),
+    textures: textures.reduce((sum, t) => sum + t.size, 0),
     images: images.reduce(
       (sum, u) => sum + (existsSync(asset(u)) ? statSync(asset(u)).size : 0),
       0,

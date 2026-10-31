@@ -282,3 +282,83 @@ test.describe('keyboard, screen readers and languages (US5)', () => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   });
 });
+
+// Spec 003 — US3: the room in the chosen style, by day and by night.
+test.describe('day and night (spec 003, US3)', () => {
+  test('the theme button turns the room to night and back, panel and view kept', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'no-preference' });
+    await openScene(page);
+    expect(await page.evaluate(() => window.__scene!.ambiance())).toBe('day');
+    await page.locator('.scene-list').getByRole('button', { name: 'LessonFolk' }).click();
+    const panel = page.locator('#panel-project-lesson-folk');
+    await expect(panel).toBeVisible();
+    // Let the camera finish bringing the object into view.
+    await expect
+      .poll(async () => {
+        const a = await objectPoint(page, 'project/lesson-folk');
+        await page.waitForTimeout(100);
+        const b = await objectPoint(page, 'project/lesson-folk');
+        return Math.hypot(a.x - b.x, a.y - b.y);
+      })
+      .toBeLessThan(1);
+    const before = await page.evaluate(() => window.__scene!.screenPosition('project/lesson-folk'));
+    // The header's button: on phones the panel is a sheet over the scene's own button.
+    const toggle = page.locator('.site-header .theme-toggle');
+
+    // system (light) -> light -> dark: night.
+    await toggle.click();
+    await toggle.click();
+    await expect.poll(() => page.evaluate(() => window.__scene!.ambiance())).toBe('night');
+    await expect.poll(() => page.evaluate(() => window.__scene!.fading())).toBe(false);
+    // dark -> system (light): day again.
+    await toggle.click();
+    await expect.poll(() => page.evaluate(() => window.__scene!.ambiance())).toBe('day');
+
+    await expect(panel).toBeVisible();
+    await expect(page).toHaveURL(/#projet\/lesson-folk$/);
+    const after = await page.evaluate(() => window.__scene!.screenPosition('project/lesson-folk'));
+    expect(Math.hypot(after!.x - before!.x, after!.y - before!.y)).toBeLessThan(1);
+    expect(await page.evaluate(() => performance.getEntriesByType('navigation').length)).toBe(1);
+  });
+
+  test('with reduced motion the switch is instant', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
+    await page.addInitScript(() => {
+      window.__sceneTest = true;
+    });
+    await page.goto('/fr/explorer/');
+    // Reduced motion asks first (choice screen).
+    await page.getByRole('button', { name: 'Continuer en 3D' }).click();
+    await sceneReady(page);
+    const toggle = page.locator('.site-header .theme-toggle');
+    await toggle.click();
+    await toggle.click();
+    const state = await page.evaluate(() => ({
+      ambiance: window.__scene!.ambiance(),
+      fading: window.__scene!.fading(),
+    }));
+    expect(state).toEqual({ ambiance: 'night', fading: false });
+  });
+
+  test('the room has its slots, lamps and baked mesh', async ({ page }) => {
+    await openScene(page);
+    const nodes = await page.evaluate(() => window.__scene!.roomNodes());
+    for (const name of [
+      'room.baked',
+      'featured.lesson-folk',
+      'featured.portfolio-3d',
+      'featured.voxelshift',
+      'slot.project.01',
+      'slot.education.01',
+      'slot.education.02',
+      'slot.experience.01',
+      'light.lamp.01',
+      'camera.home',
+      'bounds',
+    ]) {
+      expect(nodes, name).toContain(name);
+    }
+  });
+});

@@ -91,6 +91,8 @@ export async function start() {
     frames: () => handle?.frames() ?? 0,
     highlighted: () => handle?.highlighted() ?? null,
     ambiance: () => handle?.ambiance() ?? 'day',
+    fading: () => handle?.fading() ?? false,
+    roomNodes: () => handle?.roomNodes() ?? [],
   });
 
   const load = async () => {
