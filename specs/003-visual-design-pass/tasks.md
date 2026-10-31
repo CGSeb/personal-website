@@ -183,11 +183,15 @@ language, reopen the site (still light); in the scene, the room switches day / n
 
 ### Tests for User Story 4
 
-- [ ] T038 [P] [US4] Playwright `tests/e2e/theme.spec.ts`: no stored choice → follows `colorScheme` and its change during the visit; click cycle system → light → dark → system, the last step removes `localStorage.theme`; choice kept across pages, across FR / EN and in a new page of the same context; no flash: with `theme=dark` stored and a light system, the computed background at `DOMContentLoaded` is already the dark `--color-bg`; with `localStorage` throwing (init script), the button still changes the page's theme and no error is logged; accessible name in FR and EN reflects state and next action; keyboard: reachable by Tab, activated by Enter and Space; no cookie set
+- [X] T038 [P] [US4] Playwright `tests/e2e/theme.spec.ts`: no stored choice → follows `colorScheme` and its change during the visit; click cycle system → light → dark → system, the last step removes `localStorage.theme`; choice kept across pages, across FR / EN and in a new page of the same context; no flash: with `theme=dark` stored and a light system, the computed background at `DOMContentLoaded` is already the dark `--color-bg`; with `localStorage` throwing (init script), the button still changes the page's theme and no error is logged; accessible name in FR and EN reflects state and next action; keyboard: reachable by Tab, activated by Enter and Space; no cookie set
 
 ### Implementation for User Story 4
 
-- [ ] T039 [US4] Fix whatever T038 reveals in `src/components/ThemeToggle.astro`, `src/components/ThemeScript.astro` or `src/lib/theme.ts`; check that the script stays under 1 KB and that the page JavaScript stays "≤ 50 Ko" compressed
+- [X] T039 [US4] Fix whatever T038 reveals in `src/components/ThemeToggle.astro`, `src/components/ThemeScript.astro` or `src/lib/theme.ts`; check that the script stays under 1 KB and that the page JavaScript stays "≤ 50 Ko" compressed
+
+Done (31/10): T038 passed on its first run, so T039 had nothing to fix. The inline script is
+185 bytes; a written page loads about 1 KB of compressed JavaScript. Keyboard steps are skipped
+on `mobile-webkit`, where Tab does not reach buttons by default.
 
 **Checkpoint**: T038 passes
 
