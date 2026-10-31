@@ -30,6 +30,8 @@
   --palette-umber-16: rgb(50 32 18 / 0.16);
   --palette-black-50: rgb(0 0 0 / 0.5);
   --palette-black-55: rgb(0 0 0 / 0.55);
+  --palette-white: #ffffff;
+  --palette-black: #000000;
 
   color-scheme: light;
 
@@ -120,6 +122,27 @@
   --scene-highlight: var(--palette-amber-300);
   --shadow-1: 0 4px 16px var(--palette-black-50);
   --shadow-2: 0 10px 28px var(--palette-black-55);
+}
+
+/* Print: dark text on white whatever the theme. `:not(#print)` outweighs the dark rules
+   above. */
+@media print {
+  :root:not(#print) {
+    color-scheme: light;
+
+    --color-bg: var(--palette-white);
+    --color-surface: var(--palette-white);
+    --color-surface-raised: var(--palette-white);
+    --color-text: var(--palette-black);
+    --color-muted: var(--palette-stone-650);
+    --color-border: var(--palette-stone-500);
+    --color-border-strong: var(--palette-stone-500);
+    --color-accent: var(--palette-black);
+    --color-on-accent: var(--palette-white);
+    --color-accent-text: var(--palette-black);
+    --shadow-1: none;
+    --shadow-2: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -198,3 +198,66 @@ video {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* No decorative movement: cards do not lift, buttons do not glow in. */
+@media (prefers-reduced-motion: reduce) {
+  .project-card:hover {
+    transform: none !important;
+  }
+}
+
+/* Forced colours (Windows contrast themes): borders and focus in system colours, glows off. */
+@media (forced-colors: active) {
+  .project-card,
+  .meta-panel,
+  .tags li,
+  .button,
+  .button-secondary {
+    border-color: CanvasText;
+  }
+  :focus-visible,
+  .project-card:focus-within {
+    outline-color: Highlight;
+  }
+  * {
+    box-shadow: none !important;
+  }
+}
+
+/* Print: the content only (colours in tokens.css), with the address of external links. */
+@media print {
+  .site-header,
+  .theme-toggle,
+  .language-switcher,
+  .explore-3d,
+  .skip-link,
+  .pager,
+  .video-facade,
+  .site-footer a {
+    display: none !important;
+  }
+  .site-footer {
+    margin-top: var(--space-l);
+    background: none;
+  }
+  .project-card,
+  .meta-panel,
+  .timeline-entry,
+  figure,
+  img {
+    break-inside: avoid;
+  }
+  .project-card {
+    transform: none;
+  }
+  .timeline-entry::before {
+    box-shadow: none;
+    animation: none !important;
+  }
+  main a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: var(--step--1);
+    color: var(--color-muted);
+    word-break: break-all;
+  }
+}
