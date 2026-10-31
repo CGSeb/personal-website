@@ -109,6 +109,8 @@ const EXEMPT = new Set([
   'src/styles/tokens.css',
   'src/scene/ambiance.ts',
   'src/scene/objects.ts',
+  'src/scene/lighting.ts',
+  'src/scene/timeline.ts',
   'src/scene/room.ts',
   'src/pages/og/[lang].png.ts',
 ]);

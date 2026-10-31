@@ -21,9 +21,11 @@ interface Props {
   roomUrl?: string;
   /** Baked day / night textures of that room (style mockups, spec 003). */
   bakedMaps?: { day: string; night: string };
+  /** Object models served from elsewhere, by file name (style mockups, spec 003). */
+  modelUrls?: Record<string, string>;
 }
 
-const { lang, roomUrl, bakedMaps } = Astro.props;
+const { lang, roomUrl, bakedMaps, modelUrls } = Astro.props;
 const site = await getSite();
 
 // Covers shown on the generic project objects, optimized ahead (buildManifest is sync).
@@ -68,6 +70,7 @@ const jsonLd = graph(
     data-room-url={roomUrl}
     data-baked-day={bakedMaps?.day}
     data-baked-night={bakedMaps?.night}
+    data-model-urls={modelUrls && JSON.stringify(modelUrls)}
   >
     <header class="scene-header">
       <h1>{title}</h1>

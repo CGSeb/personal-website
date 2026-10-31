@@ -90,11 +90,12 @@ export function layout(
   );
   const projects = items.filter((i) => i.type === 'project').sort(byOrder);
 
-  // Rule 1: featured projects with a reserved slot.
+  // Rule 1: projects with a reserved slot (`featured.<id>`): the featured ones, and any other
+  // project the room gives a dedicated object to (spec 003).
   const reserved: Placement[] = [];
   const others: SceneItem[] = [];
   for (const project of projects) {
-    const slot = project.featured ? featuredSlots.get(project.id) : undefined;
+    const slot = featuredSlots.get(project.id);
     if (slot) {
       reserved.push({
         key: project.key,

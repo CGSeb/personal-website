@@ -7,6 +7,24 @@ import type { Room } from './room';
 
 export interface Lighting {
   apply(settings: AmbianceSettings): void;
+  /** Lets a placed object's lamps, LEDs and halos (`lamp`, `neon`, `glow`) follow the ambiance. */
+  adopt(object: THREE.Object3D): void;
+}
+
+/** Warm light falling from a picture lamp: bright at the top, fading downwards and sideways. */
+function glowTexture(): THREE.Texture {
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 128;
+  const ctx = canvas.getContext('2d')!;
+  const gradient = ctx.createRadialGradient(64, 0, 4, 64, 0, 128);
+  gradient.addColorStop(0, 'rgba(255,255,255,0.9)');
+  gradient.addColorStop(0.5, 'rgba(255,255,255,0.3)');
+  gradient.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, 128, 128);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.flipY = false; // glTF texture coordinates: v = 0 at the top
+  return texture;
 }
 
 export function createLighting(scene: THREE.Scene, room: Room): Lighting {
@@ -30,8 +48,44 @@ export function createLighting(scene: THREE.Scene, room: Room): Lighting {
   const neonColor = room.neonMaterials[0]?.color ?? glow;
   for (const light of neonPoints) light.color.copy(neonColor);
 
+  const glows: THREE.MeshBasicMaterial[] = [];
+  let glowMap: THREE.Texture | undefined;
+  let current: AmbianceSettings | undefined;
+
   return {
+    adopt(object) {
+      object.traverse((o) => {
+        const mesh = o as THREE.Mesh;
+        if (!mesh.isMesh) return;
+        const m = mesh.material as THREE.MeshStandardMaterial;
+        if (m.name === 'lamp') {
+          m.emissive.copy(glow);
+          room.lampMaterials.push(m);
+        } else if (m.name === 'neon') {
+          m.emissive.copy(m.color);
+          room.neonMaterials.push(m);
+        } else if (m.name === 'glow') {
+          glowMap ??= glowTexture();
+          const halo = new THREE.MeshBasicMaterial({
+            name: 'glow',
+            map: glowMap,
+            color: glow,
+            transparent: true,
+            opacity: 0,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+          });
+          mesh.material = halo;
+          mesh.raycast = () => {}; // never in the way of a click
+          glows.push(halo);
+        }
+      });
+      if (current) this.apply(current);
+    },
     apply(s) {
+      current = s;
+      // Halos of the picture lamps: off by day, full at night.
+      for (const m of glows) m.opacity = Math.min(1, s.lampEmissive / 2.2) * 0.8;
       hemisphere.color.setStyle(s.hemisphere.sky);
       hemisphere.groundColor.setStyle(s.hemisphere.ground);
       hemisphere.intensity = s.hemisphere.intensity;
