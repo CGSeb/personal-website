@@ -3,7 +3,6 @@ import { readFileSync } from 'node:fs';
 import { satteri } from '@astrojs/markdown-satteri';
 import { defineConfig } from 'astro/config';
 import { parse } from 'yaml';
-import mockups from './mockups/integration.mjs';
 import externalLinks from './src/lib/external-links.mjs';
 
 const contentDir = process.env.CONTENT_DIR ?? 'content';
@@ -34,9 +33,8 @@ function loadRedirects() {
   return redirects;
 }
 
-// `site` is a placeholder until hosting and the domain are chosen.
 export default defineConfig({
-  site: 'https://example.com',
+  site: 'https://sebastienmichon.fr',
   output: 'static',
   trailingSlash: 'always',
   build: {
@@ -45,8 +43,6 @@ export default defineConfig({
   redirects: loadRedirects(),
   // Links to other sites open in a new tab (the components do the same for their own links).
   markdown: { processor: satteri({ hastPlugins: [externalLinks] }) },
-  // Style mockups of spec 003, served by `astro dev` only (removed after the decision).
-  integrations: [mockups()],
   // Build tests point CONTENT_DIR at fixtures; their own cache keeps the content store apart.
   ...(process.env.ASTRO_CACHE_DIR && { cacheDir: process.env.ASTRO_CACHE_DIR }),
 });

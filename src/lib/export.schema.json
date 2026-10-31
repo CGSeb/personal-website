@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.com/data/portfolio.schema.json",
+  "$id": "https://sebastienmichon.fr/data/portfolio.schema.json",
   "title": "Portfolio export",
   "description": "Published content of the portfolio, for the 3D scene and other programs (contracts/portfolio-export.md).",
   "type": "object",

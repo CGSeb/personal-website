@@ -92,7 +92,7 @@ export async function createScene(
   const initialQuality: QualityLevel = readQuality() ?? (coarse ? 'medium' : 'high');
   const governor = new QualityGovernor({ level: initialQuality, minFps: coarse ? 30 : 50 });
 
-  const room = await loadRoom(data.models, data.roomUrl, data.bakedMaps);
+  const room = await loadRoom(data.models);
   const stage = createStage(container, {
     home: room.home,
     bounds: room.bounds,
@@ -131,15 +131,15 @@ export async function createScene(
     switchTo(ambianceFor(theme), governor.level);
   });
 
-  const hasModel = (file: string) => data.models.includes(file) || file in data.modelUrls;
-  const placements = layout(data.items, room.slots, (id) => hasModel(`featured/${id}.glb`));
+  const placements = layout(data.items, room.slots, (id) =>
+    data.models.includes(`featured/${id}.glb`),
+  );
   const objects = await placeObjects(
     placements,
     room.slots,
     data.items,
     stage.requestRender,
     data.models,
-    data.modelUrls,
   );
   const byKey = new Map<string, PlacedObject>();
   for (const object of objects) {

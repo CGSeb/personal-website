@@ -183,11 +183,15 @@ language, reopen the site (still light); in the scene, the room switches day / n
 
 ### Tests for User Story 4
 
-- [ ] T038 [P] [US4] Playwright `tests/e2e/theme.spec.ts`: no stored choice → follows `colorScheme` and its change during the visit; click cycle system → light → dark → system, the last step removes `localStorage.theme`; choice kept across pages, across FR / EN and in a new page of the same context; no flash: with `theme=dark` stored and a light system, the computed background at `DOMContentLoaded` is already the dark `--color-bg`; with `localStorage` throwing (init script), the button still changes the page's theme and no error is logged; accessible name in FR and EN reflects state and next action; keyboard: reachable by Tab, activated by Enter and Space; no cookie set
+- [X] T038 [P] [US4] Playwright `tests/e2e/theme.spec.ts`: no stored choice → follows `colorScheme` and its change during the visit; click cycle system → light → dark → system, the last step removes `localStorage.theme`; choice kept across pages, across FR / EN and in a new page of the same context; no flash: with `theme=dark` stored and a light system, the computed background at `DOMContentLoaded` is already the dark `--color-bg`; with `localStorage` throwing (init script), the button still changes the page's theme and no error is logged; accessible name in FR and EN reflects state and next action; keyboard: reachable by Tab, activated by Enter and Space; no cookie set
 
 ### Implementation for User Story 4
 
-- [ ] T039 [US4] Fix whatever T038 reveals in `src/components/ThemeToggle.astro`, `src/components/ThemeScript.astro` or `src/lib/theme.ts`; check that the script stays under 1 KB and that the page JavaScript stays "≤ 50 Ko" compressed
+- [X] T039 [US4] Fix whatever T038 reveals in `src/components/ThemeToggle.astro`, `src/components/ThemeScript.astro` or `src/lib/theme.ts`; check that the script stays under 1 KB and that the page JavaScript stays "≤ 50 Ko" compressed
+
+Done (31/10): T038 passed on its first run, so T039 had nothing to fix. The inline script is
+185 bytes; a written page loads about 1 KB of compressed JavaScript. Keyboard steps are skipped
+on `mobile-webkit`, where Tab does not reach buttons by default.
 
 **Checkpoint**: T038 passes
 
@@ -199,18 +203,28 @@ language, reopen the site (still light); in the scene, the room switches day / n
 
 **Independent Test**: run the full suite and the quickstarts of specs 001, 002 and 003
 
-- [ ] T040 [US5] Run `npm test`, `npm run build`, `npm run check:seo`, `npm run check:scene`, `npm run test:e2e`, `npm run lhci`; Lighthouse ≥ 90 in every category on every URL of `lighthouserc.json` (target 100), LCP < 2,5 s, CLS < 0,1, JS ≤ 50 Ko; fix any regression in the files concerned
-- [ ] T041 [US5] Extend `tests/e2e/privacy.spec.ts` to run its third-party request and cookie checks in both themes, including a theme toggle and the scene at night
-- [ ] T042 [US5] Run the quickstarts of `specs/001-portfolio-content-written/quickstart.md` and `specs/002-isometric-3d-scene/quickstart.md`, then `specs/003-visual-design-pass/quickstart.md` scenarios 1–19; record the results in the quickstart file
+- [X] T040 [US5] Run `npm test`, `npm run build`, `npm run check:seo`, `npm run check:scene`, `npm run test:e2e`, `npm run lhci`; Lighthouse ≥ 90 in every category on every URL of `lighthouserc.json` (target 100), LCP < 2,5 s, CLS < 0,1, JS ≤ 50 Ko; fix any regression in the files concerned
+- [X] T041 [US5] Extend `tests/e2e/privacy.spec.ts` to run its third-party request and cookie checks in both themes, including a theme toggle and the scene at night
+- [X] T042 [US5] Run the quickstarts of `specs/001-portfolio-content-written/quickstart.md` and `specs/002-isometric-3d-scene/quickstart.md`, then `specs/003-visual-design-pass/quickstart.md` scenarios 1–19; record the results in the quickstart file
 - [ ] T043 [US5] Manual checks (quickstart C, scenarios 20–22): real Android phone in both themes (site and scene day / night), written ↔ scene identity, NVDA on the theme button in both languages
+
+Done (31/10) except T043, which needs a real phone and NVDA: no regression to fix; results in
+quickstart.md. `privacy.spec.ts` uses the header's theme button in the scene, as T032 does,
+since on phones the open panel covers the scene's own button.
 
 ---
 
 ## Phase 8: Polish & Cross-Cutting Concerns
 
-- [ ] T044 Delete `mockups/` and its registration in `astro.config.mjs`; remove the `mockups/styles/*` part of `tests/unit/design-tokens.test.ts`, the mockup part of `src/layouts/BaseLayout.astro` (`data-style`, noindex, banner and its style), `src/env.d.ts` (`App.Locals.mockup`), the `mockup.banner` label in `src/i18n/ui.ts`, the `mockups/models/raw/` line of `.gitignore`, and `@fontsource-variable/figtree` / `@fontsource-variable/space-grotesk` from `devDependencies` unless their style was chosen (then the font moves to `dependencies` in T026); keep the `check-seo.mjs` rule (FR-005)
-- [ ] T045 [P] Update `README.md` (design values and roles, theme button, day / night scene, link to spec 003) and `assets-src/models/README.md` (style of the room, lamps and window, contracts/scene-ambiance.md)
-- [ ] T046 [P] Update `specs/002-isometric-3d-scene/contracts/scene-model.md` with a link to `specs/003-visual-design-pass/contracts/scene-ambiance.md` for the `lamp`, `window`, `light.lamp.NN` and `decor.shelf` additions
+- [X] T044 Delete `mockups/` and its registration in `astro.config.mjs`; remove the `mockups/styles/*` part of `tests/unit/design-tokens.test.ts`, the mockup part of `src/layouts/BaseLayout.astro` (`data-style`, noindex, banner and its style), `src/env.d.ts` (`App.Locals.mockup`), the `mockup.banner` label in `src/i18n/ui.ts`, the `mockups/models/raw/` line of `.gitignore`, and `@fontsource-variable/figtree` / `@fontsource-variable/space-grotesk` from `devDependencies` unless their style was chosen (then the font moves to `dependencies` in T026); keep the `check-seo.mjs` rule (FR-005)
+- [X] T045 [P] Update `README.md` (design values and roles, theme button, day / night scene, link to spec 003) and `assets-src/models/README.md` (style of the room, lamps and window, contracts/scene-ambiance.md)
+- [X] T046 [P] Update `specs/002-isometric-3d-scene/contracts/scene-model.md` with a link to `specs/003-visual-design-pass/contracts/scene-ambiance.md` for the `lamp`, `window`, `light.lamp.NN` and `decor.shelf` additions
+
+Done (31/10): besides the T044 list, the scene options that only served the mockups are gone too
+(`SceneView` `roomUrl`, `bakedMaps`, `modelUrls` and their reading in `labels.ts`, `room.ts`,
+`objects.ts`, `scene3d.ts`), and `scene-ambiance.md` no longer mentions `bakedMaps`. Space
+Grotesk stays (chosen style); Figtree is removed. `src/env.d.ts` held only `App.Locals.mockup`
+and is deleted.
 
 ---
 

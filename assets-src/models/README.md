@@ -13,6 +13,11 @@ de nuit : la géométrie fixe est réunie en un seul maillage, `room.baked`, et 
 deux textures, `room-day.png` et `room-night.png`. Les objets placés (diplômes, fiches
 d'expérience, écrans, objets des projets mis en avant) gardent un éclairage en temps réel.
 
+Lampes, baie, LED et ville éclairée sont précalculés dans la texture de nuit (`AMBIANCES` dans
+`tower_room.py`) ; le code passe d'une texture à l'autre avec le thème. Les emplacements
+`light.lamp.NN` placent les lumières chaudes qui éclairent les objets placés la nuit. Noms et
+règles : [`contracts/scene-ambiance.md`](../../specs/003-visual-design-pass/contracts/scene-ambiance.md).
+
 Les modèles sont générés par le script, à relancer après chaque modification (Blender 5.1 ou
 plus récent, avec le GPU réglé dans les préférences pour Cycles) :
 

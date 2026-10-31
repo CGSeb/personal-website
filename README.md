@@ -8,6 +8,10 @@ Portfolio bilingue (français / anglais) en deux parties :
   en [Three.js](https://threejs.org), construite à partir du même contenu ; chaque objet ouvre
   un panneau, et un bouton « En savoir plus » mène à la version écrite.
 
+Les deux parties partagent le même style, « tour » (spec 003) : un petit bureau en haut d'un
+immeuble, noyer et lin, lueur ambrée des LED. Le site existe en thème clair et sombre ; la pièce
+passe du jour à la nuit avec lui.
+
 Le site est construit avec [Astro](https://astro.build) et TypeScript, sans framework
 d'interface, sans traceur ni cookie. La 3D n'est chargée que sur la page de la scène, et
 chaque problème (pas de WebGL, chargement raté, appareil trop lent, mouvement réduit) ramène
@@ -44,12 +48,36 @@ e-mail avant la mise en ligne.
 | `/llms.txt`, `/llms-full.txt` | pour les agents IA |
 | `/data/portfolio.json` | export public du contenu (ce que montrent les panneaux de la scène) |
 
+## Le style et le thème
+
+Toutes les couleurs, rayons, ombres et durées sont dans
+[`src/styles/tokens.css`](src/styles/tokens.css), en deux étages : une palette
+(`--palette-<teinte>-<niveau>`) et des rôles (`--color-bg`, `--color-surface`, `--color-text`,
+`--color-accent`, `--scene-bg`…). Les composants n'utilisent que les rôles ; le thème sombre
+redéfinit les rôles, pas les composants. La liste des rôles et les contrastes exigés sont dans
+[`contracts/design-tokens.md`](specs/003-visual-design-pass/contracts/design-tokens.md) ;
+`tests/unit/design-tokens.test.ts` vérifie les contrastes et refuse toute couleur littérale
+ailleurs (sauf les lumières de la scène). Polices : Inter pour le texte, Space Grotesk pour les
+titres, servies par le site.
+
+Le bouton de thème (en-tête, et barre d'outils de la scène) passe de « système » à « clair »,
+puis « sombre », puis de nouveau « système ». Le choix est gardé dans `localStorage.theme`
+(aucun cookie) ; un petit script en tête de page l'applique avant le premier rendu, sans flash.
+Sans JavaScript, le réglage du système décide. Contrat :
+[`contracts/theme.md`](specs/003-visual-design-pass/contracts/theme.md).
+
+Dans la scène, le thème clair donne le jour et le sombre la nuit (lampes allumées, ville
+éclairée derrière la baie), avec un fondu, instantané si les animations sont réduites.
+
 ## Les modèles 3D
 
 Le contrat entre Blender et le code est dans
 [`specs/002-isometric-3d-scene/contracts/scene-model.md`](specs/002-isometric-3d-scene/contracts/scene-model.md)
 (échelle, emplacements `slot.*`, `featured.<id>`, `camera.home`, `bounds`, matériaux `screen`
-et `label`, budgets).
+et `label`, budgets), complété pour le jour et la nuit par
+[`specs/003-visual-design-pass/contracts/scene-ambiance.md`](specs/003-visual-design-pass/contracts/scene-ambiance.md)
+(lampes, fenêtre, pièce à lumière précalculée). La pièce et ses objets sont générés par script
+dans Blender : voir [`assets-src/models/README.md`](assets-src/models/README.md).
 
 1. Modéliser dans `assets-src/models/*.blend` (sources, non publiées).
 2. Exporter en glTF binaire dans `assets-src/models/` (`room.glb`, `generic-project.glb`,
@@ -68,7 +96,7 @@ en code, avec les mêmes emplacements.
 | `npx astro check` | les types |
 | `npm test` | schémas, validation du contenu, adresses, JSON-LD, llms.txt, export, et deux constructions réelles sur les fixtures |
 | `npm run check:seo` | après `build` : titres, descriptions, hreflang, Open Graph, JSON-LD, titres de page, textes alternatifs, sitemap |
-| `npm run test:e2e` | parcours visiteur sur ordinateur, iPhone, 320 px et sans JavaScript ; langue ; vie privée ; scène 3D (panneaux, téléphone, replis, clavier, fréquence d'images) |
+| `npm run test:e2e` | parcours visiteur sur ordinateur, iPhone, 320 px et sans JavaScript ; langue ; style des pages dans les deux thèmes ; bouton de thème ; vie privée ; scène 3D (panneaux, téléphone, replis, clavier, jour et nuit, fréquence d'images) |
 | `npm run check:scene` | après `build` : taille de chaque modèle, et ≤ 3 Mo compressés avant la première interaction sur la scène |
 | `npm run lhci` | après `build` : Lighthouse ≥ 90 partout, LCP < 2,5 s, CLS < 0,1, JavaScript ≤ 50 Ko sur la version écrite ; sur la scène, accessibilité, bonnes pratiques et SEO ≥ 90, poids total ≤ 3 Mo |
 | `npm run check:links` | les liens externes du contenu (avertissements seulement) |
@@ -89,8 +117,11 @@ Le projet suit [Spec Kit](https://github.com/github/spec-kit) :
 - constitution : [`.specify/memory/constitution.md`](.specify/memory/constitution.md)
 - spec 001 (version écrite) : [`specs/001-portfolio-content-written/`](specs/001-portfolio-content-written/)
 - spec 002 (scène 3D) : [`specs/002-isometric-3d-scene/`](specs/002-isometric-3d-scene/)
+- spec 003 (style, thème clair / sombre, pièce de jour et de nuit) :
+  [`specs/003-visual-design-pass/`](specs/003-visual-design-pass/)
 
 ## Hébergement
 
-Pas encore choisi. Le site est entièrement statique (`dist/`) et fonctionne sur n'importe quel
-hébergement statique ; `site` dans `astro.config.mjs` reste à régler avec le vrai domaine.
+Domaine : `https://sebastienmichon.fr` (`site` dans `astro.config.mjs` : adresses canoniques,
+hreflang, sitemap, Open Graph, JSON-LD). L'hébergeur n'est pas encore choisi : le site est
+entièrement statique (`dist/`) et fonctionne sur n'importe quel hébergement statique.

@@ -70,8 +70,7 @@ Une pièce peut porter sa lumière dans des textures plutôt que dans des lumiè
 - toute la géométrie fixe est fusionnée en un maillage dont le matériau s'appelle `baked`
   (gltfpack retire les noms des maillages, pas ceux des matériaux) ; ses coordonnées de texture
   couvrent un atlas ;
-- deux textures, `<pièce>-day.webp` et `<pièce>-night.webp`, à côté du `.glb` (ou passées par la
-  page : `SceneView` `bakedMaps`), contiennent la couleur éclairée de jour et de nuit ;
+- deux textures, `<pièce>-day.webp` et `<pièce>-night.webp`, à côté du `.glb`, contiennent la couleur éclairée de jour et de nuit ;
 - le code (`src/scene/baked.ts`) affiche ce maillage sans éclairage et mélange les deux textures
   selon `bakedNight` (0 le jour, 1 la nuit, interpolé pendant le fondu) ; les objets placés
   (projets, diplômes, expériences) restent éclairés en temps réel par les réglages ci-dessus ;

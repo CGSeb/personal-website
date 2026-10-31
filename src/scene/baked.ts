@@ -11,7 +11,7 @@ export interface BakedMaps {
   night: string;
 }
 
-/** Default addresses, next to the model; a page can pass its own (style mockups). */
+/** Addresses of the textures, next to the model. */
 export const bakedTextureUrls = (roomUrl: string): BakedMaps => ({
   day: roomUrl.replace(/\.glb$/, '-day.webp'),
   night: roomUrl.replace(/\.glb$/, '-night.webp'),

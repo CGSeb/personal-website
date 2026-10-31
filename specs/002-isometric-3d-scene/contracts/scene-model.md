@@ -3,6 +3,11 @@
 Ce que les fichiers `.glb` doivent contenir pour que le code place les éléments. C'est le
 contrat entre la modélisation (Blender) et le code.
 
+La spec 003 le complète pour le jour et la nuit :
+[`contracts/scene-ambiance.md`](../../003-visual-design-pass/contracts/scene-ambiance.md)
+(matériaux `lamp`, `window` et `neon`, emplacements `light.lamp.NN` et `light.neon.NN`, groupe
+`decor.shelf`, pièce à lumière précalculée).
+
 ## Fichiers
 
 | Fichier (servi) | Contenu | Budget compressé |

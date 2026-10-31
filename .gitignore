@@ -16,6 +16,5 @@ Thumbs.db
 .idea/
 .test-builds/
 assets-src/**/*.blend1
-mockups/models/raw/
 assets-src/models/*-day.png
 assets-src/models/*-night.png

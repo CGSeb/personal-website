@@ -93,7 +93,6 @@ const fr = {
   'theme.system': 'Thème : système. Passer au thème clair',
   'theme.light': 'Thème : clair. Passer au thème sombre',
   'theme.dark': 'Thème : sombre. Revenir au réglage du système',
-  'mockup.banner': 'Maquette : {style}',
 };
 
 const en = {
@@ -187,7 +186,6 @@ const en = {
   'theme.system': 'Theme: system. Switch to light theme',
   'theme.light': 'Theme: light. Switch to dark theme',
   'theme.dark': 'Theme: dark. Go back to the system setting',
-  'mockup.banner': 'Mockup: {style}',
 } satisfies Record<keyof typeof fr, string>;
 
 export type UiKey = keyof typeof fr;

@@ -139,12 +139,9 @@ async function fetchModel(url: string): Promise<THREE.Object3D | null> {
   }
 }
 
-/** Model files a page serves from elsewhere (a style mockup's own objects), by file name. */
-let modelUrls: Record<string, string> = {};
-
 async function loadFile(file: string, available: Set<string>): Promise<THREE.Object3D | null> {
-  if (!available.has(file) && !modelUrls[file]) return null;
-  const url = modelUrls[file] ?? `/models/${file}`;
+  if (!available.has(file)) return null;
+  const url = `/models/${file}`;
   if (!models.has(url)) models.set(url, fetchModel(url));
   const model = await models.get(url)!;
   return model ? model.clone(true) : null;
@@ -203,9 +200,7 @@ export async function placeObjects(
   items: SceneItem[],
   requestRender: () => void,
   models: string[],
-  urls: Record<string, string> = {},
 ): Promise<PlacedObject[]> {
-  modelUrls = urls;
   const available = new Set(models);
   const bySlot = new Map(slots.map((s) => [s.name, s]));
   return Promise.all(
