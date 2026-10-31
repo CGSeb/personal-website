@@ -25,6 +25,8 @@ export interface Stage {
   /** World position -> pixels inside the canvas. */
   toScreen(position: THREE.Vector3): { x: number; y: number };
   onRender(listener: () => void): void;
+  /** Reads `--scene-bg` again (after a theme change). */
+  refreshBackground(): void;
   dispose(): void;
 }
 
@@ -49,14 +51,13 @@ export function createStage(
   container.append(renderer.domElement);
 
   const scene = new THREE.Scene();
-  // Same colour as the scene frame, light or dark theme.
-  scene.background = new THREE.Color(
-    getComputedStyle(container).getPropertyValue('--color-surface').trim() || '#ffffff',
-  );
-  scene.add(new THREE.HemisphereLight('#ffffff', '#b9a68f', 1.6));
-  const sun = new THREE.DirectionalLight('#fff3e0', 1.8);
-  sun.position.set(5, 9, 6);
-  scene.add(sun);
+  // Lights come from lighting.ts (day / night); the background is the `--scene-bg` role.
+  const background = new THREE.Color();
+  scene.background = background;
+  const refreshBackground = () => {
+    background.setStyle(getComputedStyle(container).getPropertyValue('--scene-bg').trim());
+  };
+  refreshBackground();
 
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 100);
   const controls = new MapControls(camera, renderer.domElement);
@@ -213,6 +214,10 @@ export function createStage(
       };
     },
     onRender: (listener) => listeners.push(listener),
+    refreshBackground: () => {
+      refreshBackground();
+      requestRender();
+    },
     dispose: () => {
       observer.disconnect();
       controls.dispose();

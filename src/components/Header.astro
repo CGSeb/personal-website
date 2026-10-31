@@ -3,6 +3,7 @@ import { SECTIONS, urlFor, type Lang } from '../i18n/routes';
 import { t } from '../i18n/ui';
 import { getSite } from '../content';
 import LanguageSwitcher from './LanguageSwitcher.astro';
+import ThemeToggle from './ThemeToggle.astro';
 
 interface Props {
   lang: Lang;
@@ -43,7 +44,10 @@ const isCurrent = (item: { href: string; exact?: boolean }) =>
         ))}
       </ul>
     </nav>
-    <LanguageSwitcher lang={lang} alternatePath={alternatePath} />
+    <div class="tools">
+      <ThemeToggle lang={lang} />
+      <LanguageSwitcher lang={lang} alternatePath={alternatePath} />
+    </div>
   </div>
 </header>
 
@@ -61,6 +65,11 @@ const isCurrent = (item: { href: string; exact?: boolean }) =>
   }
   nav {
     margin-left: auto;
+  }
+  .tools {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
   }
   .brand {
     font-weight: 700;

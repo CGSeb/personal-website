@@ -1,0 +1,11 @@
+---
+// Applies the visitor's stored theme before the first paint, so there is no flash of the other
+// theme (contracts/theme.md). Must stay first in <head> and under 1 KB.
+---
+
+<script is:inline>
+  try {
+    var theme = localStorage.getItem('theme');
+    if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+  } catch (e) {}
+</script>

@@ -88,6 +88,11 @@ const fr = {
   'notFound.title': 'Page introuvable',
   'notFound.text':
     'Cette adresse n’existe pas ou plus. Repartez de l’accueil ou de la liste des projets.',
+  'theme.system': 'Thème : système. Passer au thème clair',
+  'theme.light': 'Thème : clair. Passer au thème sombre',
+  'theme.dark': 'Thème : sombre. Revenir au réglage du système',
+  'mockup.banner': 'Maquette : {style}',
+  'mockup.other': 'Voir l’autre maquette',
 };
 
 const en = {
@@ -176,6 +181,11 @@ const en = {
   'notFound.title': 'Page not found',
   'notFound.text':
     'This address does not exist, or no longer does. Start again from the home page or the project list.',
+  'theme.system': 'Theme: system. Switch to light theme',
+  'theme.light': 'Theme: light. Switch to dark theme',
+  'theme.dark': 'Theme: dark. Go back to the system setting',
+  'mockup.banner': 'Mockup: {style}',
+  'mockup.other': 'See the other mockup',
 } satisfies Record<keyof typeof fr, string>;
 
 export type UiKey = keyof typeof fr;

@@ -90,6 +90,7 @@ export async function start() {
     quality: (): QualityLevel => handle?.quality() ?? 'high',
     frames: () => handle?.frames() ?? 0,
     highlighted: () => handle?.highlighted() ?? null,
+    ambiance: () => handle?.ambiance() ?? 'day',
   });
 
   const load = async () => {

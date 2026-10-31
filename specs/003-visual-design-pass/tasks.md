@@ -28,6 +28,14 @@ testing of each story.
 - Check the exact APIs in the installed packages before use (Astro 7 `injectRoute` and
   `astro:config:setup` `command`, Three.js 0.187 lights and `emissiveIntensity`, Playwright
   `emulateMedia` / `forcedColors`)
+- Built beyond the plan in Phase 2: `src/scene/lighting.ts` applies the ambiance settings (lights,
+  lamp glow, window, point lights), so `renderer.ts` only keeps the background
+  (`refreshBackground()`). The light theme's focus colour became a darker amber (`#b35900`):
+  the old `#ff9f1c` was under 3:1 on the light background. The literal-colour check covers
+  `src/` with the exemptions listed in contracts/design-tokens.md. The site's room keeps its
+  look (`build_models.py` style `site`); its window glass and lampshade are now the `window` and
+  `lamp` materials, the bookshelf is `decor.shelf` with two plants, and `light.lamp.01` sits in
+  the floor lamp
 
 ---
 
@@ -35,8 +43,8 @@ testing of each story.
 
 **Purpose**: folders and labels
 
-- [ ] T001 Create `mockups/` with `README.md` (exploration only, served by `astro dev` only, deleted after the decision; contracts/mockups.md), and the empty folders `mockups/styles/`, `mockups/models/` and `specs/003-visual-design-pass/captures/`
-- [ ] T002 [P] Add the theme labels FR/EN to `src/i18n/ui.ts`: `theme.system`, `theme.light`, `theme.dark`, each with the current state and the next action ("Thème : système. Passer au thème clair" / "Theme: system. Switch to light theme", and so on through the cycle system → light → dark → system); also the mockup banner "Maquette : {style}" / "Mockup: {style}" and "Voir l'autre maquette" / "See the other mockup"
+- [X] T001 Create `mockups/` with `README.md` (exploration only, served by `astro dev` only, deleted after the decision; contracts/mockups.md), and the empty folders `mockups/styles/`, `mockups/models/` and `specs/003-visual-design-pass/captures/`
+- [X] T002 [P] Add the theme labels FR/EN to `src/i18n/ui.ts`: `theme.system`, `theme.light`, `theme.dark`, each with the current state and the next action ("Thème : système. Passer au thème clair" / "Theme: system. Switch to light theme", and so on through the cycle system → light → dark → system); also the mockup banner "Maquette : {style}" / "Mockup: {style}" and "Voir l'autre maquette" / "See the other mockup"
 
 ---
 
@@ -49,27 +57,27 @@ the mockups and the final style all build on
 
 ### Design values
 
-- [ ] T003 Restructure `src/styles/tokens.css` into a palette (`--palette-<hue>-<level>`) and roles, with the current colours as the values: all roles of contracts/design-tokens.md (`--color-bg`, `--color-surface`, `--color-surface-raised`, `--color-text`, `--color-muted`, `--color-border`, `--color-border-strong`, `--color-accent`, `--color-on-accent`, `--color-accent-text`, `--color-focus`, `--color-ongoing`, `--scene-bg`, `--scene-highlight`), plus `--radius-s`, `--radius-pill`, `--shadow-1`, `--shadow-2`, `--duration-fast`, `--duration-theme`; dark values declared twice, under `@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) }` and under `:root[data-theme="dark"]`; `color-scheme` follows the effective theme; durations set to `0s` under `prefers-reduced-motion: reduce`
-- [ ] T004 [P] Unit test `tests/unit/design-tokens.test.ts`: parse `src/styles/tokens.css`, resolve each role in the light and the dark theme, compute the WCAG 2 ratio of every pair in contracts/design-tokens.md and fail below its threshold ("4,5:1" text, "3:1" large text, control borders, focus, scene highlight); also fail on any literal colour (`#…`, `rgb(`, `hsl(`) in `src/` outside `tokens.css`, except the light and sky colours of `src/scene/ambiance.ts` (contracts/scene-ambiance.md)
-- [ ] T005 Replace every literal colour in `src/components/**`, `src/views/**`, `src/layouts/**`, `src/styles/base.css` and `src/scene/renderer.ts` with roles (29 occurrences found when planning), so that T004 passes with the current look unchanged
+- [X] T003 Restructure `src/styles/tokens.css` into a palette (`--palette-<hue>-<level>`) and roles, with the current colours as the values: all roles of contracts/design-tokens.md (`--color-bg`, `--color-surface`, `--color-surface-raised`, `--color-text`, `--color-muted`, `--color-border`, `--color-border-strong`, `--color-accent`, `--color-on-accent`, `--color-accent-text`, `--color-focus`, `--color-ongoing`, `--scene-bg`, `--scene-highlight`), plus `--radius-s`, `--radius-pill`, `--shadow-1`, `--shadow-2`, `--duration-fast`, `--duration-theme`; dark values declared twice, under `@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) }` and under `:root[data-theme="dark"]`; `color-scheme` follows the effective theme; durations set to `0s` under `prefers-reduced-motion: reduce`
+- [X] T004 [P] Unit test `tests/unit/design-tokens.test.ts`: parse `src/styles/tokens.css`, resolve each role in the light and the dark theme, compute the WCAG 2 ratio of every pair in contracts/design-tokens.md and fail below its threshold ("4,5:1" text, "3:1" large text, control borders, focus, scene highlight); also fail on any literal colour (`#…`, `rgb(`, `hsl(`) in `src/` outside `tokens.css`, except the light and sky colours of `src/scene/ambiance.ts` (contracts/scene-ambiance.md)
+- [X] T005 Replace every literal colour in `src/components/**`, `src/views/**`, `src/layouts/**`, `src/styles/base.css` and `src/scene/renderer.ts` with roles (29 occurrences found when planning), so that T004 passes with the current look unchanged
 
 ### Theme mechanism
 
-- [ ] T006 [P] Unit tests `tests/unit/theme.test.ts` and pure logic `src/lib/theme.ts` per contracts/theme.md: `effectiveTheme(pref, systemDark)`, `nextPreference(pref)` (system → light → dark → system), `parsePreference(raw)` (unknown or `null` → `'system'`)
-- [ ] T007 [P] `src/components/ThemeScript.astro`: `is:inline` script under 1 KB that reads `localStorage.theme` in a `try/catch` and sets `data-theme` on `<html>` only for `light` or `dark`; nothing else
-- [ ] T008 `src/components/ThemeToggle.astro`: `<button type="button" hidden>` revealed by its module; click cycles the preference, writes or removes `localStorage.theme` in a `try/catch`, sets or removes `data-theme`, updates its accessible name from `ui.ts` and its decorative `aria-hidden` icon, then dispatches `themechange` on `document` with `detail.theme` = effective theme; without a stored choice, listens to `matchMedia('(prefers-color-scheme: dark)')` and dispatches `themechange` when the system changes
-- [ ] T009 Put `ThemeScript` first in `<head>` of `src/layouts/BaseLayout.astro` (before the stylesheets) and `ThemeToggle` in `src/components/Header.astro` next to `LanguageSwitcher`; add it to the scene toolbar in `src/views/SceneView.astro` next to the recenter button
+- [X] T006 [P] Unit tests `tests/unit/theme.test.ts` and pure logic `src/lib/theme.ts` per contracts/theme.md: `effectiveTheme(pref, systemDark)`, `nextPreference(pref)` (system → light → dark → system), `parsePreference(raw)` (unknown or `null` → `'system'`)
+- [X] T007 [P] `src/components/ThemeScript.astro`: `is:inline` script under 1 KB that reads `localStorage.theme` in a `try/catch` and sets `data-theme` on `<html>` only for `light` or `dark`; nothing else
+- [X] T008 `src/components/ThemeToggle.astro`: `<button type="button" hidden>` revealed by its module; click cycles the preference, writes or removes `localStorage.theme` in a `try/catch`, sets or removes `data-theme`, updates its accessible name from `ui.ts` and its decorative `aria-hidden` icon, then dispatches `themechange` on `document` with `detail.theme` = effective theme; without a stored choice, listens to `matchMedia('(prefers-color-scheme: dark)')` and dispatches `themechange` when the system changes
+- [X] T009 Put `ThemeScript` first in `<head>` of `src/layouts/BaseLayout.astro` (before the stylesheets) and `ThemeToggle` in `src/components/Header.astro` next to `LanguageSwitcher`; add it to the scene toolbar in `src/views/SceneView.astro` next to the recenter button
 
 ### Day / night scene
 
-- [ ] T010 [P] Unit tests `tests/unit/scene-ambiance.test.ts` and pure module `src/scene/ambiance.ts` per contracts/scene-ambiance.md: `ambianceFor(theme)`, `settingsFor(ambiance, quality)` with `pointLight` "`null` en qualité `low`", `blend(a, b, t)` (t = 0 → a, t = 1 → b, colours interpolated)
-- [ ] T011 `src/scene/renderer.ts` and `src/scene/room.ts`: lights created from `settingsFor()`; background read from `--scene-bg`; materials named `lamp` and `window` found in the room and driven by the settings; one `PointLight` without shadow per `light.lamp.NN` empty when the setting is not `null`; `loadRoom()` takes the room URL from the page (`roomUrl`, default `/models/room.glb`); the provisional room gets a lamp, a window and a `light.lamp.01` empty
-- [ ] T012 `src/scene/scene3d.ts` and `src/scene/test-hook.ts`: on `themechange`, re-read `--scene-bg` and switch ambiance, instant under reduced motion, otherwise a fade with `blend()` over `--duration-theme`, rendering on demand only during the fade; view, open panel, language and quality kept; re-apply the settings when the quality level changes; test hook `__scene.ambiance()` returns `'day'` or `'night'`
-- [ ] T013 `src/views/SceneView.astro`: optional prop `roomUrl` passed to the scene script (data attribute), default `/models/room.glb`
+- [X] T010 [P] Unit tests `tests/unit/scene-ambiance.test.ts` and pure module `src/scene/ambiance.ts` per contracts/scene-ambiance.md: `ambianceFor(theme)`, `settingsFor(ambiance, quality)` with `pointLight` "`null` en qualité `low`", `blend(a, b, t)` (t = 0 → a, t = 1 → b, colours interpolated)
+- [X] T011 `src/scene/renderer.ts` and `src/scene/room.ts`: lights created from `settingsFor()`; background read from `--scene-bg`; materials named `lamp` and `window` found in the room and driven by the settings; one `PointLight` without shadow per `light.lamp.NN` empty when the setting is not `null`; `loadRoom()` takes the room URL from the page (`roomUrl`, default `/models/room.glb`); the provisional room gets a lamp, a window and a `light.lamp.01` empty
+- [X] T012 `src/scene/scene3d.ts` and `src/scene/test-hook.ts`: on `themechange`, re-read `--scene-bg` and switch ambiance, instant under reduced motion, otherwise a fade with `blend()` over `--duration-theme`, rendering on demand only during the fade; view, open panel, language and quality kept; re-apply the settings when the quality level changes; test hook `__scene.ambiance()` returns `'day'` or `'night'`
+- [X] T013 `src/views/SceneView.astro`: optional prop `roomUrl` passed to the scene script (data attribute), default `/models/room.glb`
 
 ### Room variants
 
-- [ ] T014 `assets-src/models/build_models.py`: arguments after `--` (`--style atelier|bureau`, `--out <dir>`; default: current style into `assets-src/models/`); one `ROOM_PALETTE` per style; project support per style (`workbench` for atelier: wooden workbench; `desk` for bureau: white thin-top desk) carrying the same `slot.project.NN` and `featured.<id>` empties; for every style: diploma wall with the `slot.education.NN`, `decor.shelf` with at least 2 plants, a lamp using material `lamp` with its `light.lamp.01` empty, a window using material `window`; no light exported in the `.glb` (contracts/scene-ambiance.md)
+- [X] T014 `assets-src/models/build_models.py`: arguments after `--` (`--style atelier|bureau`, `--out <dir>`; default: current style into `assets-src/models/`); one `ROOM_PALETTE` per style; project support per style (`workbench` for atelier: wooden workbench; `desk` for bureau: white thin-top desk) carrying the same `slot.project.NN` and `featured.<id>` empties; for every style: diploma wall with the `slot.education.NN`, `decor.shelf` with at least 2 plants, a lamp using material `lamp` with its `light.lamp.01` empty, a window using material `window`; no light exported in the `.glb` (contracts/scene-ambiance.md)
 
 **Checkpoint**: the site looks as before, passes all existing tests, has a working theme button,
 and the scene switches day / night with the provisional room

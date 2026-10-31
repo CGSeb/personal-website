@@ -16,7 +16,8 @@ Les emplacements, le repère et les budgets décrits là restent valables.
 - Le mur des diplômes porte les `slot.education.NN`. Le support des projets (établi, bureau ou
   étagère selon le style) porte les `slot.project.NN` et les `featured.<id>`.
 - Aucune lumière n'est exportée dans le `.glb` : les lumières viennent du code
-  (`scene/ambiance.ts`).
+  (`scene/ambiance.ts` pour les réglages, `scene/lighting.ts` pour leur application).
+- Le cadre de la fenêtre utilise un autre matériau (`window-frame`) : seule la vitre s'éclaire.
 - Budget inchangé : `room.glb` ≤ 1,5 Mo compressé ; pas de texture de lumière précalculée.
 
 ## Réglages (`src/scene/ambiance.ts`)

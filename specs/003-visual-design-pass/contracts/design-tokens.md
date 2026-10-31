@@ -43,12 +43,17 @@ interface de la scène et code 3D.
 | `--color-on-accent` | `--color-accent` | 4,5:1 |
 | `--color-ongoing` | `--color-surface` | 3:1 (badge, grand texte gras) |
 | `--color-border-strong` | `--color-bg`, `--color-surface` | 3:1 |
-| `--color-focus` | `--color-bg`, `--color-surface`, `--color-accent` | 3:1 |
-| `--scene-highlight` | `--scene-bg` | 3:1 |
+| `--color-focus` | `--color-bg`, `--color-surface` | 3:1 |
+
+L'anneau de focus est décalé de 2 px (`outline-offset`) : il se lit sur le fond autour du
+contrôle, jamais sur `--color-accent`. `--scene-highlight` teinte les objets eux-mêmes (émission),
+pas le fond : il n'a pas de paire.
 
 Le test `tests/unit/design-tokens.test.ts` lit `tokens.css`, résout chaque rôle dans chaque thème
 et échoue si une paire est sous son seuil. Il échoue aussi si une couleur littérale apparaît
-dans `src/` hors de `tokens.css` (exceptions : [scene-ambiance.md](scene-ambiance.md)).
+dans `src/` hors de `tokens.css`. Exceptions : `src/scene/ambiance.ts` (lumières et ciel,
+[scene-ambiance.md](scene-ambiance.md)), `src/scene/objects.ts` et `src/scene/room.ts`
+(matériaux des objets 3D construits en code), `src/pages/og/[lang].png.ts` (image de partage).
 
 ## Autres valeurs
 

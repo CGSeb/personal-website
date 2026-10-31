@@ -4,6 +4,7 @@
 import '../styles/fonts.css';
 import '../styles/tokens.css';
 import '../styles/base.css';
+import ThemeScript from '../components/ThemeScript.astro';
 
 interface Props {
   title: string;
@@ -21,6 +22,7 @@ const url = (path: string) => new URL(path, Astro.site);
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <ThemeScript />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />

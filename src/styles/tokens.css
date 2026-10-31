@@ -1,17 +1,58 @@
+/* Design values (specs/003-visual-design-pass/contracts/design-tokens.md).
+   Two levels: the palette holds raw colours and is used in this file only; components use the
+   roles. Dark values are declared twice: once for the system setting when the visitor made no
+   choice, once for an explicit choice (`data-theme`, set by ThemeScript.astro). */
 :root {
-  color-scheme: light dark;
+  --palette-paper-50: #fbfaf7;
+  --palette-paper-100: #f3f1ec;
+  --palette-paper-200: #e3e1dc;
+  --palette-white: #ffffff;
+  --palette-ink-500: #75757f;
+  --palette-ink-600: #5b5b63;
+  --palette-ink-650: #7d7a73;
+  --palette-ink-900: #1d1d1f;
+  --palette-night-200: #a5a5b0;
+  --palette-night-100: #ececf0;
+  --palette-night-700: #2e2e35;
+  --palette-night-800: #26262b;
+  --palette-night-850: #1c1c20;
+  --palette-night-900: #121214;
+  --palette-indigo-300: #a9b6ff;
+  --palette-indigo-400: #8c9eff;
+  --palette-indigo-500: #3d5afe;
+  --palette-indigo-700: #2a3fd1;
+  --palette-amber-400: #ffb020;
+  --palette-amber-500: #ff9f1c;
+  --palette-amber-700: #b35900;
+  --palette-green-400: #4ade80;
+  --palette-green-600: #16a34a;
+  --palette-black-15: rgb(0 0 0 / 0.15);
+  --palette-black-18: rgb(0 0 0 / 0.18);
+  --palette-black-45: rgb(0 0 0 / 0.45);
+  --palette-black-50: rgb(0 0 0 / 0.5);
 
-  --color-bg: #fbfaf7;
-  --color-surface: #ffffff;
-  --color-text: #1d1d1f;
-  --color-muted: #5b5b63;
-  --color-border: #e3e1dc;
-  --color-accent: #3d5afe;
-  --color-accent-text: #2a3fd1;
-  --color-focus: #ff9f1c;
-  --color-ongoing: #16a34a;
+  color-scheme: light;
 
-  --font-sans: 'Inter Variable', 'Inter Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --color-bg: var(--palette-paper-50);
+  --color-surface: var(--palette-white);
+  --color-surface-raised: var(--palette-paper-100);
+  --color-text: var(--palette-ink-900);
+  --color-muted: var(--palette-ink-600);
+  --color-border: var(--palette-paper-200);
+  --color-border-strong: var(--palette-ink-650);
+  --color-accent: var(--palette-indigo-500);
+  --color-on-accent: var(--palette-white);
+  --color-accent-text: var(--palette-indigo-700);
+  --color-focus: var(--palette-amber-700);
+  --color-ongoing: var(--palette-green-600);
+  --scene-bg: var(--palette-white);
+  --scene-highlight: var(--palette-amber-400);
+  --shadow-1: 0 8px 24px var(--palette-black-15);
+  --shadow-2: 0 12px 32px var(--palette-black-18);
+
+  --font-sans:
+    'Inter Variable', 'Inter Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: var(--font-sans);
 
   --step--1: clamp(0.83rem, 0.8rem + 0.15vw, 0.9rem);
   --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.1rem);
@@ -28,20 +69,62 @@
   --space-2xl: 4rem;
 
   --radius: 0.75rem;
+  --radius-s: 0.5rem;
+  --radius-pill: 999px;
+  --duration-fast: 150ms;
+  --duration-theme: 400ms;
   --content-width: 72rem;
   --text-width: 42rem;
   --gutter: clamp(1rem, 4vw, 2.5rem);
 }
 
 @media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+
+    --color-bg: var(--palette-night-900);
+    --color-surface: var(--palette-night-850);
+    --color-surface-raised: var(--palette-night-800);
+    --color-text: var(--palette-night-100);
+    --color-muted: var(--palette-night-200);
+    --color-border: var(--palette-night-700);
+    --color-border-strong: var(--palette-ink-500);
+    --color-accent: var(--palette-indigo-400);
+    --color-on-accent: var(--palette-night-900);
+    --color-accent-text: var(--palette-indigo-300);
+    --color-focus: var(--palette-amber-500);
+    --color-ongoing: var(--palette-green-400);
+    --scene-bg: var(--palette-night-850);
+    --scene-highlight: var(--palette-amber-400);
+    --shadow-1: 0 8px 24px var(--palette-black-45);
+    --shadow-2: 0 12px 32px var(--palette-black-50);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-bg: var(--palette-night-900);
+  --color-surface: var(--palette-night-850);
+  --color-surface-raised: var(--palette-night-800);
+  --color-text: var(--palette-night-100);
+  --color-muted: var(--palette-night-200);
+  --color-border: var(--palette-night-700);
+  --color-border-strong: var(--palette-ink-500);
+  --color-accent: var(--palette-indigo-400);
+  --color-on-accent: var(--palette-night-900);
+  --color-accent-text: var(--palette-indigo-300);
+  --color-focus: var(--palette-amber-500);
+  --color-ongoing: var(--palette-green-400);
+  --scene-bg: var(--palette-night-850);
+  --scene-highlight: var(--palette-amber-400);
+  --shadow-1: 0 8px 24px var(--palette-black-45);
+  --shadow-2: 0 12px 32px var(--palette-black-50);
+}
+
+@media (prefers-reduced-motion: reduce) {
   :root {
-    --color-bg: #121214;
-    --color-surface: #1c1c20;
-    --color-text: #ececf0;
-    --color-muted: #a5a5b0;
-    --color-border: #2e2e35;
-    --color-accent: #8c9eff;
-    --color-accent-text: #a9b6ff;
-    --color-ongoing: #4ade80;
+    --duration-fast: 0s;
+    --duration-theme: 0s;
   }
 }
