@@ -19,6 +19,7 @@ test('without WebGL: message, written version, list and panels still work', asyn
     '/fr/',
   );
   await expect(page.locator('#scene canvas')).toHaveCount(0);
+  await page.locator('.scene-list summary').click();
   await page.locator('.scene-list').getByRole('button', { name: 'LessonFolk' }).click();
   await expect(page.locator('#panel-project-lesson-folk')).toBeVisible();
 });

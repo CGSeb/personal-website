@@ -388,6 +388,10 @@ const jsonLd = graph(
   .scene-panels :global(.close:hover) {
     background: var(--color-surface-raised);
   }
+  /* Project links (demo, source code…) below the tags, not stuck to them. */
+  .scene-panels :global(.tags + .links) {
+    margin-top: var(--space-m);
+  }
   .scene-panels :global(.more) {
     margin: var(--space-s) 0 0;
     font-weight: 600;

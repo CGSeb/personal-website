@@ -9,7 +9,8 @@ async function sceneReady(page: Page) {
   await page.evaluate(() => window.__scene!.ready);
 }
 
-/** Opens the scene with the test hook enabled and waits until it is ready. */
+/** Opens the scene with the test hook enabled and waits until it is ready; unfolds the list
+ * of items (folded by default) so the tests can use it. */
 async function openScene(page: Page, path = '/fr/explorer/') {
   await page.addInitScript(() => {
     window.__sceneTest = true;
@@ -17,6 +18,7 @@ async function openScene(page: Page, path = '/fr/explorer/') {
   await page.goto(path);
   await expect(page.locator('#scene canvas')).toBeVisible({ timeout: 30_000 });
   await sceneReady(page);
+  await page.locator('.scene-list summary').click();
 }
 
 /** Viewport position of an object, from the test hook. */
@@ -108,7 +110,7 @@ test.describe('scene (US1)', () => {
     await openScene(page);
     await page
       .locator('.scene-list')
-      .getByRole('button', { name: 'Ingénieur en ingénierie logicielle' })
+      .getByRole('button', { name: 'Ingénieur conception logicielle' })
       .click();
     await expect(page.locator('#panel-education-exia-cesi')).toBeVisible();
   });
@@ -271,7 +273,7 @@ test.describe('keyboard, screen readers and languages (US5)', () => {
     await openScene(page);
     await page
       .locator('.scene-list')
-      .getByRole('button', { name: 'Ingénieur en ingénierie logicielle' })
+      .getByRole('button', { name: 'Ingénieur conception logicielle' })
       .click();
     const switcher = page.locator('.language-switcher');
     await expect(switcher).toHaveAttribute('href', '/en/explore/#education/exia-cesi');
@@ -361,4 +363,18 @@ test.describe('day and night (spec 003, US3)', () => {
       expect(nodes, name).toContain(name);
     }
   });
+});
+
+test('the list of items is folded under its title, and unfolds with it (spec 003)', async ({
+  page,
+}) => {
+  await page.goto('/fr/explorer/');
+  const summary = page.locator('.scene-list summary');
+  await expect(summary).toContainText('Tous les éléments de la scène');
+  const item = page.locator('.scene-list').getByText('LessonFolk');
+  await expect(item).toBeHidden();
+  await summary.click();
+  await expect(item).toBeVisible();
+  await summary.click();
+  await expect(item).toBeHidden();
 });

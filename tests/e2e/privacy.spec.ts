@@ -52,6 +52,7 @@ test('the 3D scene, loaded and with a panel open, makes no outside request and s
     await page.goto(path);
     await page.waitForFunction(() => window.__scene !== undefined, null, { timeout: 30_000 });
     await page.evaluate(() => window.__scene!.ready);
+    await page.locator('.scene-list summary').click();
     await page.locator('.scene-list').getByRole('button', { name: item }).first().click();
     await expect(page.locator('.scene-panel:not([hidden])')).toBeVisible();
     await page.waitForLoadState('networkidle');

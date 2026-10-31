@@ -15,7 +15,7 @@ test('without JavaScript the scene page lists every item with links to the writt
     'href',
     '/fr/projets/lesson-folk/',
   );
-  await expect(list.getByRole('link', { name: 'Ingénieur en ingénierie logicielle' })).toHaveAttribute(
+  await expect(list.getByRole('link', { name: 'Ingénieur conception logicielle' })).toHaveAttribute(
     'href',
     '/fr/parcours/diplomes/exia-cesi/',
   );

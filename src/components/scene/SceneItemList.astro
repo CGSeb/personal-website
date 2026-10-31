@@ -1,6 +1,7 @@
 ---
 // Text list of everything in the scene (FR-020): links to the written pages without
-// JavaScript, turned into buttons that open the in-scene panels by the script.
+// JavaScript, turned into buttons that open the in-scene panels by the script. Folded under its
+// title; open without JavaScript, where it is the only way to the items.
 import type { Lang } from '../../i18n/routes';
 import { t } from '../../i18n/ui';
 import type { ItemType, SceneItem } from '../../scene/layout';
@@ -15,35 +16,84 @@ const groups: ItemType[] = ['project', 'education', 'experience'];
 ---
 
 <nav class="scene-list" aria-labelledby="scene-list-title">
-  <h2 id="scene-list-title">{t(lang, 'scene.listTitle')}</h2>
-  <div class="groups">
-    {groups.map((type) => {
-      const list = items.filter((i) => i.type === type);
-      return (
-        list.length > 0 && (
-          <section>
-            <h3>{t(lang, `scene.group.${type}`)}</h3>
-            <ul>
-              {list.map((item) => (
-                <li>
-                  <a href={item.href} data-key={item.key}>
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )
-      );
-    })}
-  </div>
+  <details id="scene-list-details" open>
+    <summary>
+      <h2 id="scene-list-title">{t(lang, 'scene.listTitle')}</h2>
+      <svg class="chevron" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+        <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.5"></path>
+      </svg>
+    </summary>
+    <div class="groups">
+      {groups.map((type) => {
+        const list = items.filter((i) => i.type === type);
+        return (
+          list.length > 0 && (
+            <section>
+              <h3>{t(lang, `scene.group.${type}`)}</h3>
+              <ul>
+                {list.map((item) => (
+                  <li>
+                    <a href={item.href} data-key={item.key}>
+                      {item.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        );
+      })}
+    </div>
+  </details>
+  <script is:inline>
+    document.getElementById('scene-list-details').open = false;
+  </script>
 </nav>
 
 <style>
   .scene-list {
     margin-top: var(--space-xl);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-s);
+    padding: var(--space-s) var(--space-m);
+    border-radius: var(--radius);
+    list-style: none;
+    cursor: pointer;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary h2 {
+    margin: 0;
+    font-size: var(--step-1);
+  }
+  .chevron {
+    flex: none;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0.4rem;
+    color: var(--color-text);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-s);
+    transition:
+      transform var(--duration-fast),
+      border-color var(--duration-fast);
+  }
+  summary:hover .chevron {
+    border-color: var(--color-accent);
+  }
+  details[open] .chevron {
+    transform: rotate(180deg);
   }
   .groups {
+    padding: 0 var(--space-m) var(--space-m);
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
     gap: var(--space-l);

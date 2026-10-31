@@ -20,6 +20,8 @@ const items = [
   ...(SECTIONS.career ? [{ href: urlFor('career', lang), label: t(lang, 'nav.career') }] : []),
   ...(SECTIONS.contact ? [{ href: urlFor('contact', lang), label: t(lang, 'nav.contact') }] : []),
 ];
+// The 3D version stands apart from the other links: a raised amber button (spec 003).
+const sceneHref = urlFor('scene', lang);
 const isCurrent = (item: { href: string; exact?: boolean }) =>
   item.exact ? currentPath === item.href : currentPath.startsWith(item.href);
 ---
@@ -43,6 +45,23 @@ const isCurrent = (item: { href: string; exact?: boolean }) =>
             </a>
           </li>
         ))}
+        <li>
+          <a
+            class="nav-3d"
+            href={sceneHref}
+            aria-current={currentPath === sceneHref ? 'page' : undefined}
+          >
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
+              <path
+                d="M12 3 20 7.5v9L12 21l-8-4.5v-9Z M4 7.5 12 12l8-4.5 M12 12v9"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linejoin="round"></path>
+            </svg>
+            {t(lang, 'nav.scene')}
+          </a>
+        </li>
       </ul>
     </nav>
     <div class="tools">
@@ -152,5 +171,38 @@ const isCurrent = (item: { href: string; exact?: boolean }) =>
   nav a.active {
     color: var(--color-text);
     text-decoration-color: var(--color-accent);
+  }
+  nav .nav-3d {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    margin-left: var(--space-2xs);
+    padding: var(--space-2xs) var(--space-s);
+    font-weight: 600;
+    color: var(--color-on-accent);
+    text-decoration: none;
+    background: var(--color-accent);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-s);
+    box-shadow:
+      0 2px 0 color-mix(in srgb, var(--color-accent) 55%, var(--color-text)),
+      0 0 1rem color-mix(in srgb, var(--color-accent) 40%, transparent);
+    transition:
+      transform var(--duration-fast),
+      box-shadow var(--duration-fast);
+  }
+  nav .nav-3d:hover {
+    color: var(--color-on-accent);
+    transform: translateY(-1px);
+    box-shadow:
+      0 3px 0 color-mix(in srgb, var(--color-accent) 55%, var(--color-text)),
+      0 0 1.4rem color-mix(in srgb, var(--color-accent) 55%, transparent);
+  }
+  nav .nav-3d:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--color-accent) 55%, var(--color-text));
+  }
+  nav .nav-3d[aria-current='page'] {
+    box-shadow: inset 0 2px 4px color-mix(in srgb, var(--color-text) 35%, transparent);
   }
 </style>
