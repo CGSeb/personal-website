@@ -3,7 +3,6 @@ import '../styles/fonts.css';
 import '../styles/tokens.css';
 import '../styles/base.css';
 import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
-import spaceGroteskLatin from '@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url';
 import Header from '../components/Header.astro';
 import ThemeScript from '../components/ThemeScript.astro';
 import Footer from '../components/Footer.astro';
@@ -74,7 +73,6 @@ const mockup = Astro.locals.mockup;
       <meta name={m.name} content={m.content} />
     ))}
     <link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={spaceGroteskLatin} as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
   </head>

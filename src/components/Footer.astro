@@ -24,6 +24,7 @@ const year = new Date().getFullYear();
 <style>
   .site-footer {
     margin-top: var(--space-2xl);
+    background: var(--color-surface);
     border-top: 1px solid var(--color-border);
     padding-block: var(--space-l);
     color: var(--color-muted);
@@ -32,10 +33,15 @@ const year = new Date().getFullYear();
   .container {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     justify-content: space-between;
     gap: var(--space-s);
   }
   p {
     margin: 0;
+  }
+  a {
+    color: var(--color-accent-text);
+    font-weight: 500;
   }
 </style>
