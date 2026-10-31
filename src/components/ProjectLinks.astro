@@ -19,8 +19,9 @@ const others = links.filter((l) => l.kind !== 'video');
   <ul class="links">
     {others.map((link) => (
       <li>
-        <a class="button-secondary" href={link.url} rel="noopener">
+        <a class="button-secondary" href={link.url} target="_blank" rel="noopener">
           {link.label?.[lang] ?? t(lang, `link.${link.kind}`)}
+          <span class="visually-hidden"> {t(lang, 'link.newTab')}</span>
         </a>
       </li>
     ))}

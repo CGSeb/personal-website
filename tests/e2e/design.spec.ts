@@ -132,3 +132,30 @@ test.describe('print and forced colours', () => {
     expect(outline.width).toBeGreaterThan(0);
   });
 });
+
+test('links to other sites open in a new tab, with a note for screen readers', async ({
+  page,
+}, info) => {
+  test.skip(info.project.name !== 'desktop-chromium', 'one browser is enough');
+  let checked = 0;
+  for (const [, path] of ALL) {
+    await page.goto(path);
+    const links = await page
+      .locator('main a[href^="http"]')
+      .evaluateAll((els) =>
+        els.map((a) => ({
+          href: a.getAttribute('href'),
+          target: a.getAttribute('target'),
+          rel: a.getAttribute('rel') ?? '',
+          note: a.querySelector('.visually-hidden')?.textContent?.trim() ?? '',
+        })),
+      );
+    for (const link of links) {
+      expect(link.target, `${path} ${link.href}`).toBe('_blank');
+      expect(link.rel, `${path} ${link.href}`).toContain('noopener');
+      expect(link.note, `${path} ${link.href}`).toMatch(/onglet|tab/);
+    }
+    checked += links.length;
+  }
+  expect(checked).toBeGreaterThan(0);
+});

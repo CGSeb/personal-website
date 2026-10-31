@@ -25,8 +25,9 @@ const embed = youtubeId
 ---
 
 <div class="video-facade" data-embed={embed} data-title={title}>
-  <a href={url} rel="noopener" class="video-link button">
+  <a href={url} target="_blank" rel="noopener" class="video-link button">
     ▶ {t(lang, 'video.play', { title })}
+    <span class="visually-hidden"> {t(lang, 'link.newTab')}</span>
   </a>
   {embed && <p class="notice">{t(lang, 'video.notice')}</p>}
 </div>

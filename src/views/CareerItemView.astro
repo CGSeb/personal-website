@@ -73,8 +73,9 @@ const jsonLd = graph(
       <h1>{title}</h1>
       <p class="org">
         {organization.url ? (
-          <a href={organization.url} rel="noopener">
+          <a href={organization.url} target="_blank" rel="noopener">
             {organization.name}
+            <span class="visually-hidden"> {t(lang, 'link.newTab')}</span>
           </a>
         ) : (
           organization.name

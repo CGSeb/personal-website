@@ -1,8 +1,10 @@
 // @ts-check
 import { readFileSync } from 'node:fs';
+import { satteri } from '@astrojs/markdown-satteri';
 import { defineConfig } from 'astro/config';
 import { parse } from 'yaml';
 import mockups from './mockups/integration.mjs';
+import externalLinks from './src/lib/external-links.mjs';
 
 const contentDir = process.env.CONTENT_DIR ?? 'content';
 
@@ -41,6 +43,8 @@ export default defineConfig({
     format: 'directory',
   },
   redirects: loadRedirects(),
+  // Links to other sites open in a new tab (the components do the same for their own links).
+  markdown: { processor: satteri({ hastPlugins: [externalLinks] }) },
   // Style mockups of spec 003, served by `astro dev` only (removed after the decision).
   integrations: [mockups()],
   // Build tests point CONTENT_DIR at fixtures; their own cache keeps the content store apart.

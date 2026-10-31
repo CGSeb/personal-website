@@ -67,8 +67,9 @@ const jsonLd = graph(
         <ul class="profiles">
           {profile.profiles!.map((p) => (
             <li>
-              <a class="button-secondary" href={p.url} rel="me noopener">
+              <a class="button-secondary" href={p.url} target="_blank" rel="me noopener">
                 {p.label ?? NETWORK_NAMES[p.network] ?? new URL(p.url).hostname}
+                <span class="visually-hidden"> {t(lang, 'link.newTab')}</span>
               </a>
             </li>
           ))}
