@@ -38,3 +38,33 @@ npm run build && npm run preview
   l'écran ; fluidité ressentie.
 - iPhone (Safari) : même parcours.
 - Lecteur d'écran (NVDA ou VoiceOver) : annonces de la liste et des panneaux.
+
+## Résultats (31/10/2026, après les PR #14, #15 et #16)
+
+Construction de `main` avec les vrais modèles (`room.glb` et objets, 98 Ko en tout).
+
+| # | Résultat | Comment |
+|---|---|---|
+| 1 | ✅ | `scene.spec.ts` (US1-1), 4 projets Playwright |
+| 2 | ✅ | `scene-nojs.spec.ts` (projet `chromium-nojs`) |
+| 3 | ✅ | `scene.spec.ts` (US1-3 à US1-6) |
+| 4 | ✅ | `scene.spec.ts` (US5-1, US5-2) |
+| 5 | ✅ | `scene.spec.ts` (US2) |
+| 6 | ✅ | test ponctuel : `/en/explore/#education/master-informatique` ouvre le panneau du diplôme, page en anglais (ordinateur et iPhone) |
+| 7 | ✅ | `scene.spec.ts` (US5-4) |
+| 8 | ✅ | `scene-nowebgl.spec.ts`, `scene-fallback.spec.ts` |
+| 9 | ✅ | `scene-fallback.spec.ts` ; vu aussi dans le navigateur de l'app, qui demande les mouvements réduits |
+| 10 | ✅ | `scene-perf.spec.ts` : en CI (rendu logiciel, 5 i/s) la qualité baisse puis la version écrite est proposée ; en local ≥ 30 i/s |
+| 11 | ✅ | `npm test` (`scene-layout.test.ts`), 79 tests unitaires |
+| 12 | ✅ | test ponctuel : projet ajouté dans `content/`, construit, objet générique placé, clic → son panneau et `#projet/<id>` (ordinateur et iPhone) ; projet retiré ensuite |
+| 13 | ✅ | `privacy.spec.ts` : scène chargée et panneau ouvert, aucune requête tierce, aucun cookie |
+| 14 | ✅ | `check:scene` : 299 Ko avant la première interaction / 3 Mo ; chaque `.glb` sous son budget (pièce 69 Ko / 1,5 Mo) |
+| 15 | ✅ | `npm run lhci` : `/fr/explorer/` et `/en/explore/` à 1 en performance, accessibilité, bonnes pratiques et SEO |
+
+Suite complète : 250 tests de bout en bout réussis (37 ignorés par projet : sans JavaScript, tactile, Chromium seul), `check:seo` sur 29 pages.
+
+### Vérification manuelle
+
+- [x] Téléphone Android de milieu de gamme réel : la scène fonctionne (31/10/2026)
+- [ ] iPhone (Safari) : non fait, pas d'iPhone disponible ; le parcours est couvert par les tests automatiques sur WebKit mobile (mobile-webkit)
+- [x] Lecteur d'écran : la liste et les panneaux sont annoncés (31/10/2026)
