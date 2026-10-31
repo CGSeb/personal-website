@@ -326,3 +326,6 @@ site refait.
 - Pas de son, d'animation d'introduction, ni de nouveau contenu (blog, nouvelles pages) dans
   cette fonctionnalité.
 - Le choix de l'hébergement et la mise en ligne restent hors de cette fonctionnalité.
+- Après une première comparaison (31/10/2026), Sébastien a demandé un troisième candidat,
+  « tour » : le bureau moderne en haut d'un immeuble, très moderne et sci-fi. Il s'ajoute aux
+  deux maquettes de FR-001 et suit les mêmes règles (FR-002 à FR-005).

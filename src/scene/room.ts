@@ -4,6 +4,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { bakedTextureUrls, loadBakedMaterial, type BakedMaps, type BakedMaterial } from './baked';
 import { parseSlot, type Slot } from './layout';
 
 export interface RoomSlot extends Slot {
@@ -19,9 +20,15 @@ export interface Room {
   bounds: THREE.Box3;
   /** `light.lamp.NN` empties: where the night point lights go. */
   lamps: THREE.Object3D[];
+  /** `light.neon.NN` empties: where the night LED glows go. */
+  neonLights: THREE.Object3D[];
   /** Materials named `lamp` (shades, bulbs) and `window` (glass), driven by the ambiance. */
   lampMaterials: THREE.MeshStandardMaterial[];
   windowMaterials: THREE.MeshStandardMaterial[];
+  /** Materials named `neon` (LED strips), glowing in their own colour. */
+  neonMaterials: THREE.MeshStandardMaterial[];
+  /** Material of a baked room (`room.baked` mesh), or null when the room is lit in real time. */
+  baked: BakedMaterial | null;
 }
 
 export const ROOM_URL = '/models/room.glb';
@@ -36,8 +43,10 @@ export function gltfLoader(): GLTFLoader {
 function describe(group: THREE.Object3D): Room {
   const slots: RoomSlot[] = [];
   const lamps: THREE.Object3D[] = [];
+  const neonLights: THREE.Object3D[] = [];
   const lampMaterials = new Set<THREE.MeshStandardMaterial>();
   const windowMaterials = new Set<THREE.MeshStandardMaterial>();
+  const neonMaterials = new Set<THREE.MeshStandardMaterial>();
   let home = new THREE.Vector3(0, 0.8, 0);
   let bounds = new THREE.Box3(new THREE.Vector3(-4, 0, -4), new THREE.Vector3(4, 3, 4));
   group.updateMatrixWorld(true);
@@ -47,10 +56,12 @@ function describe(group: THREE.Object3D): Room {
     const slot = parseSlot(name);
     if (slot) slots.push({ ...slot, object });
     if (/^light\.lamp\.\d+$/.test(name)) lamps.push(object);
+    if (/^light\.neon\.\d+$/.test(name)) neonLights.push(object);
     const material = (object as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined;
     if (material && 'emissive' in material) {
       if (material.name === 'lamp') lampMaterials.add(material);
       if (material.name === 'window') windowMaterials.add(material);
+      if (material.name === 'neon') neonMaterials.add(material);
     }
     if (name === 'camera.home') home = object.getWorldPosition(new THREE.Vector3());
     if (name === 'bounds') {
@@ -65,17 +76,35 @@ function describe(group: THREE.Object3D): Room {
     home,
     bounds,
     lamps,
+    neonLights,
     lampMaterials: [...lampMaterials],
     windowMaterials: [...windowMaterials],
+    neonMaterials: [...neonMaterials],
+    baked: null,
   };
 }
 
 /** `url`: the page's room (a mockup sets its own); otherwise room.glb when it was built. */
-export async function loadRoom(models: string[], url?: string): Promise<Room> {
+export async function loadRoom(
+  models: string[],
+  url?: string,
+  bakedMaps?: BakedMaps,
+): Promise<Room> {
   const src = url ?? (models.includes('room.glb') ? ROOM_URL : null);
   if (!src) return describe(provisionalRoom());
   const gltf = await gltfLoader().loadAsync(src);
-  return describe(gltf.scene);
+  const room = describe(gltf.scene);
+  // A baked room carries its light in two textures next to the model (baked.ts).
+  const bakedMeshes: THREE.Mesh[] = [];
+  gltf.scene.traverse((object) => {
+    const mesh = object as THREE.Mesh;
+    if (mesh.isMesh && (mesh.material as THREE.Material).name === 'baked') bakedMeshes.push(mesh);
+  });
+  if (bakedMeshes.length) {
+    room.baked = await loadBakedMaterial(bakedMaps ?? bakedTextureUrls(src));
+    for (const mesh of bakedMeshes) mesh.material = room.baked;
+  }
+  return room;
 }
 
 const material = (color: string, name = '') =>

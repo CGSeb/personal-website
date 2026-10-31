@@ -55,6 +55,13 @@ describe('layout', () => {
     ]);
   });
 
+  it('gives a reserved slot to a project that is not featured too (rule 1, spec 003)', () => {
+    const result = layout([item('project', 'star', 5, false)], room);
+    expect(result).toEqual([
+      { key: 'project/star', slot: 'featured.star', model: 'featured:star' },
+    ]);
+  });
+
   it('keeps the reserved slot with a generic model when the dedicated file is missing (rule 1)', () => {
     const result = layout([item('project', 'star', 0, true)], room, () => false);
     expect(result[0]).toMatchObject({ slot: 'featured.star', model: 'generic-project' });

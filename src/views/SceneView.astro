@@ -19,9 +19,13 @@ interface Props {
   lang: Lang;
   /** Room model to load instead of public/models/room.glb (style mockups, spec 003). */
   roomUrl?: string;
+  /** Baked day / night textures of that room (style mockups, spec 003). */
+  bakedMaps?: { day: string; night: string };
+  /** Object models served from elsewhere, by file name (style mockups, spec 003). */
+  modelUrls?: Record<string, string>;
 }
 
-const { lang, roomUrl } = Astro.props;
+const { lang, roomUrl, bakedMaps, modelUrls } = Astro.props;
 const site = await getSite();
 
 // Covers shown on the generic project objects, optimized ahead (buildManifest is sync).
@@ -60,7 +64,14 @@ const jsonLd = graph(
   alternatePath={alternateOf('scene', lang)}
   jsonLd={jsonLd}
 >
-  <div class="container scene-page" data-lang={lang} data-room-url={roomUrl}>
+  <div
+    class="container scene-page"
+    data-lang={lang}
+    data-room-url={roomUrl}
+    data-baked-day={bakedMaps?.day}
+    data-baked-night={bakedMaps?.night}
+    data-model-urls={modelUrls && JSON.stringify(modelUrls)}
+  >
     <header class="scene-header">
       <h1>{title}</h1>
       <p>

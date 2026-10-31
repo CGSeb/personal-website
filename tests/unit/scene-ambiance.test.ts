@@ -14,6 +14,20 @@ describe('settingsFor', () => {
     expect(settingsFor('night', 'high').lampEmissive).toBeGreaterThan(0);
   });
 
+  it('LED strips glow a little by day and much more at night', () => {
+    const day = settingsFor('day', 'high').neonEmissive;
+    expect(day).toBeGreaterThan(0);
+    expect(settingsFor('night', 'high').neonEmissive).toBeGreaterThan(day);
+  });
+
+  it('shows the day texture of a baked room by day and the night one at night', () => {
+    expect(settingsFor('day', 'low').bakedNight).toBe(0);
+    expect(settingsFor('night', 'low').bakedNight).toBe(1);
+    expect(blend(settingsFor('day', 'high'), settingsFor('night', 'high'), 0.25).bakedNight).toBe(
+      0.25,
+    );
+  });
+
   it('has no point light by day', () => {
     for (const q of ['high', 'medium', 'low'] as const)
       expect(settingsFor('day', q).pointLight).toBeNull();
@@ -23,6 +37,13 @@ describe('settingsFor', () => {
     expect(settingsFor('night', 'high').pointLight).not.toBeNull();
     expect(settingsFor('night', 'medium').pointLight).not.toBeNull();
     expect(settingsFor('night', 'low').pointLight).toBeNull();
+  });
+
+  it('adds LED glows at night at high quality only', () => {
+    expect(settingsFor('day', 'high').neonLight).toBeNull();
+    expect(settingsFor('night', 'high').neonLight).not.toBeNull();
+    expect(settingsFor('night', 'medium').neonLight).toBeNull();
+    expect(settingsFor('night', 'low').neonLight).toBeNull();
   });
 
   it('makes up for the missing point lights at low quality', () => {

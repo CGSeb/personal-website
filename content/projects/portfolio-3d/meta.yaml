@@ -14,8 +14,8 @@ technologies: [astro, typescript, threejs, blender]
 cover:
   src: ./cover.webp
   alt:
-    fr: "La scène 3D du portfolio : une pièce isométrique avec un bureau, une bibliothèque, un fauteuil, des cadres et un tableau de liège"
-    en: "The portfolio's 3D scene: an isometric room with a desk, a bookcase, an armchair, frames and a corkboard"
+    fr: "La scène 3D du portfolio sur fond gris foncé : un petit bureau isométrique avec un bureau en L en noyer, un mur de lattes de bois, deux diplômes encadrés, un tableau de liège avec les expériences, une fenêtre sur la ville, un tapis et un fauteuil en cuir"
+    en: "The portfolio's 3D scene on a dark grey background: a small isometric study with an L-shaped walnut desk, a wall of wooden slats, two framed diplomas, a cork board with the experience, a window over the city, a rug and a leather armchair"
 links: []
 experience: [cg-seb]
 featured: true

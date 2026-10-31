@@ -19,6 +19,8 @@ const STAND_IN_SCALE = 1.6;
 /** Hit shapes are larger than the objects, more so for fingers (US3). */
 const HIT_SCALE = matchMedia('(pointer: coarse)').matches ? 1.6 : 1.3;
 const SELECTED = new THREE.Color('#ff7a00');
+/** Materials whose light the ambiance drives (contracts/scene-ambiance.md). */
+const GLOWING = new Set(['lamp', 'neon', 'glow']);
 
 /** A small canvas texture with a short badge (never the full content). */
 function badgeTexture(text: string, background: string, color = '#2b2b2b'): THREE.CanvasTexture {
@@ -134,9 +136,12 @@ async function fetchModel(url: string): Promise<THREE.Object3D | null> {
   }
 }
 
+/** Model files a page serves from elsewhere (a style mockup's own objects), by file name. */
+let modelUrls: Record<string, string> = {};
+
 async function loadFile(file: string, available: Set<string>): Promise<THREE.Object3D | null> {
-  if (!available.has(file)) return null;
-  const url = `/models/${file}`;
+  if (!available.has(file) && !modelUrls[file]) return null;
+  const url = modelUrls[file] ?? `/models/${file}`;
   if (!models.has(url)) models.set(url, fetchModel(url));
   const model = await models.get(url)!;
   return model ? model.clone(true) : null;
@@ -195,7 +200,9 @@ export async function placeObjects(
   items: SceneItem[],
   requestRender: () => void,
   models: string[],
+  urls: Record<string, string> = {},
 ): Promise<PlacedObject[]> {
+  modelUrls = urls;
   const available = new Set(models);
   const bySlot = new Map(slots.map((s) => [s.name, s]));
   return Promise.all(
@@ -233,10 +240,11 @@ export async function placeObjects(
       hit.position.copy(center);
       hit.userData.key = placement.key;
 
+      // Lamps, LEDs and halos keep their own glow (lighting.ts); the rest shows the states.
       const materials: THREE.MeshStandardMaterial[] = [];
       root.traverse((o) => {
         const m = (o as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined;
-        if (m && 'emissive' in m) materials.push(m);
+        if (m && 'emissive' in m && !GLOWING.has(m.name)) materials.push(m);
       });
       const setState = (state: ObjectState) => {
         for (const m of materials) {

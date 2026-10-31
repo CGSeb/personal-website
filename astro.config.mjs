@@ -2,6 +2,7 @@
 import { readFileSync } from 'node:fs';
 import { defineConfig } from 'astro/config';
 import { parse } from 'yaml';
+import mockups from './mockups/integration.mjs';
 
 const contentDir = process.env.CONTENT_DIR ?? 'content';
 
@@ -40,6 +41,8 @@ export default defineConfig({
     format: 'directory',
   },
   redirects: loadRedirects(),
+  // Style mockups of spec 003, served by `astro dev` only (removed after the decision).
+  integrations: [mockups()],
   // Build tests point CONTENT_DIR at fixtures; their own cache keeps the content store apart.
   ...(process.env.ASTRO_CACHE_DIR && { cacheDir: process.env.ASTRO_CACHE_DIR }),
 });

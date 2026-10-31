@@ -78,6 +78,26 @@ class Builder:
             matrix=matrix(x, y, z, rot, tilt),
         )
 
+    def ellipse(self, material, rx, rz, h, x, y, z, segments=40, rot=0.0):
+        """Flat oval (or round) slab centred at (x, y, z): radii `rx` along its own X, `rz`
+        along its own Z, thickness `h`."""
+        bmesh.ops.create_cone(
+            self._bm(material),
+            cap_ends=True,
+            segments=segments,
+            radius1=1,
+            radius2=1,
+            depth=1,
+            matrix=matrix(x, y, z, rot, 0.0, (rx, h, rz)),
+        )
+
+    def blob(self, material, w, h, d, x, y, z, rot=0.0, tilt=0.0):
+        """Ellipsoid of half-sizes (w, h, d) centred at (x, y, z) (leaves, cushions)."""
+        bmesh.ops.create_uvsphere(
+            self._bm(material), u_segments=12, v_segments=6, radius=1,
+            matrix=matrix(x, y, z, rot, tilt, (w, h, d)),
+        )
+
     def sphere(self, material, r, x, y, z):
         bmesh.ops.create_uvsphere(
             self._bm(material), u_segments=10, v_segments=6, radius=r, matrix=matrix(x, y, z)
@@ -280,6 +300,8 @@ STYLES = {
     "site": (ROOM_PALETTE, table_support),
     "atelier": (ATELIER_PALETTE, workbench_support),
     "bureau": (BUREAU_PALETTE, desk_support),
+    # « tour » is built and baked by tower_room.py (build_tower_room_baked).
+    "tour": (None, None),
 }
 
 
@@ -381,25 +403,43 @@ def build_room(style="site"):
 
     b.build("room")
     build_shelf(palette)
+    room_markers()
 
-    # Slots and markers (same names and places as the provisional room in src/scene/room.ts).
+
+def room_markers(
+    lamps=((-3.5, 1.55, 3.4),),
+    projects=None,
+    featured=None,
+    education=None,
+    experience=None,
+    neon_lights=(),
+):
+    """Slots and markers (same names and places as the provisional room in src/scene/room.ts,
+    unless a room passes its own places and lights). A place is (x, y, z, rotation)."""
     pad = lambda n: f"{n:02d}"
-    for i in range(6):
-        empty(f"slot.project.{pad(i + 1)}", -0.4 + (i % 3), 0.8, 0.05 if i < 3 else 0.75, math.pi / 4)
-    for i in range(4):
-        empty(
-            f"slot.education.{pad(i + 1)}",
-            -3.97,
-            2.1 if i < 2 else 1.45,
-            -2.4 + (i % 2) * 1.2,
-            math.pi / 2,
-        )
-    for i in range(4):
-        empty(f"slot.experience.{pad(i + 1)}", 0.95 + (i % 2) * 1.3, 2.1 if i < 2 else 1.45, -3.93)
-    empty("featured.lesson-folk", -2.7, 0.8, -3.72)
-    empty("featured.portfolio-3d", -1.7, 0.8, -3.72)
-    # Night point light inside the floor lamp's shade (contracts/scene-ambiance.md).
-    empty("light.lamp.01", -3.5, 1.55, 3.4)
+    projects = projects or [
+        (-0.4 + (i % 3), 0.8, 0.05 if i < 3 else 0.75, math.pi / 4) for i in range(6)
+    ]
+    education = education or [
+        (-3.97, 2.1 if i < 2 else 1.45, -2.4 + (i % 2) * 1.2, math.pi / 2) for i in range(4)
+    ]
+    experience = experience or [
+        (0.95 + (i % 2) * 1.3, 2.1 if i < 2 else 1.45, -3.93, 0.0) for i in range(4)
+    ]
+    for kind, places in (("project", projects), ("education", education), ("experience", experience)):
+        for i, place in enumerate(places):
+            empty(f"slot.{kind}.{pad(i + 1)}", *place)
+    featured = featured or {
+        "lesson-folk": (-2.7, 0.8, -3.72, 0.0),
+        "portfolio-3d": (-1.7, 0.8, -3.72, 0.0),
+    }
+    for id_, place in featured.items():
+        empty(f"featured.{id_}", *place)
+    # Night point lights (contracts/scene-ambiance.md): warm in the lamps, LED-coloured glows.
+    for i, place in enumerate(lamps):
+        empty(f"light.lamp.{pad(i + 1)}", *place)
+    for i, place in enumerate(neon_lights):
+        empty(f"light.neon.{pad(i + 1)}", *place)
     empty("camera.home", 0, 0.9, -0.4)
     empty("bounds", 0, 1.5, 0, scale=(4, 1.5, 4))
 
@@ -515,6 +555,10 @@ MODELS = {
 
 
 def main(names=None, style=None, out=None):
+    if style == "tour":
+        build_tower_objects(out)
+        build_tower_room_baked(out)
+        return
     if style:
         reset()
         build_room(style)
@@ -524,6 +568,10 @@ def main(names=None, style=None, out=None):
         reset()
         MODELS[name]()
         save(name, out)
+
+
+# The « tour » room (baked lighting) lives in its own file.
+exec(open(os.path.join(ROOT, "tower_room.py"), encoding="utf-8").read())
 
 
 def cli_args():

@@ -8,6 +8,7 @@ import { layout } from './layout';
 import { placeObjects, type PlacedObject } from './objects';
 import type { Panels } from './panels';
 import { createLighting } from './lighting';
+import { experienceString } from './timeline';
 import { attachPicking } from './picking';
 import { createStage, HOME_ZOOM, type CameraView } from './renderer';
 import { QUALITY, QualityGovernor, type QualityLevel } from './quality';
@@ -87,7 +88,7 @@ export async function createScene(
   const initialQuality: QualityLevel = readQuality() ?? (coarse ? 'medium' : 'high');
   const governor = new QualityGovernor({ level: initialQuality, minFps: coarse ? 30 : 50 });
 
-  const room = await loadRoom(data.models, data.roomUrl);
+  const room = await loadRoom(data.models, data.roomUrl, data.bakedMaps);
   const stage = createStage(container, {
     home: room.home,
     bounds: room.bounds,
@@ -126,21 +127,31 @@ export async function createScene(
     switchTo(ambianceFor(theme), governor.level);
   });
 
-  const placements = layout(data.items, room.slots, (id) =>
-    data.models.includes(`featured/${id}.glb`),
-  );
+  const hasModel = (file: string) => data.models.includes(file) || file in data.modelUrls;
+  const placements = layout(data.items, room.slots, (id) => hasModel(`featured/${id}.glb`));
   const objects = await placeObjects(
     placements,
     room.slots,
     data.items,
     stage.requestRender,
     data.models,
+    data.modelUrls,
   );
   const byKey = new Map<string, PlacedObject>();
   for (const object of objects) {
     stage.scene.add(object.root, object.hit);
+    lighting.adopt(object.root);
     byKey.set(object.key, object);
   }
+  // Experience cards joined by a red string, oldest to newest (spec 003).
+  const timeline = experienceString(
+    data.items
+      .filter((i) => i.type === 'experience')
+      .sort((a, b) => b.order - a.order)
+      .flatMap((i) => byKey.get(i.key)?.root ?? []),
+  );
+  if (timeline) stage.scene.add(timeline);
+  lighting.apply(shown);
   // Items inside an overflow box are reached through that box.
   const container_ = new Map<string, string>();
   for (const p of placements) {

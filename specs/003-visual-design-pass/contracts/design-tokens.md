@@ -52,8 +52,9 @@ pas le fond : il n'a pas de paire.
 Le test `tests/unit/design-tokens.test.ts` lit `tokens.css`, résout chaque rôle dans chaque thème
 et échoue si une paire est sous son seuil. Il échoue aussi si une couleur littérale apparaît
 dans `src/` hors de `tokens.css`. Exceptions : `src/scene/ambiance.ts` (lumières et ciel,
-[scene-ambiance.md](scene-ambiance.md)), `src/scene/objects.ts` et `src/scene/room.ts`
-(matériaux des objets 3D construits en code), `src/pages/og/[lang].png.ts` (image de partage).
+[scene-ambiance.md](scene-ambiance.md)), `src/scene/objects.ts`, `src/scene/room.ts`,
+`src/scene/lighting.ts` et `src/scene/timeline.ts` (matériaux et textures des objets 3D
+construits en code : halo des lampes de tableau, fil rouge des expériences), `src/pages/og/[lang].png.ts` (image de partage).
 
 ## Autres valeurs
 
