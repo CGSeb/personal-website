@@ -77,6 +77,22 @@ sont décrits dans `specs/001-portfolio-content-written/data-model.md`.
   construction affiche un avertissement.
 - `featured: true` : le projet s'affiche sur l'accueil, dans « Projets à la une ».
 
+## Dans la scène 3D
+
+La scène (`/fr/explorer/`, `/en/explore/`) se construit à partir du même contenu : un projet,
+un diplôme ou une expérience publié y apparaît à la construction suivante, sans rien toucher à
+la scène, et un brouillon en disparaît.
+
+Un projet `featured: true` peut avoir sa place et son objet à lui dans la pièce :
+
+1. dans `assets-src/models/room.blend`, ajouter un objet vide nommé `featured.<id>` (l'`id` du
+   projet) à l'endroit voulu, axe +Z vers la pièce ;
+2. modéliser l'objet dédié, l'exporter en `assets-src/models/featured/<id>.glb` (≤ 300 Ko une
+   fois optimisé), puis `npm run models:optimize`.
+
+Sans place réservée, le projet prend un emplacement de projet ordinaire ; sans fichier dédié
+(ou s'il ne se charge pas), il garde sa place avec l'objet générique de projet.
+
 ## Changer une adresse
 
 Une adresse publiée ne doit pas disparaître. Si tu renommes un dossier (`id`) ou un `slug`,

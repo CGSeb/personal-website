@@ -16,6 +16,7 @@
     "lhci": "lhci autorun",
     "check:seo": "node scripts/check-seo.mjs",
     "check:links": "node scripts/check-links.mjs",
+    "check:scene": "node scripts/check-scene-budget.mjs",
     "format": "prettier --write .",
     "models:optimize": "node scripts/optimize-models.mjs"
   },
