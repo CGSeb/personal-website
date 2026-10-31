@@ -1,0 +1,36 @@
+name: Lighthouse
+
+# Performance budgets of the written version and of the scene pages (constitution: before going
+# to production). Kept out of the pull request checks: scores vary from one run to the next, so
+# they run weekly on main and on demand, and regressions are fixed when they show up.
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Lighthouse
+        run: npm run lhci
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse
+          path: .lighthouseci/
+          retention-days: 14

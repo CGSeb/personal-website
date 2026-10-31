@@ -73,7 +73,10 @@ en code, avec les mêmes emplacements.
 | `npm run lhci` | après `build` : Lighthouse ≥ 90 partout, LCP < 2,5 s, CLS < 0,1, JavaScript ≤ 50 Ko sur la version écrite ; sur la scène, accessibilité, bonnes pratiques et SEO ≥ 90, poids total ≤ 3 Mo |
 | `npm run check:links` | les liens externes du contenu (avertissements seulement) |
 
-La CI GitHub (`.github/workflows/ci.yml`) lance tout cela sur chaque pull request.
+La CI GitHub (`.github/workflows/ci.yml`) lance tout cela sur chaque pull request, sauf
+Lighthouse : ses scores varient d'un passage à l'autre, il tourne donc chaque lundi sur `main`
+et à la demande (`.github/workflows/lighthouse.yml`, onglet Actions → Lighthouse → Run
+workflow), et toujours avant une mise en ligne.
 
 Sous Windows, si Lighthouse ne parvient pas à lancer Chrome (`spawn UNKNOWN`), démarrer un
 Chromium avec `--remote-debugging-port=9222` et lancer
