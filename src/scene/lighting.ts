@@ -58,6 +58,7 @@ export function createLighting(scene: THREE.Scene, room: Room): Lighting {
 
   return {
     adopt(object) {
+      let neon: THREE.MeshStandardMaterial | undefined;
       object.traverse((o) => {
         const mesh = o as THREE.Mesh;
         if (!mesh.isMesh) return;
@@ -66,8 +67,10 @@ export function createLighting(scene: THREE.Scene, room: Room): Lighting {
           m.emissive.copy(glow);
           room.lampMaterials.push(m);
         } else if (m.name === 'neon') {
-          m.emissive.copy(m.color);
+          // An object's LEDs glow brighter than their (darker) surface colour.
+          m.emissive.copy(m.color).multiplyScalar(1.8);
           room.neonMaterials.push(m);
+          neon = m;
         } else if (m.name === 'glow') {
           glowMap ??= glowTexture();
           const halo = new THREE.MeshBasicMaterial({
@@ -84,6 +87,15 @@ export function createLighting(scene: THREE.Scene, room: Room): Lighting {
           glows.push(halo);
         }
       });
+      // An object with LEDs (Voxel Shift's logo) also lights what is around it, like the room's
+      // LED glows: at night, at high quality.
+      if (neon) {
+        const marker = new THREE.Object3D();
+        new THREE.Box3().setFromObject(object).getCenter(marker.position);
+        const light = pointAt(marker);
+        light.color.copy(neon.color);
+        neonPoints.push(light);
+      }
       if (current) this.apply(current);
     },
     apply(s) {

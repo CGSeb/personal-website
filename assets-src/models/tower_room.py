@@ -373,14 +373,15 @@ def tower_markers(lights):
     top = 0.77
     room_markers(
         lamps=(lights["floor_lamp"], lights["desk_lamp"], lights["spot_board"]),
-        # Dedicated objects on the desk's north arm (LessonFolk's cap, this portfolio's
-        # diorama, Voxel Shift's logo); other projects on the west arm.
+        # Dedicated objects: LessonFolk's cap on the west arm, this portfolio on the main
+        # screen in front of the chair, Voxel Shift's logo on the right.
         featured={
-            "lesson-folk": (-0.95, top, -H + 0.38, 0.0),
-            "portfolio-3d": (-0.15, top, -H + 0.36, 0.0),
-            "voxelshift": (0.5, top, -H + 0.36, 0.0),
+            "lesson-folk": (-H + 0.33, top, -1.12, math.pi / 2),
+            "portfolio-3d": (-0.55, top, -H + 0.3, 0.0),
+            "voxelshift": (0.45, top, -H + 0.36, 0.0),
         },
-        projects=[(-H + 0.36, top, -1.05, math.pi / 2)],
+        # Another project (none yet) gets a screen on the left of the north arm.
+        projects=[(-1.3, top, -H + 0.3, 0.0)],
         # Two large lit frames above the desk's west arm.
         education=[(-H + 0.01, 1.85, z, math.pi / 2) for z in (-1.65, -0.8)],
         # The board: a zigzag timeline, the most recent card (slot 01) on the right.
@@ -589,7 +590,10 @@ def tower_object_materials():
     mat_plain("book-purple", "#5b4cf0", rough=0.7)
     mat_plain("book-cream", "#efe6d2", rough=0.7)
     mat_plain("base", "#141518", rough=0.4)
-    mat_plain("neon", "#01e675", rough=0.4)
+    mat_plain("neon", "#00a352", rough=0.4)  # darker than the logo's green; glows brighter
+    mat_plain("screen", "#e8eaf6", rough=0.4)
+    mat_plain("bezel", "#16171a", rough=0.5)
+    mat_plain("stand", "#5a5d63", rough=0.35, metal=1.0)
 
 
 def _capsule(b, material, x0, y0, x1, y1, w, depth, z=0.0):
@@ -663,13 +667,28 @@ def build_tower_voxelshift():
     b.build("voxelshift", bevel=0.002)
 
 
+def build_tower_monitor(name):
+    """A slim 27" monitor on a metal stand; its screen shows the project's image (`screen`)."""
+    b = Builder(collections.defaultdict(lambda: None))
+    w, h, y = 0.64, 0.37, 0.42
+    b.box("bezel", w + 0.02, h + 0.02, 0.02, 0, y, 0)
+    b.plane("screen", w, h, 0, y, 0.0105)
+    b.box("bezel", 0.2, 0.12, 0.03, 0, y - 0.02, -0.025)
+    b.box("stand", 0.04, 0.3, 0.025, 0, 0.17, -0.06, tilt=math.radians(-6))
+    b.box("stand", 0.24, 0.012, 0.16, 0, 0.006, -0.04)
+    b.build(name, flat=("screen",))
+
+
 # Model file -> builder and scale: the desk objects are drawn larger than life so they read
 # from the isometric view.
 TOWER_OBJECTS = {
     "tour/generic-education": (build_tower_education, 1.0),
     "tour/generic-experience": (build_tower_experience, 1.0),
+    "tour/generic-project": (lambda: build_tower_monitor("generic-project"), 1.0),
     "tour/featured/lesson-folk": (build_tower_lesson_folk, 1.5),
     "tour/featured/voxelshift": (build_tower_voxelshift, 1.4),
+    # This portfolio: the main computer's screen, showing the site.
+    "tour/featured/portfolio-3d": (lambda: build_tower_monitor("portfolio-3d"), 1.1),
 }
 
 
