@@ -106,13 +106,17 @@ const { lang, class: className } = Astro.props;
     color: var(--color-text);
     background: transparent;
     border: 1px solid var(--color-border-strong);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-s);
     cursor: pointer;
+    transition:
+      border-color var(--duration-fast),
+      background-color var(--duration-fast);
   }
   .theme-toggle[hidden] {
     display: none;
   }
   .theme-toggle:hover {
+    border-color: var(--color-accent);
     background: var(--color-surface-raised);
   }
   .theme-toggle svg > * {

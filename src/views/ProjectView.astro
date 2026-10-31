@@ -78,7 +78,7 @@ const jsonLd = graph(
       />
     )}
 
-    <dl class="project-meta">
+    <dl class="project-meta meta-panel">
       <div>
         <dt>{t(lang, 'project.role')}</dt>
         <dd>{project.role[lang]}</dd>
@@ -220,26 +220,22 @@ const jsonLd = graph(
   }
   .project :global(.cover) {
     width: 100%;
+    border: 1px solid var(--color-border);
     border-radius: var(--radius);
+    box-shadow: var(--shadow-2);
     margin-block: var(--space-l);
     aspect-ratio: 16 / 10;
     object-fit: cover;
   }
   .project-meta {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
-    gap: var(--space-m) var(--space-l);
     margin: 0 0 var(--space-xl);
   }
-  dt {
-    font-size: var(--step--1);
-    font-weight: 600;
-    color: var(--color-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+  .project-meta .tags a {
+    color: inherit;
+    text-decoration: none;
   }
-  dd {
-    margin: var(--space-2xs) 0 0;
+  .project-meta .tags li:has(a:hover) {
+    border-color: var(--color-accent);
   }
   section {
     margin-block: var(--space-xl);
@@ -250,7 +246,14 @@ const jsonLd = graph(
     gap: var(--space-m);
   }
   .gallery :global(img) {
+    border: 1px solid var(--color-border);
     border-radius: var(--radius);
+  }
+  .related ul {
+    padding-left: var(--space-m);
+  }
+  .related li::marker {
+    color: var(--color-accent);
   }
   .pager {
     display: grid;
@@ -259,6 +262,14 @@ const jsonLd = graph(
     border-top: 1px solid var(--color-border);
     padding-top: var(--space-l);
     margin-top: var(--space-2xl);
+  }
+  .pager a {
+    font-weight: 600;
+    text-decoration: underline 2px transparent;
+    text-underline-offset: 0.25em;
+  }
+  .pager a:hover {
+    text-decoration-color: currentColor;
   }
   .pager a[rel='next'] {
     text-align: right;

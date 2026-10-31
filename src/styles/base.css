@@ -114,9 +114,74 @@ video {
 
 .tags li {
   font-size: var(--step--1);
+  font-weight: 500;
+  background: var(--color-surface-raised);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-pill);
-  padding: 0.1em 0.7em;
+  border-radius: var(--radius-s);
+  padding: 0.1em 0.6em;
+}
+
+/* Facts of a project or a career entry (role, period, categories…), on a panel. */
+.meta-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: var(--space-m) var(--space-l);
+  padding: var(--space-m) var(--space-l);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.meta-panel dt {
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.meta-panel dd {
+  margin: var(--space-2xs) 0 0;
+}
+
+/* Buttons: `.button` is the main action (amber, like the room's lights), `.button-secondary`
+   the others. Both work on links. */
+.button,
+.button-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-height: 2.75rem;
+  padding: var(--space-xs) var(--space-m);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-s);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast),
+    border-color var(--duration-fast),
+    box-shadow var(--duration-fast);
+}
+
+.button {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.button:hover {
+  box-shadow: 0 0 1.25rem color-mix(in srgb, var(--color-accent) 45%, transparent);
+}
+
+.button-secondary {
+  background: transparent;
+  border-color: var(--color-border-strong);
+  color: var(--color-accent-text);
+}
+
+.button-secondary:hover {
+  background: var(--color-surface-raised);
+  border-color: var(--color-accent);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -131,5 +196,68 @@ video {
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* No decorative movement: cards do not lift, buttons do not glow in. */
+@media (prefers-reduced-motion: reduce) {
+  .project-card:hover {
+    transform: none !important;
+  }
+}
+
+/* Forced colours (Windows contrast themes): borders and focus in system colours, glows off. */
+@media (forced-colors: active) {
+  .project-card,
+  .meta-panel,
+  .tags li,
+  .button,
+  .button-secondary {
+    border-color: CanvasText;
+  }
+  :focus-visible,
+  .project-card:focus-within {
+    outline-color: Highlight;
+  }
+  * {
+    box-shadow: none !important;
+  }
+}
+
+/* Print: the content only (colours in tokens.css), with the address of external links. */
+@media print {
+  .site-header,
+  .theme-toggle,
+  .language-switcher,
+  .explore-3d,
+  .skip-link,
+  .pager,
+  .video-facade,
+  .site-footer a {
+    display: none !important;
+  }
+  .site-footer {
+    margin-top: var(--space-l);
+    background: none;
+  }
+  .project-card,
+  .meta-panel,
+  .timeline-entry,
+  figure,
+  img {
+    break-inside: avoid;
+  }
+  .project-card {
+    transform: none;
+  }
+  .timeline-entry::before {
+    box-shadow: none;
+    animation: none !important;
+  }
+  main a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: var(--step--1);
+    color: var(--color-muted);
+    word-break: break-all;
   }
 }

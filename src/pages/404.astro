@@ -15,10 +15,10 @@ import { t } from '../i18n/ui';
     <p>{t('fr', 'notFound.text')}</p>
     <ul class="choices">
       <li>
-        <a href={urlFor('home', 'fr')}>{t('fr', 'nav.home')}</a>
+        <a class="button" href={urlFor('home', 'fr')}>{t('fr', 'nav.home')}</a>
       </li>
       <li>
-        <a href={urlFor('projects', 'fr')}>{t('fr', 'nav.projects')}</a>
+        <a class="button-secondary" href={urlFor('projects', 'fr')}>{t('fr', 'nav.projects')}</a>
       </li>
     </ul>
   </section>
@@ -27,10 +27,10 @@ import { t } from '../i18n/ui';
     <p>{t('en', 'notFound.text')}</p>
     <ul class="choices">
       <li>
-        <a href={urlFor('home', 'en')}>{t('en', 'nav.home')}</a>
+        <a class="button" href={urlFor('home', 'en')}>{t('en', 'nav.home')}</a>
       </li>
       <li>
-        <a href={urlFor('projects', 'en')}>{t('en', 'nav.projects')}</a>
+        <a class="button-secondary" href={urlFor('projects', 'en')}>{t('en', 'nav.projects')}</a>
       </li>
     </ul>
   </section>

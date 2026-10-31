@@ -79,4 +79,15 @@ const jsonLd = graph(
   section {
     margin-top: var(--space-xl);
   }
+  section > :global(h2) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+  }
+  section > :global(h2)::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-border);
+  }
 </style>

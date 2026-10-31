@@ -19,17 +19,27 @@ const other = otherLang(lang);
 </a>
 
 <style>
+  /* Same size and shape as the theme button next to it. */
   .language-switcher {
-    display: inline-block;
-    padding: var(--space-2xs) var(--space-s);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-pill);
+    display: inline-grid;
+    place-items: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding-inline: var(--space-xs);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-s);
     color: var(--color-text);
+    font-family: var(--font-display);
     font-size: var(--step--1);
     font-weight: 600;
+    letter-spacing: 0.04em;
     text-decoration: none;
+    transition:
+      border-color var(--duration-fast),
+      background-color var(--duration-fast);
   }
   .language-switcher:hover {
     border-color: var(--color-accent);
+    background: var(--color-surface-raised);
   }
 </style>

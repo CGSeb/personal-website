@@ -1,9 +1,11 @@
-/* Inter, self-hosted through @fontsource and bundled with the site (no third-party request).
-   Its @font-face rules use `font-display: swap` and unicode ranges, so only the latin
-   files are downloaded for French and English text. */
+/* Inter for text and Space Grotesk for headings (style « tour », spec 003), self-hosted through
+   @fontsource and bundled with the site (no third-party request). Their @font-face rules use
+   `font-display: swap` and unicode ranges, so only the latin files are downloaded for French and
+   English text. */
 @import '@fontsource-variable/inter/wght.css';
+@import '@fontsource-variable/space-grotesk/wght.css';
 
-/* Fallback shown while Inter loads, adjusted to Inter's metrics so the swap does not move the
+/* Fallbacks shown while the fonts load, adjusted to their metrics so the swap does not move the
    text (it caused most of the layout shift measured by Lighthouse). */
 @font-face {
   font-family: 'Inter Fallback';
@@ -11,5 +13,14 @@
   size-adjust: 107.12%;
   ascent-override: 90.44%;
   descent-override: 22.52%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Space Grotesk Fallback';
+  src: local('Arial');
+  size-adjust: 104%;
+  ascent-override: 88%;
+  descent-override: 26%;
   line-gap-override: 0%;
 }

@@ -29,16 +29,23 @@ export const GET: APIRoute = async ({ params }) => {
     .slice(0, 3)
     .map((line, i) => `<tspan x="80" dy="${i === 0 ? 0 : 56}">${escape(line)}</tspan>`)
     .join('');
+  // Style « tour »: charcoal like the room at night, an amber LED line and the amber cube.
+  // librsvg only knows the fonts installed on the build machine, hence the fallbacks.
+  const font = "'Space Grotesk', Inter, 'Segoe UI', Arial, sans-serif";
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0" stop-color="#3d5afe"/><stop offset="1" stop-color="#7c4dff"/>
-  </linearGradient></defs>
-  <rect width="1200" height="630" fill="url(#g)"/>
-  <g fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="10" stroke-linejoin="round">
-    <path d="M1000 160 1110 215 1110 345 1000 400 890 345 890 215Z"/><path d="M890 215 1000 270 1110 215M1000 270v130"/>
+  <defs><radialGradient id="glow" cx="0.83" cy="0.45" r="0.45">
+    <stop offset="0" stop-color="#f0a35a" stop-opacity="0.22"/><stop offset="1" stop-color="#f0a35a" stop-opacity="0"/>
+  </radialGradient></defs>
+  <rect width="1200" height="630" fill="#141516"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect y="560" width="1200" height="70" fill="#1c1d1f"/>
+  <rect x="80" y="558" width="1040" height="4" rx="2" fill="#f0a35a"/>
+  <g fill="none" stroke="#f0a35a" stroke-width="10" stroke-linejoin="round">
+    <path d="M1000 160 1110 215 1110 345 1000 400 890 345 890 215Z"/><path d="M890 215 1000 270 1110 215M1000 270v130" stroke-opacity="0.6"/>
   </g>
-  <text x="80" y="250" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="84" font-weight="700" fill="#ffffff">${escape(profile.name)}</text>
-  <text x="80" y="340" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="44" fill="#ffffff" fill-opacity="0.9">${headline}</text>
+  <rect x="80" y="166" width="28" height="28" rx="6" fill="#f0a35a"/>
+  <text x="80" y="270" font-family="${font}" font-size="84" font-weight="700" fill="#f0ebe3">${escape(profile.name)}</text>
+  <text x="80" y="350" font-family="${font}" font-size="44" fill="#f5b77a">${headline}</text>
 </svg>`;
   const png = await sharp(Buffer.from(svg)).png().toBuffer();
   return new Response(new Uint8Array(png), { headers: { 'Content-Type': 'image/png' } });
