@@ -76,8 +76,8 @@ D'abord la liste : lesquels garder, lesquels ajouter. Puis pour chaque projet :
 
 ## Étape 7 — Vérification
 
-- [ ] Plus aucun « (Texte provisoire) », « (Provisoire) », « à préciser », `example.com`
-- [ ] `npm run build`, `npm test`, `npm run check:seo`, `npm run check:links`
+- [x] Plus aucun « (Texte provisoire) », « (Provisoire) », « à préciser », `example.com`
+- [x] `npm run build`, `npm test`, `npm run check:seo`, `npm run check:links`
 - [ ] Relecture des pages FR et EN et de la scène 3D
 
 Ensuite : la passe graphique et design sur tout le site, scène 3D comprise.

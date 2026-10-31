@@ -2,7 +2,7 @@ id: exia-cesi
 title:
   fr: Ingénieur en ingénierie logicielle
   en: Engineering degree in software engineering
-institution: exia.CESI, école d'ingénieurs informatique
+institution: exia.CESI
 location: { fr: Saint-Nazaire, France, en: "Saint-Nazaire, France" }
 period: { start: 2016-09, end: 2019-07 }
 obtained: true
