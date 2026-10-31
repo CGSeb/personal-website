@@ -63,8 +63,8 @@ Construction de `main` avec les vrais modèles (`room.glb` et objets, 98 Ko en t
 
 Suite complète : 250 tests de bout en bout réussis (37 ignorés par projet : sans JavaScript, tactile, Chromium seul), `check:seo` sur 29 pages.
 
-### Vérification manuelle (à faire)
+### Vérification manuelle
 
 - [x] Téléphone Android de milieu de gamme réel : la scène fonctionne (31/10/2026)
-- [ ] iPhone (Safari)
-- [ ] Lecteur d'écran (NVDA ou VoiceOver)
+- [ ] iPhone (Safari) : non fait, pas d'iPhone disponible ; le parcours est couvert par les tests automatiques sur WebKit mobile (mobile-webkit)
+- [x] Lecteur d'écran : la liste et les panneaux sont annoncés (31/10/2026)

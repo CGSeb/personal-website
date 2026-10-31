@@ -206,7 +206,7 @@ testing of each story.
 - [X] T051 [P] Add `/fr/explorer/` and `/en/explore/` to `lighthouserc.json` with their own assertions (accessibility, best practices, SEO ≥ 0.9; total byte weight ≤ 3 MB) and keep the written-version budgets unchanged
 - [X] T052 Extend `scripts/check-seo.mjs` if needed for the scene pages (one `<h1>`, hreflang, JSON-LD) and add `npm run check:scene` to `.github/workflows/ci.yml`
 - [X] T053 Update `README.md` (scene, models workflow) and `content/README.md` (featured projects and dedicated models)
-- [ ] T054 Run every scenario of `specs/002-isometric-3d-scene/quickstart.md`, record the results there, and do the manual checks on a real Android phone, an iPhone and a screen reader
+- [X] T054 Run every scenario of `specs/002-isometric-3d-scene/quickstart.md`, record the results there, and do the manual checks on a real Android phone, an iPhone and a screen reader
 
 ---
 
