@@ -43,9 +43,10 @@ function blend(a: AmbianceSettings, b: AmbianceSettings, t: number): AmbianceSet
 - `pointLight` est `null` en qualité `low` (FR-027).
 - `neonLight` est `null` le jour et en qualité `medium` et `low` : sur téléphone, seules les
   lampes éclairent la nuit.
-- Une pièce peut placer ses propres emplacements (`slot.project.NN`, `featured.<id>`) : la
-  pièce « tour » met les projets mis en avant au centre, sur son bureau, et les autres sur un
-  mur d'écrans ; le code ne dépend que des noms.
+- Une pièce peut placer ses propres emplacements (`slot.project.NN`, `slot.education.NN`,
+  `slot.experience.NN`, `featured.<id>`) : la pièce « tour » met tous les projets sur un long
+  bureau face à la baie (mis en avant au centre), les diplômes et les expériences sur le mur
+  ouest ; le code ne dépend que des noms.
 - Les couleurs des lumières et du ciel sont les seules couleurs littérales permises dans le
   code (exception à la règle de [design-tokens.md](design-tokens.md)). Le fond de la scène vient
   de `--scene-bg`.

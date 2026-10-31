@@ -6,8 +6,10 @@ le panneau d'un projet ouvert (`…-panneau.jpg`) ; sur téléphone, la pièce s
 recouvrirait en entier).
 
 « Tour » a été ajouté après une première comparaison : Sébastien penche pour le bureau moderne,
-mais situé en haut d'un immeuble, très moderne et sci-fi. Sa pièce a ensuite été réagencée : les
-projets mis en avant au milieu, sur un bureau ovale, et un éclairage de nuit en plusieurs sources.
+mais situé en haut d'un immeuble, très moderne et sci-fi. Sa pièce a ensuite été refaite d'après
+ses images de référence : baie vitrée sur toute la largeur, long bureau face à la ville avec les
+projets mis en avant au centre, bibliothèque en bois encastrée, lattes de bois éclairées au-dessus
+des diplômes, salon tourné vers la vue.
 
 Nom : `<style>-<thème>-<largeur>-<écran>.jpg`.
 
@@ -35,9 +37,9 @@ Nom : `<style>-<thème>-<largeur>-<écran>.jpg`.
 
 | | Atelier | Bureau moderne | Tour (sci-fi) |
 |---|---|---|---|
-| Ambiance | chaleureuse : bois, sable, crème | épurée : blanc, gris clair, graphite | bureau en haut d'un immeuble : blanc froid, bleu nuit, néons |
+| Ambiance | chaleureuse : bois, sable, crème | épurée : blanc, gris clair, graphite | bureau en haut d'un immeuble : béton, bois foncé, noir, néons cyan |
 | Accent | terracotta | sarcelle | cyan électrique (focus magenta) |
 | Police | Figtree (plus ronde) | Inter (celle d'aujourd'hui) | Space Grotesk pour les titres, Inter pour le texte |
 | Arrondis | larges (1 rem) | fins (0,375 rem) | presque nets (0,25 rem) |
-| Pièce | parquet, établi en bois, outils | parquet clair, bureau blanc à plateau fin | sol sombre quadrillé, baie vitrée sur la ville, bandes LED ; au centre, bureau ovale blanc avec les projets mis en avant, cerclé de LED ; mur d'écrans le long de la baie pour les autres projets ; salon avec canapé bas, table ronde, lampe arc |
-| Nuit | bruns chauds sous la lampe | graphite et lumière froide | fenêtres de la ville allumées ; halo suspendu au-dessus du bureau central, lampe arc sur le salon, lueurs cyan sous le bureau et le mur d'écrans |
+| Pièce | parquet, établi en bois, outils | parquet clair, bureau blanc à plateau fin | parquet foncé ; baie vitrée sur la ville, de mur à mur ; long bureau noir suspendu face à la vue, liseré LED cyan, projets mis en avant au centre et autres écrans de part et d'autre, fauteuil tourné vers la ville ; mur en béton : bibliothèque en noyer encastrée, diplômes sous des lattes de bois, panneau noir des expériences ; salon face à la vue (canapé bas, table basse, lampe) |
+| Nuit | bruns chauds sous la lampe | graphite et lumière froide | fenêtres et enseignes de la ville allumées ; lumière chaude sous les lattes et les étagères, lampe du salon, accent sur le bureau ; lueurs cyan sous le bureau et autour des expériences |
