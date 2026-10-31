@@ -131,7 +131,7 @@ and check that nothing of the mockups is in `dist/`
 
 ### Implementation for User Story 2
 
-- [ ] T026 [US2] Move the chosen style's palette and roles from `mockups/styles/<style>.css` into `src/styles/tokens.css` (with the borrowings listed in `decision.md`); update `src/styles/fonts.css` and the font preload in `src/layouts/BaseLayout.astro` if the font changes (add the `@fontsource-variable/*` package, remove the unused one)
+- [X] T026 [US2] Move the chosen style's palette and roles from `mockups/styles/<style>.css` into `src/styles/tokens.css` (with the borrowings listed in `decision.md`); update `src/styles/fonts.css` and the font preload in `src/layouts/BaseLayout.astro` if the font changes (add the `@fontsource-variable/*` package, remove the unused one)
 - [ ] T027 [P] [US2] Header, footer, language switcher, theme button in the chosen style: `src/components/Header.astro`, `src/components/Footer.astro`, `src/components/LanguageSwitcher.astro`, `src/components/ThemeToggle.astro`
 - [ ] T028 [P] [US2] Shared components with one look each (FR-010): `src/components/ProjectCard.astro` (with the default visual in the chosen style when a project has no image), `src/components/Timeline.astro`, `src/components/Period.astro`, `src/components/ProjectLinks.astro`, `src/components/RelatedProjects.astro`, `src/components/VideoFacade.astro`, tags and buttons in `src/styles/base.css`
 - [ ] T029 [US2] Views in the chosen style, using roles only: `src/views/HomeView.astro` (profile, featured projects, 3D entry), `src/views/ProjectListView.astro`, `src/views/ProjectView.astro`, `src/views/CareerView.astro`, `src/views/CareerItemView.astro`, `src/views/ContactView.astro`, `src/pages/404.astro`

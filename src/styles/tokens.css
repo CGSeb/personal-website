@@ -3,56 +3,56 @@
    roles. Dark values are declared twice: once for the system setting when the visitor made no
    choice, once for an explicit choice (`data-theme`, set by ThemeScript.astro). */
 :root {
-  --palette-paper-50: #fbfaf7;
-  --palette-paper-100: #f3f1ec;
-  --palette-paper-200: #e3e1dc;
-  --palette-white: #ffffff;
-  --palette-ink-500: #75757f;
-  --palette-ink-600: #5b5b63;
-  --palette-ink-650: #7d7a73;
-  --palette-ink-900: #1d1d1f;
-  --palette-night-200: #a5a5b0;
-  --palette-night-100: #ececf0;
-  --palette-night-700: #2e2e35;
-  --palette-night-800: #26262b;
-  --palette-night-850: #1c1c20;
-  --palette-night-900: #121214;
-  --palette-indigo-300: #a9b6ff;
-  --palette-indigo-400: #8c9eff;
-  --palette-indigo-500: #3d5afe;
-  --palette-indigo-700: #2a3fd1;
-  --palette-amber-400: #ffb020;
-  --palette-amber-500: #ff9f1c;
-  --palette-amber-700: #b35900;
-  --palette-green-400: #4ade80;
-  --palette-green-600: #16a34a;
-  --palette-black-15: rgb(0 0 0 / 0.15);
-  --palette-black-18: rgb(0 0 0 / 0.18);
-  --palette-black-45: rgb(0 0 0 / 0.45);
+  --palette-linen-25: #fffdf9;
+  --palette-linen-50: #f5f1ea;
+  --palette-linen-100: #ece5da;
+  --palette-linen-200: #e0d8cc;
+  --palette-stone-500: #8a8076;
+  --palette-stone-650: #5e574f;
+  --palette-ink-950: #1c1a18;
+  --palette-walnut-600: #a5541f;
+  --palette-walnut-700: #8a4417;
+  --palette-amber-300: #f5b77a;
+  --palette-amber-400: #f0a35a;
+  --palette-amber-950: #1a1209;
+  --palette-teal-300: #7fd4dc;
+  --palette-teal-700: #1f6f78;
+  --palette-moss-300: #8cc97f;
+  --palette-moss-600: #3f7d3a;
+  --palette-charcoal-500: #7a736a;
+  --palette-charcoal-800: #2f3134;
+  --palette-charcoal-850: #25272a;
+  --palette-charcoal-900: #1c1d1f;
+  --palette-charcoal-950: #141516;
+  --palette-cream-100: #f0ebe3;
+  --palette-cream-300: #b5aca0;
+  --palette-umber-10: rgb(50 32 18 / 0.1);
+  --palette-umber-16: rgb(50 32 18 / 0.16);
   --palette-black-50: rgb(0 0 0 / 0.5);
+  --palette-black-55: rgb(0 0 0 / 0.55);
 
   color-scheme: light;
 
-  --color-bg: var(--palette-paper-50);
-  --color-surface: var(--palette-white);
-  --color-surface-raised: var(--palette-paper-100);
-  --color-text: var(--palette-ink-900);
-  --color-muted: var(--palette-ink-600);
-  --color-border: var(--palette-paper-200);
-  --color-border-strong: var(--palette-ink-650);
-  --color-accent: var(--palette-indigo-500);
-  --color-on-accent: var(--palette-white);
-  --color-accent-text: var(--palette-indigo-700);
-  --color-focus: var(--palette-amber-700);
-  --color-ongoing: var(--palette-green-600);
-  --scene-bg: var(--palette-white);
+  --color-bg: var(--palette-linen-50);
+  --color-surface: var(--palette-linen-25);
+  --color-surface-raised: var(--palette-linen-100);
+  --color-text: var(--palette-ink-950);
+  --color-muted: var(--palette-stone-650);
+  --color-border: var(--palette-linen-200);
+  --color-border-strong: var(--palette-stone-500);
+  --color-accent: var(--palette-walnut-600);
+  --color-on-accent: var(--palette-linen-25);
+  --color-accent-text: var(--palette-walnut-700);
+  --color-focus: var(--palette-teal-700);
+  --color-ongoing: var(--palette-moss-600);
+  --scene-bg: var(--palette-linen-100);
   --scene-highlight: var(--palette-amber-400);
-  --shadow-1: 0 8px 24px var(--palette-black-15);
-  --shadow-2: 0 12px 32px var(--palette-black-18);
+  --shadow-1: 0 4px 16px var(--palette-umber-10);
+  --shadow-2: 0 10px 28px var(--palette-umber-16);
 
   --font-sans:
     'Inter Variable', 'Inter Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-display: var(--font-sans);
+  --font-display: 'Space Grotesk Variable', 'Space Grotesk Fallback', system-ui, sans-serif;
 
   --step--1: clamp(0.83rem, 0.8rem + 0.15vw, 0.9rem);
   --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.1rem);
@@ -68,8 +68,8 @@
   --space-xl: 2.5rem;
   --space-2xl: 4rem;
 
-  --radius: 0.75rem;
-  --radius-s: 0.5rem;
+  --radius: 0.5rem;
+  --radius-s: 0.25rem;
   --radius-pill: 999px;
   --duration-fast: 150ms;
   --duration-theme: 400ms;
@@ -82,44 +82,44 @@
   :root:not([data-theme='light']) {
     color-scheme: dark;
 
-    --color-bg: var(--palette-night-900);
-    --color-surface: var(--palette-night-850);
-    --color-surface-raised: var(--palette-night-800);
-    --color-text: var(--palette-night-100);
-    --color-muted: var(--palette-night-200);
-    --color-border: var(--palette-night-700);
-    --color-border-strong: var(--palette-ink-500);
-    --color-accent: var(--palette-indigo-400);
-    --color-on-accent: var(--palette-night-900);
-    --color-accent-text: var(--palette-indigo-300);
-    --color-focus: var(--palette-amber-500);
-    --color-ongoing: var(--palette-green-400);
-    --scene-bg: var(--palette-night-850);
-    --scene-highlight: var(--palette-amber-400);
-    --shadow-1: 0 8px 24px var(--palette-black-45);
-    --shadow-2: 0 12px 32px var(--palette-black-50);
+    --color-bg: var(--palette-charcoal-950);
+    --color-surface: var(--palette-charcoal-900);
+    --color-surface-raised: var(--palette-charcoal-850);
+    --color-text: var(--palette-cream-100);
+    --color-muted: var(--palette-cream-300);
+    --color-border: var(--palette-charcoal-800);
+    --color-border-strong: var(--palette-charcoal-500);
+    --color-accent: var(--palette-amber-400);
+    --color-on-accent: var(--palette-amber-950);
+    --color-accent-text: var(--palette-amber-300);
+    --color-focus: var(--palette-teal-300);
+    --color-ongoing: var(--palette-moss-300);
+    --scene-bg: var(--palette-charcoal-950);
+    --scene-highlight: var(--palette-amber-300);
+    --shadow-1: 0 4px 16px var(--palette-black-50);
+    --shadow-2: 0 10px 28px var(--palette-black-55);
   }
 }
 
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --color-bg: var(--palette-night-900);
-  --color-surface: var(--palette-night-850);
-  --color-surface-raised: var(--palette-night-800);
-  --color-text: var(--palette-night-100);
-  --color-muted: var(--palette-night-200);
-  --color-border: var(--palette-night-700);
-  --color-border-strong: var(--palette-ink-500);
-  --color-accent: var(--palette-indigo-400);
-  --color-on-accent: var(--palette-night-900);
-  --color-accent-text: var(--palette-indigo-300);
-  --color-focus: var(--palette-amber-500);
-  --color-ongoing: var(--palette-green-400);
-  --scene-bg: var(--palette-night-850);
-  --scene-highlight: var(--palette-amber-400);
-  --shadow-1: 0 8px 24px var(--palette-black-45);
-  --shadow-2: 0 12px 32px var(--palette-black-50);
+  --color-bg: var(--palette-charcoal-950);
+  --color-surface: var(--palette-charcoal-900);
+  --color-surface-raised: var(--palette-charcoal-850);
+  --color-text: var(--palette-cream-100);
+  --color-muted: var(--palette-cream-300);
+  --color-border: var(--palette-charcoal-800);
+  --color-border-strong: var(--palette-charcoal-500);
+  --color-accent: var(--palette-amber-400);
+  --color-on-accent: var(--palette-amber-950);
+  --color-accent-text: var(--palette-amber-300);
+  --color-focus: var(--palette-teal-300);
+  --color-ongoing: var(--palette-moss-300);
+  --scene-bg: var(--palette-charcoal-950);
+  --scene-highlight: var(--palette-amber-300);
+  --shadow-1: 0 4px 16px var(--palette-black-50);
+  --shadow-2: 0 10px 28px var(--palette-black-55);
 }
 
 @media (prefers-reduced-motion: reduce) {
