@@ -10,7 +10,8 @@ Les emplacements, le repère et les budgets décrits là restent valables.
 |---|---|---|
 | matériau `lamp` | matériau | abat-jour et ampoules ; le code règle son émission (0 de jour) |
 | matériau `window` | matériau | vitre ; le code règle sa couleur émise (ciel de jour, ciel de nuit) |
-| `light.lamp.NN` | objet vide | position d'une lumière ponctuelle de nuit, au centre d'une lampe ; 1 à 3 |
+| `light.lamp.NN` | objet vide | position d'une lumière ponctuelle de nuit (chaude), au centre d'une lampe ; 1 à 3 |
+| `light.neon.NN` | objet vide | position d'une lueur de nuit dans la couleur du matériau `neon` (sous un meuble éclairé par LED) ; 0 à 2, en qualité haute seulement |
 | `decor.shelf` | groupe | étagère avec plantes (au moins 2 plantes), non interactive |
 | matériau `neon` | matériau | bandes LED (facultatif) ; le code le fait briller dans sa propre couleur, un peu de jour, fort de nuit |
 
@@ -30,6 +31,7 @@ interface AmbianceSettings {
   sun: { color: string; intensity: number; position: [number, number, number] };
   lampEmissive: number;
   neonEmissive: number; // > 0 by day, higher at night
+  neonLight: { intensity: number; distance: number } | null; // night, high quality only
   window: { color: string; intensity: number };
   pointLight: { color: string; intensity: number; distance: number } | null;
 }
@@ -39,6 +41,11 @@ function blend(a: AmbianceSettings, b: AmbianceSettings, t: number): AmbianceSet
 ```
 
 - `pointLight` est `null` en qualité `low` (FR-027).
+- `neonLight` est `null` le jour et en qualité `medium` et `low` : sur téléphone, seules les
+  lampes éclairent la nuit.
+- Une pièce peut placer ses propres emplacements (`slot.project.NN`, `featured.<id>`) : la
+  pièce « tour » met les projets mis en avant au centre, sur son bureau, et les autres sur un
+  mur d'écrans ; le code ne dépend que des noms.
 - Les couleurs des lumières et du ciel sont les seules couleurs littérales permises dans le
   code (exception à la règle de [design-tokens.md](design-tokens.md)). Le fond de la scène vient
   de `--scene-bg`.

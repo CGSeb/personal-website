@@ -16,6 +16,11 @@ export interface AmbianceSettings {
   window: { color: string; intensity: number };
   /** One light per `light.lamp.NN` empty; none at low quality (FR-027). */
   pointLight: { color: string; intensity: number; distance: number } | null;
+  /**
+   * One light per `light.neon.NN` empty, in the colour of the room's `neon` material (LED glow
+   * on the floor and the furniture); at high quality only.
+   */
+  neonLight: { intensity: number; distance: number } | null;
 }
 
 /** Colour the lamps glow with, at night. */
@@ -31,27 +36,32 @@ const DAY: AmbianceSettings = {
   neonEmissive: 0.6,
   window: { color: '#cfe6f5', intensity: 0.6 },
   pointLight: null,
+  neonLight: null,
 };
 
-// Moonlight comes in through the window on the north wall; the lamps light the room.
+// Moonlight comes in through the window on the north wall; pools of warm light from the lamps
+// and cyan glows from the LED strips light the room, so the ambient light stays low.
 const NIGHT: AmbianceSettings = {
-  hemisphere: { sky: '#46507a', ground: '#1e1b24', intensity: 0.7 },
-  sun: { color: '#9fb4ff', intensity: 0.35, position: [-3, 7, -8] },
+  hemisphere: { sky: '#3c4670', ground: '#1a1820', intensity: 0.55 },
+  sun: { color: '#9fb4ff', intensity: 0.45, position: [-3, 7, -8] },
   lampEmissive: 2.2,
-  neonEmissive: 2.4,
+  neonEmissive: 2.6,
   window: { color: '#1b2440', intensity: 0.5 },
   pointLight: { color: LAMP_GLOW, intensity: 6, distance: 6 },
+  neonLight: { intensity: 3, distance: 2.6 },
 };
 
 export function settingsFor(ambiance: Ambiance, quality: QualityLevel): AmbianceSettings {
   const base = ambiance === 'night' ? NIGHT : DAY;
-  if (quality !== 'low' || !base.pointLight) return base;
+  if (quality === 'high' || !base.pointLight) return base;
+  if (quality === 'medium') return { ...base, neonLight: null };
   // Without point lights, the glow and the ambient light carry the night.
   return {
     ...base,
     pointLight: null,
+    neonLight: null,
     lampEmissive: base.lampEmissive * 1.3,
-    hemisphere: { ...base.hemisphere, intensity: base.hemisphere.intensity * 1.3 },
+    hemisphere: { ...base.hemisphere, intensity: base.hemisphere.intensity * 1.5 },
   };
 }
 
@@ -86,6 +96,15 @@ export function blend(a: AmbianceSettings, b: AmbianceSettings, t: number): Ambi
           distance: lerp(pa.distance, pb.distance, t),
         }
       : null;
+  const na = a.neonLight ?? (b.neonLight && { ...b.neonLight, intensity: 0 });
+  const nb = b.neonLight ?? (a.neonLight && { ...a.neonLight, intensity: 0 });
+  const neon =
+    na && nb
+      ? {
+          intensity: lerp(na.intensity, nb.intensity, t),
+          distance: lerp(na.distance, nb.distance, t),
+        }
+      : null;
   return {
     hemisphere: {
       sky: mix(a.hemisphere.sky, b.hemisphere.sky, t),
@@ -108,5 +127,6 @@ export function blend(a: AmbianceSettings, b: AmbianceSettings, t: number): Ambi
       intensity: lerp(a.window.intensity, b.window.intensity, t),
     },
     pointLight: t >= 1 ? b.pointLight : t <= 0 ? a.pointLight : point,
+    neonLight: t >= 1 ? b.neonLight : t <= 0 ? a.neonLight : neon,
   };
 }

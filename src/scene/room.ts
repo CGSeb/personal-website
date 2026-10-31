@@ -19,6 +19,8 @@ export interface Room {
   bounds: THREE.Box3;
   /** `light.lamp.NN` empties: where the night point lights go. */
   lamps: THREE.Object3D[];
+  /** `light.neon.NN` empties: where the night LED glows go. */
+  neonLights: THREE.Object3D[];
   /** Materials named `lamp` (shades, bulbs) and `window` (glass), driven by the ambiance. */
   lampMaterials: THREE.MeshStandardMaterial[];
   windowMaterials: THREE.MeshStandardMaterial[];
@@ -38,6 +40,7 @@ export function gltfLoader(): GLTFLoader {
 function describe(group: THREE.Object3D): Room {
   const slots: RoomSlot[] = [];
   const lamps: THREE.Object3D[] = [];
+  const neonLights: THREE.Object3D[] = [];
   const lampMaterials = new Set<THREE.MeshStandardMaterial>();
   const windowMaterials = new Set<THREE.MeshStandardMaterial>();
   const neonMaterials = new Set<THREE.MeshStandardMaterial>();
@@ -50,6 +53,7 @@ function describe(group: THREE.Object3D): Room {
     const slot = parseSlot(name);
     if (slot) slots.push({ ...slot, object });
     if (/^light\.lamp\.\d+$/.test(name)) lamps.push(object);
+    if (/^light\.neon\.\d+$/.test(name)) neonLights.push(object);
     const material = (object as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined;
     if (material && 'emissive' in material) {
       if (material.name === 'lamp') lampMaterials.add(material);
@@ -69,6 +73,7 @@ function describe(group: THREE.Object3D): Room {
     home,
     bounds,
     lamps,
+    neonLights,
     lampMaterials: [...lampMaterials],
     windowMaterials: [...windowMaterials],
     neonMaterials: [...neonMaterials],

@@ -31,6 +31,13 @@ describe('settingsFor', () => {
     expect(settingsFor('night', 'low').pointLight).toBeNull();
   });
 
+  it('adds LED glows at night at high quality only', () => {
+    expect(settingsFor('day', 'high').neonLight).toBeNull();
+    expect(settingsFor('night', 'high').neonLight).not.toBeNull();
+    expect(settingsFor('night', 'medium').neonLight).toBeNull();
+    expect(settingsFor('night', 'low').neonLight).toBeNull();
+  });
+
   it('makes up for the missing point lights at low quality', () => {
     const low = settingsFor('night', 'low');
     const high = settingsFor('night', 'high');

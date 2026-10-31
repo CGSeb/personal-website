@@ -1,11 +1,13 @@
 # Captures des maquettes
 
 Prises le 31/10/2026 avec le contenu réel, sur `npm run dev` (`/_maquettes/<style>/`).
-Animations réduites : la pièce s'affiche directement. Sur ordinateur, le panneau d'un projet est
-ouvert ; sur téléphone, la pièce est seule (le panneau la recouvrirait en entier).
+Animations réduites : la pièce s'affiche directement. Sur ordinateur, la pièce seule, puis avec
+le panneau d'un projet ouvert (`…-panneau.jpg`) ; sur téléphone, la pièce seule (le panneau la
+recouvrirait en entier).
 
 « Tour » a été ajouté après une première comparaison : Sébastien penche pour le bureau moderne,
-mais situé en haut d'un immeuble, très moderne et sci-fi.
+mais situé en haut d'un immeuble, très moderne et sci-fi. Sa pièce a ensuite été réagencée : les
+projets mis en avant au milieu, sur un bureau ovale, et un éclairage de nuit en plusieurs sources.
 
 Nom : `<style>-<thème>-<largeur>-<écran>.jpg`.
 
@@ -17,6 +19,8 @@ Nom : `<style>-<thème>-<largeur>-<écran>.jpg`.
 | Accueil, sombre | ![](atelier-sombre-1440-accueil.jpg) | ![](bureau-sombre-1440-accueil.jpg) | ![](tour-sombre-1440-accueil.jpg) |
 | Pièce, jour | ![](atelier-clair-1440-piece.jpg) | ![](bureau-clair-1440-piece.jpg) | ![](tour-clair-1440-piece.jpg) |
 | Pièce, nuit | ![](atelier-sombre-1440-piece.jpg) | ![](bureau-sombre-1440-piece.jpg) | ![](tour-sombre-1440-piece.jpg) |
+| Panneau, jour | ![](atelier-clair-1440-panneau.jpg) | ![](bureau-clair-1440-panneau.jpg) | ![](tour-clair-1440-panneau.jpg) |
+| Panneau, nuit | ![](atelier-sombre-1440-panneau.jpg) | ![](bureau-sombre-1440-panneau.jpg) | ![](tour-sombre-1440-panneau.jpg) |
 
 ## Téléphone (375 px)
 
@@ -35,5 +39,5 @@ Nom : `<style>-<thème>-<largeur>-<écran>.jpg`.
 | Accent | terracotta | sarcelle | cyan électrique (focus magenta) |
 | Police | Figtree (plus ronde) | Inter (celle d'aujourd'hui) | Space Grotesk pour les titres, Inter pour le texte |
 | Arrondis | larges (1 rem) | fins (0,375 rem) | presque nets (0,25 rem) |
-| Pièce | parquet, établi en bois, outils | parquet clair, bureau blanc à plateau fin | sol sombre quadrillé, baie vitrée sur la ville, bandes LED, bureau-console blanc, lampe arc |
-| Nuit | bruns chauds sous la lampe | graphite et lumière froide | fenêtres de la ville allumées, LED cyan, bleu nuit |
+| Pièce | parquet, établi en bois, outils | parquet clair, bureau blanc à plateau fin | sol sombre quadrillé, baie vitrée sur la ville, bandes LED ; au centre, bureau ovale blanc avec les projets mis en avant, cerclé de LED ; mur d'écrans le long de la baie pour les autres projets ; salon avec canapé bas, table ronde, lampe arc |
+| Nuit | bruns chauds sous la lampe | graphite et lumière froide | fenêtres de la ville allumées ; halo suspendu au-dessus du bureau central, lampe arc sur le salon, lueurs cyan sous le bureau et le mur d'écrans |
