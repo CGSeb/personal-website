@@ -136,7 +136,7 @@ and check that nothing of the mockups is in `dist/`
 - [X] T028 [P] [US2] Shared components with one look each (FR-010): `src/components/ProjectCard.astro` (with the default visual in the chosen style when a project has no image), `src/components/Timeline.astro`, `src/components/Period.astro`, `src/components/ProjectLinks.astro`, `src/components/RelatedProjects.astro`, `src/components/VideoFacade.astro`, tags and buttons in `src/styles/base.css`
 - [X] T029 [US2] Views in the chosen style, using roles only: `src/views/HomeView.astro` (profile, featured projects, 3D entry), `src/views/ProjectListView.astro`, `src/views/ProjectView.astro`, `src/views/CareerView.astro`, `src/views/CareerItemView.astro`, `src/views/ContactView.astro`, `src/pages/404.astro`
 - [X] T030 [US2] `src/styles/base.css`: `@media print` (dark text on white, header, theme button, 3D entry and decorations hidden, URL shown after external links); `@media (forced-colors: active)` (card borders and focus in `CanvasText` / `Highlight`); no decorative transition under `prefers-reduced-motion: reduce`
-- [ ] T031 [US2] Regenerate the share images `src/pages/og/[lang].png.ts` with the chosen palette and font
+- [X] T031 [US2] Regenerate the share images `src/pages/og/[lang].png.ts` with the chosen palette and font
 
 **Checkpoint**: T004 and T025 pass; all existing written-version tests pass
 
