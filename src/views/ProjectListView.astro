@@ -85,7 +85,15 @@ const jsonLd = graph(
   .filters {
     margin-block: var(--space-l);
   }
+  .filters li {
+    padding: 0;
+  }
+  .filters li:hover {
+    border-color: var(--color-border-strong);
+  }
   .filters a {
+    display: inline-block;
+    padding: 0.25em 0.75em;
     text-decoration: none;
     color: inherit;
   }

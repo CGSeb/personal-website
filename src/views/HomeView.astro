@@ -55,7 +55,7 @@ const jsonLd = graph(
       <p class="headline">{profile.headline[lang]}</p>
       <p class="summary">{profile.summary[lang]}</p>
       {SHOW_3D_ENTRY && (
-        <a class="explore-3d" href={urlFor('scene', lang)}>
+        <a class="explore-3d button" href={urlFor('scene', lang)}>
           {t(lang, 'home.explore3d')}
         </a>
       )}
@@ -80,7 +80,7 @@ const jsonLd = graph(
   )}
 
   <p class="container more">
-    <a href={urlFor('projects', lang)}>{t(lang, 'home.allProjects')} →</a>
+    <a class="button-secondary" href={urlFor('projects', lang)}>{t(lang, 'home.allProjects')} →</a>
   </p>
 </BaseLayout>
 
@@ -92,11 +92,16 @@ const jsonLd = graph(
     align-items: center;
     padding-block: var(--space-2xl) var(--space-xl);
   }
+  /* The photo sits in a frame lit by an amber glow, like the room's picture lamps. */
   .hero :global(.photo) {
     width: clamp(5rem, 22vw, 10rem);
     aspect-ratio: 1;
-    border-radius: 50%;
+    border-radius: var(--radius);
     object-fit: cover;
+    border: 3px solid var(--color-surface);
+    box-shadow:
+      0 0 0 1px var(--color-border-strong),
+      0 0 2rem color-mix(in srgb, var(--color-accent) 35%, transparent);
   }
   @media (max-width: 30rem) {
     .hero {
@@ -104,8 +109,10 @@ const jsonLd = graph(
     }
   }
   .headline {
+    font-family: var(--font-display);
     font-size: var(--step-1);
     font-weight: 600;
+    color: var(--color-accent-text);
   }
   .summary {
     color: var(--color-muted);
@@ -121,6 +128,5 @@ const jsonLd = graph(
   }
   .more {
     margin-top: var(--space-l);
-    font-weight: 600;
   }
 </style>

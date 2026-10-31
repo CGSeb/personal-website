@@ -82,7 +82,7 @@ const jsonLd = graph(
       </p>
     </header>
 
-    <dl class="entry-meta">
+    <dl class="entry-meta meta-panel">
       <div>
         <dt>{obtainedOnly ? t(lang, 'career.obtained') : t(lang, 'career.period')}</dt>
         <dd>
@@ -146,28 +146,18 @@ const jsonLd = graph(
     padding-top: var(--space-xl);
   }
   .org {
+    font-family: var(--font-display);
     font-size: var(--step-1);
     font-weight: 600;
+    color: var(--color-accent-text);
   }
   .entry-meta {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
-    gap: var(--space-m) var(--space-l);
     margin: var(--space-l) 0 var(--space-xl);
-  }
-  dt {
-    font-size: var(--step--1);
-    font-weight: 600;
-    color: var(--color-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-  dd {
-    margin: var(--space-2xs) 0 0;
   }
   .back {
     margin-top: var(--space-2xl);
     border-top: 1px solid var(--color-border);
     padding-top: var(--space-l);
+    font-weight: 600;
   }
 </style>

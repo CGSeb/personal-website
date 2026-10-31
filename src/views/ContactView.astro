@@ -67,7 +67,7 @@ const jsonLd = graph(
         <ul class="profiles">
           {profile.profiles!.map((p) => (
             <li>
-              <a href={p.url} rel="me noopener">
+              <a class="button-secondary" href={p.url} rel="me noopener">
                 {p.label ?? NETWORK_NAMES[p.network] ?? new URL(p.url).hostname}
               </a>
             </li>
@@ -89,8 +89,13 @@ const jsonLd = graph(
     margin-top: var(--space-xl);
   }
   .mail {
-    font-size: var(--step-1);
+    font-family: var(--font-display);
+    font-size: var(--step-2);
     font-weight: 600;
+  }
+  .mail :global(a) {
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
   }
   .profiles {
     display: flex;
@@ -99,15 +104,5 @@ const jsonLd = graph(
     list-style: none;
     padding: 0;
     margin: 0;
-  }
-  .profiles a {
-    display: inline-block;
-    padding: var(--space-xs) var(--space-m);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-pill);
-    text-decoration: none;
-  }
-  .profiles a:hover {
-    border-color: var(--color-accent);
   }
 </style>

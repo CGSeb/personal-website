@@ -25,7 +25,7 @@ const embed = youtubeId
 ---
 
 <div class="video-facade" data-embed={embed} data-title={title}>
-  <a href={url} rel="noopener" class="video-link">
+  <a href={url} rel="noopener" class="video-link button">
     ▶ {t(lang, 'video.play', { title })}
   </a>
   {embed && <p class="notice">{t(lang, 'video.notice')}</p>}
@@ -47,7 +47,8 @@ const embed = youtubeId
 
 <style>
   .video-facade {
-    border: 1px dashed var(--color-border);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
     border-radius: var(--radius);
     padding: var(--space-m);
   }
