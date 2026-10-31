@@ -55,3 +55,33 @@ npm run lhci
 | 20 | Vrai téléphone Android, deux thèmes | site lisible ; pièce de jour et de nuit fluide | FR-027 |
 | 21 | Passage écrit ↔ scène | même identité : couleurs, police, boutons, panneaux | SC-007 |
 | 22 | Lecteur d'écran (NVDA) sur le bouton de thème | état et action annoncés, dans les deux langues | FR-023 |
+
+## Résultats (31/10/2026, style « tour »)
+
+| # | Résultat | Comment |
+|---|---|---|
+| 1–3, 5 | ✅ | faits avant la décision ([decision.md](decision.md), `captures/`) ; les maquettes ne sont plus construites |
+| 4 | ✅ | aucune trace de `_maquettes`, `room-atelier`, `room-bureau` ni `room-tour` dans `dist/` |
+| 6 | ✅ | `npm test` : 204 tests unitaires, dont `design-tokens.test.ts` |
+| 7–10 | ✅ | `design.spec.ts` |
+| 11–13 | ✅ | `theme.spec.ts` (T038), 4 projets Playwright ; clavier sauté sur `mobile-webkit`, où Tab n'atteint pas les boutons par défaut |
+| 14–15 | ✅ | `scene.spec.ts` |
+| 16 | ✅ | `scene-perf.spec.ts`, jour et nuit |
+| 17 | ✅ | `check:scene` : `room.glb` 525 Ko / 1,5 Mo, textures 259 et 373 Ko / 512 Ko, scène 1,40 Mo / 3 Mo avant interaction ; `lhci` : 100 / 100 / 100 / 100 sur les 12 adresses, LCP 1,5–1,7 s, CLS ≤ 0,015 |
+| 18 | ✅ | `privacy.spec.ts` étendu (T041) : toutes les pages en clair et en sombre avec un cycle du bouton, scène de jour et de nuit avec un panneau ouvert |
+| 19 | ✅ | voir ci-dessous |
+
+Suite complète : 308 tests de bout en bout réussis, 127 sautés (projet sans JavaScript,
+tactile, Chromium seul) ; `check:seo` sur 41 pages ; `check:links` : 6 liens externes
+répondent ; `astro check` sans erreur.
+
+Quickstarts précédents (scénario 19) : les scénarios automatisés des specs 001 et 002 passent
+dans la suite ci-dessus. Tests ponctuels refaits : projet temporaire `qs-test` (pages FR / EN,
+liste, expérience liée, sitemap, `llms.txt`, `portfolio.json`, objet générique dans la scène et
+son panneau par `#projet/qs-test`) ; redirection d'essai `/fr/projets/ancien-portfolio/` →
+`/fr/projets/portfolio-3d/` ; lien partagé `/en/explore/#education/exia-cesi` (le diplôme
+`master-informatique` du quickstart 002 n'existe plus dans le contenu) ; adresse e-mail absente
+en clair de `dist/`. Tout retiré ensuite.
+
+Restent manuels (scénarios 20–22, T043) : vrai téléphone Android, passage écrit ↔ scène,
+NVDA sur le bouton de thème.

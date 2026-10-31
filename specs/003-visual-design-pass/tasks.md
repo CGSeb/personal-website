@@ -203,10 +203,14 @@ on `mobile-webkit`, where Tab does not reach buttons by default.
 
 **Independent Test**: run the full suite and the quickstarts of specs 001, 002 and 003
 
-- [ ] T040 [US5] Run `npm test`, `npm run build`, `npm run check:seo`, `npm run check:scene`, `npm run test:e2e`, `npm run lhci`; Lighthouse ≥ 90 in every category on every URL of `lighthouserc.json` (target 100), LCP < 2,5 s, CLS < 0,1, JS ≤ 50 Ko; fix any regression in the files concerned
-- [ ] T041 [US5] Extend `tests/e2e/privacy.spec.ts` to run its third-party request and cookie checks in both themes, including a theme toggle and the scene at night
-- [ ] T042 [US5] Run the quickstarts of `specs/001-portfolio-content-written/quickstart.md` and `specs/002-isometric-3d-scene/quickstart.md`, then `specs/003-visual-design-pass/quickstart.md` scenarios 1–19; record the results in the quickstart file
+- [X] T040 [US5] Run `npm test`, `npm run build`, `npm run check:seo`, `npm run check:scene`, `npm run test:e2e`, `npm run lhci`; Lighthouse ≥ 90 in every category on every URL of `lighthouserc.json` (target 100), LCP < 2,5 s, CLS < 0,1, JS ≤ 50 Ko; fix any regression in the files concerned
+- [X] T041 [US5] Extend `tests/e2e/privacy.spec.ts` to run its third-party request and cookie checks in both themes, including a theme toggle and the scene at night
+- [X] T042 [US5] Run the quickstarts of `specs/001-portfolio-content-written/quickstart.md` and `specs/002-isometric-3d-scene/quickstart.md`, then `specs/003-visual-design-pass/quickstart.md` scenarios 1–19; record the results in the quickstart file
 - [ ] T043 [US5] Manual checks (quickstart C, scenarios 20–22): real Android phone in both themes (site and scene day / night), written ↔ scene identity, NVDA on the theme button in both languages
+
+Done (31/10) except T043, which needs a real phone and NVDA: no regression to fix; results in
+quickstart.md. `privacy.spec.ts` uses the header's theme button in the scene, as T032 does,
+since on phones the open panel covers the scene's own button.
 
 ---
 
