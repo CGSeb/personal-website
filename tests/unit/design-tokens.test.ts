@@ -81,7 +81,7 @@ const site = themes(readFileSync(TOKENS, 'utf8'));
 /** The site's values, plus the candidate styles while their mockups exist (spec 003, US1). */
 const STYLESHEETS: [string, Record<Theme, Values>][] = [
   [TOKENS, site],
-  ...['atelier', 'bureau']
+  ...['atelier', 'bureau', 'tour']
     .map((style) => `mockups/styles/${style}.css`)
     .filter((file) => existsSync(file))
     .map((file): [string, Record<Theme, Values>] => {

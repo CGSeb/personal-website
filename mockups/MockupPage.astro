@@ -6,18 +6,21 @@
 //   /_maquettes/<style>/en/…        same in English
 import './styles/atelier.css';
 import './styles/bureau.css';
+import './styles/tour.css';
 import roomAtelier from './models/room-atelier.glb?url';
 import roomBureau from './models/room-bureau.glb?url';
+import roomTour from './models/room-tour.glb?url';
 import HomeView from '../src/views/HomeView.astro';
 import SceneView from '../src/views/SceneView.astro';
 import type { Lang } from '../src/i18n/routes';
 
-type Style = 'atelier' | 'bureau';
+type Style = 'atelier' | 'bureau' | 'tour';
 type View = 'home' | 'scene';
 
 const STYLES: Record<Style, { name: string; room: string }> = {
   atelier: { name: 'Atelier', room: roomAtelier },
   bureau: { name: 'Bureau moderne', room: roomBureau },
+  tour: { name: 'Tour (sci-fi)', room: roomTour },
 };
 
 const pathOf = (style: Style, lang: Lang, view: View) =>
@@ -25,7 +28,7 @@ const pathOf = (style: Style, lang: Lang, view: View) =>
 
 // getStaticPaths runs on its own: it cannot use the page's other declarations.
 export function getStaticPaths() {
-  return (['atelier', 'bureau'] as const).flatMap((style) =>
+  return (['atelier', 'bureau', 'tour'] as const).flatMap((style) =>
     (['fr', 'en'] as const).flatMap((lang) =>
       (['home', 'scene'] as const).map((view) => ({
         params: {
@@ -46,7 +49,7 @@ interface Props {
 }
 
 const { style, lang, view } = Astro.props;
-const other: Style = style === 'atelier' ? 'bureau' : 'atelier';
+const others = (Object.keys(STYLES) as Style[]).filter((s) => s !== style);
 const href = (s: Style, l: Lang, v: View) => `/_maquettes/${pathOf(s, l, v)}/`;
 
 // Read by BaseLayout (data-style, noindex, banner); the views stay unchanged.
@@ -65,7 +68,7 @@ Astro.locals.mockup = {
       current: view === 'scene',
     },
     { label: lang === 'fr' ? 'EN' : 'FR', href: href(style, lang === 'fr' ? 'en' : 'fr', view) },
-    { label: `${STYLES[other].name} →`, href: href(other, lang, view) },
+    ...others.map((s) => ({ label: `${STYLES[s].name} →`, href: href(s, lang, view) })),
   ],
 };
 ---

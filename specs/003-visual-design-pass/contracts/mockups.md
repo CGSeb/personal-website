@@ -6,6 +6,7 @@
 |---|---|
 | `/_maquettes/atelier/` | style « atelier », accueil |
 | `/_maquettes/bureau/` | style « bureau moderne », accueil |
+| `/_maquettes/tour/` | style « tour » (bureau en haut d'un immeuble, sci-fi), accueil |
 | `/_maquettes/<style>/scene/` | la pièce du style |
 | `/_maquettes/<style>/en/`, `/_maquettes/<style>/en/scene/` | les mêmes en anglais |
 
@@ -36,6 +37,6 @@ Pièces : `build_models.py -- --style <style> --out mockups/models/raw` (ignoré
 
 - `astro build` n'exécute pas la route ; rien sous `mockups/` n'est importé depuis `src/`.
 - `scripts/check-seo.mjs` échoue si `dist/` contient un chemin ou un texte `_maquettes`, ou un
-  fichier `room-atelier` / `room-bureau`.
+  fichier `room-atelier` / `room-bureau` / `room-tour`.
 - Après la décision (`decision.md`), `mockups/` et son enregistrement dans `astro.config.mjs`
   sont supprimés.

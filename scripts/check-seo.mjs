@@ -103,7 +103,7 @@ for (const file of ['robots.txt', 'llms.txt', 'llms-full.txt']) {
 }
 
 // Style mockups of spec 003 are served by `astro dev` only (contracts/mockups.md, FR-004).
-const MOCKUP = /_maquettes|room-atelier|room-bureau/;
+const MOCKUP = /_maquettes|room-atelier|room-bureau|room-tour/;
 const allFiles = (dir) =>
   readdirSync(dir).flatMap((name) => {
     const path = join(dir, name);

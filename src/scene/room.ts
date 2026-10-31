@@ -22,6 +22,8 @@ export interface Room {
   /** Materials named `lamp` (shades, bulbs) and `window` (glass), driven by the ambiance. */
   lampMaterials: THREE.MeshStandardMaterial[];
   windowMaterials: THREE.MeshStandardMaterial[];
+  /** Materials named `neon` (LED strips), glowing in their own colour. */
+  neonMaterials: THREE.MeshStandardMaterial[];
 }
 
 export const ROOM_URL = '/models/room.glb';
@@ -38,6 +40,7 @@ function describe(group: THREE.Object3D): Room {
   const lamps: THREE.Object3D[] = [];
   const lampMaterials = new Set<THREE.MeshStandardMaterial>();
   const windowMaterials = new Set<THREE.MeshStandardMaterial>();
+  const neonMaterials = new Set<THREE.MeshStandardMaterial>();
   let home = new THREE.Vector3(0, 0.8, 0);
   let bounds = new THREE.Box3(new THREE.Vector3(-4, 0, -4), new THREE.Vector3(4, 3, 4));
   group.updateMatrixWorld(true);
@@ -51,6 +54,7 @@ function describe(group: THREE.Object3D): Room {
     if (material && 'emissive' in material) {
       if (material.name === 'lamp') lampMaterials.add(material);
       if (material.name === 'window') windowMaterials.add(material);
+      if (material.name === 'neon') neonMaterials.add(material);
     }
     if (name === 'camera.home') home = object.getWorldPosition(new THREE.Vector3());
     if (name === 'bounds') {
@@ -67,6 +71,7 @@ function describe(group: THREE.Object3D): Room {
     lamps,
     lampMaterials: [...lampMaterials],
     windowMaterials: [...windowMaterials],
+    neonMaterials: [...neonMaterials],
   };
 }
 

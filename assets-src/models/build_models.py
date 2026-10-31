@@ -276,10 +276,46 @@ def desk_support(b):
     b.box("desk-leg", 2.9, 0.03, 0.03, 0.6, 0.7, -0.2)
 
 
+TOUR_PALETTE = {
+    **ROOM_PALETTE,
+    "floor": ("#20252c", 0.35),
+    "plank": "#3a434e",
+    "wall": "#e9edf1",
+    "wall-north": "#dfe4e9",
+    "skirting": "#cfd6dd",
+    "walnut": "#c9d1d9",
+    "dark-wood": "#1f242b",
+    "oak": "#e3e8ed",
+    "cork": ("#10161e", 0.2),
+    "rug": "#171c23",
+    "fabric": "#eef1f4",
+    "pot": "#f7f8fa",
+    "leaf": "#4f9a6a",
+    "metal": ("#8a939e", 0.3),
+    "lamp": "#f5f7fa",
+    "window": ("#a9c7e8", 0.08),
+    "window-frame": ("#2a2f36", 0.4),
+    "city": "#2f3a48",
+    "neon": "#3ee6ff",
+    "desk": ("#f7f9fb", 0.3),
+    "desk-leg": "#1f242b",
+}
+
+
+def console_support(b):
+    """Tour: a white slab desk on two solid side panels, LED line under its front edge."""
+    b.box("desk", 3.2, 0.04, 1.5, 0.6, 0.78, 0.4)
+    for x in (-0.95, 2.15):
+        b.box("desk", 0.04, 0.76, 1.4, x, 0.38, 0.4)
+    b.box("desk-leg", 2.9, 0.12, 0.02, 0.6, 0.68, -0.25)
+    b.box("neon", 3.0, 0.012, 0.012, 0.6, 0.755, 1.14)
+
+
 STYLES = {
     "site": (ROOM_PALETTE, table_support),
     "atelier": (ATELIER_PALETTE, workbench_support),
     "bureau": (BUREAU_PALETTE, desk_support),
+    "tour": (TOUR_PALETTE, console_support),
 }
 
 
@@ -317,6 +353,8 @@ def build_shelf(palette):
 
 
 def build_room(style="site"):
+    if style == "tour":
+        return build_tower_room()
     palette, support = STYLES[style]
     b = Builder(palette)
 
@@ -381,8 +419,11 @@ def build_room(style="site"):
 
     b.build("room")
     build_shelf(palette)
+    room_markers()
 
-    # Slots and markers (same names and places as the provisional room in src/scene/room.ts).
+
+def room_markers(lamp=(-3.5, 1.55, 3.4)):
+    """Slots and markers (same names and places as the provisional room in src/scene/room.ts)."""
     pad = lambda n: f"{n:02d}"
     for i in range(6):
         empty(f"slot.project.{pad(i + 1)}", -0.4 + (i % 3), 0.8, 0.05 if i < 3 else 0.75, math.pi / 4)
@@ -399,9 +440,100 @@ def build_room(style="site"):
     empty("featured.lesson-folk", -2.7, 0.8, -3.72)
     empty("featured.portfolio-3d", -1.7, 0.8, -3.72)
     # Night point light inside the floor lamp's shade (contracts/scene-ambiance.md).
-    empty("light.lamp.01", -3.5, 1.55, 3.4)
+    empty("light.lamp.01", *lamp)
     empty("camera.home", 0, 0.9, -0.4)
     empty("bounds", 0, 1.5, 0, scale=(4, 1.5, 4))
+
+
+def build_tower_room():
+    """« Tour »: a sci-fi office high up in a tower. Polished dark floor with a light grid, white
+    wall panels, a glass curtain wall over the city on the north side, LED strips (`neon`)."""
+    palette, support = STYLES["tour"]
+    b = Builder(palette)
+
+    b.box("floor", 8, 0.1, 8, 0, -0.05, 0)
+    for i in range(1, 8):
+        b.box("plank", 0.01, 0.004, 8, -4 + i, 0.001, 0)
+        b.box("plank", 8, 0.004, 0.01, 0, 0.001, -4 + i)
+
+    # West wall: white panels, LED strips along the floor and the ceiling.
+    b.box("wall", 0.15, 3, 8.15, -4.075, 1.5, -0.075)
+    for z in (-3.0, -0.4, 0.6, 2.6):
+        b.box("skirting", 0.01, 3, 0.012, -3.995, 1.5, z)
+    b.box("neon", 0.02, 0.025, 8, -3.985, 0.04, 0)
+    b.box("neon", 0.02, 0.025, 8, -3.985, 2.94, 0)
+
+    # North side: solid wall behind the experience screen, glass curtain wall elsewhere.
+    b.box("wall-north", 3.2, 3, 0.15, 1.7, 1.5, -4.075)
+    b.box("neon", 3.2, 0.025, 0.02, 1.7, 0.04, -3.985)
+    b.box("neon", 3.2, 0.025, 0.02, 1.7, 2.94, -3.985)
+    for x0, x1 in ((-4.0, 0.1), (3.3, 4.0)):
+        b.box("window", x1 - x0, 3, 0.04, (x0 + x1) / 2, 1.5, -4.03)
+        b.box("window-frame", x1 - x0, 0.06, 0.08, (x0 + x1) / 2, 0.03, -4.0)
+        b.box("window-frame", x1 - x0, 0.06, 0.08, (x0 + x1) / 2, 2.97, -4.0)
+    for x in (-4.0, -3.0, -2.0, -1.0, 0.1, 3.3, 4.0):
+        b.box("window-frame", 0.05, 3, 0.08, x, 1.5, -4.0)
+    # The city below, seen through the glass: silhouettes on the glass, lit windows (`lamp`
+    # glows at night).
+    x = -3.95
+    for i, (w, h) in enumerate(
+        ((0.3, 1.1), (0.22, 1.5), (0.4, 0.9), (0.26, 1.7), (0.34, 1.2), (0.2, 1.4),
+         (0.42, 1.0), (0.28, 1.6), (0.3, 0.8), (0.24, 1.3), (0.36, 1.15), (0.3, 1.45))
+    ):
+        if x + w > 0.05:
+            break
+        b.box("city", w, h, 0.01, x + w / 2, h / 2, -3.995)
+        for row in range(int((h - 0.1) / 0.14)):
+            for col in range(max(1, int(w / 0.09))):
+                if (i * 7 + row * 3 + col * 5) % 4 == 0:
+                    continue
+                b.box("lamp", 0.035, 0.05, 0.004, x + 0.05 + col * 0.09, 0.12 + row * 0.14, -3.988)
+        x += w + 0.03
+
+    # Experience screen: dark glass framed by a LED line.
+    b.box("cork", 2.6, 1.4, 0.04, 1.6, 1.75, -3.975)
+    for y in (1.04, 2.46):
+        b.box("neon", 2.64, 0.02, 0.02, 1.6, y, -3.95)
+    for x in (0.29, 2.91):
+        b.box("neon", 0.02, 1.44, 0.02, x, 1.75, -3.95)
+
+    # Projects: the console desk, and the white chair behind it.
+    support(b)
+    b.box("fabric", 0.5, 0.06, 0.48, 0.6, 0.48, -0.95)
+    b.box("fabric", 0.48, 0.55, 0.06, 0.6, 0.78, -1.18, tilt=math.radians(-8))
+    b.cylinder("metal", 0.03, 0.4, 0.6, 0.24, -0.95, 10)
+    b.cylinder("metal", 0.26, 0.03, 0.6, 0.015, -0.95, 20)
+
+    # Featured projects: a low white console in front of the glass, LED underneath.
+    b.box("desk", 1.8, 0.8, 0.5, -2.2, 0.4, -3.72)
+    b.box("neon", 1.7, 0.02, 0.02, -2.2, 0.03, -3.46)
+
+    # Plant in the north-west corner, white pot.
+    b.cylinder("pot", 0.2, 0.5, -3.62, 0.25, -3.62, segments=20, r2=0.2)
+    for i, (dx, dz, h) in enumerate(
+        ((0, 0, 0.9), (0.12, 0.05, 0.7), (-0.1, 0.1, 0.75), (0.05, -0.12, 0.8))
+    ):
+        b.cylinder("leaf", 0.13 - i * 0.015, h, -3.62 + dx, 0.5 + h / 2, -3.62 + dz, 6, r2=0.0)
+
+    # Lounge corner: round rug with a LED ring, armchair, arc lamp.
+    b.cylinder("neon", 1.04, 0.006, -2.2, 0.003, 2.4, 40)
+    b.cylinder("rug", 1.0, 0.012, -2.2, 0.007, 2.4, 40)
+    r = math.radians(60)
+    cx, cz = -2.75, 2.35
+    fx, fz = math.sin(r), math.cos(r)  # front
+    sx, sz = math.cos(r), -math.sin(r)  # side
+    b.box("fabric", 0.8, 0.36, 0.75, cx, 0.24, cz, rot=r)
+    b.box("fabric", 0.8, 0.5, 0.12, cx - fx * 0.34, 0.62, cz - fz * 0.34, rot=r)
+    for side in (-1, 1):
+        b.box("fabric", 0.1, 0.2, 0.75, cx + sx * side * 0.38, 0.5, cz + sz * side * 0.38, rot=r)
+    b.cylinder("metal", 0.18, 0.03, -3.6, 0.015, 3.5, 20)
+    b.cylinder("metal", 0.015, 2.0, -3.6, 1.0, 3.5, 8)
+    b.box("metal", 0.7, 0.025, 0.025, -3.27, 2.0, 3.5)
+    b.cylinder("lamp", 0.16, 0.08, -2.95, 1.95, 3.5, 20)
+
+    b.build("room")
+    build_shelf(palette)
+    room_markers(lamp=(-2.95, 1.85, 3.5))
 
 
 # ---------------------------------------------------------------------------------------------

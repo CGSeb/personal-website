@@ -7,14 +7,14 @@ décrivent des valeurs de design, des préférences et des décisions, pas des c
 
 | Champ | Type | Règle |
 |---|---|---|
-| `id` | `atelier` \| `bureau` | identifiant dans l'adresse de la maquette (`/_maquettes/<id>/`) |
-| `name` | texte FR | « Atelier », « Bureau moderne » |
+| `id` | `atelier` \| `bureau` \| `tour` | identifiant dans l'adresse de la maquette (`/_maquettes/<id>/`) |
+| `name` | texte FR | « Atelier », « Bureau moderne », « Tour (sci-fi) » |
 | `palette` | jeu de couleurs nommées | défini dans `mockups/styles/<id>.css` |
 | `roles.light`, `roles.dark` | rôles → couleurs de la palette | tous les rôles de [design-tokens.md](contracts/design-tokens.md), paires AA respectées |
 | `accent` | couleur de la palette | propre au style |
 | `font` | une famille `@fontsource-variable` | au plus deux familles avec celle des titres |
 | `roomPalette` | table de matériaux Blender | `ROOM_PALETTE` du style dans `build_models.py` |
-| `projectSupport` | `workbench` \| `desk` \| `shelf` | mobilier qui porte les `slot.project.NN` |
+| `projectSupport` | `workbench` \| `desk` \| `console` \| `shelf` | mobilier qui porte les `slot.project.NN` |
 | `state` | `trial` → `chosen` \| `dropped` | voir transitions |
 
 **Transitions** : les deux styles sont en `trial` pendant l'exploration. La décision fait passer

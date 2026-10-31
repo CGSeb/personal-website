@@ -29,6 +29,7 @@ main {
 h1,
 h2,
 h3 {
+  font-family: var(--font-display);
   line-height: 1.2;
   text-wrap: balance;
   margin: 0 0 var(--space-s);

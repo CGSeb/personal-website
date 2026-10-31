@@ -10,6 +10,8 @@ export interface AmbianceSettings {
   sun: { color: string; intensity: number; position: [number, number, number] };
   /** Emissive intensity of the `lamp` material (shades and bulbs). */
   lampEmissive: number;
+  /** Emissive intensity of the `neon` material (LED strips), in its own colour. */
+  neonEmissive: number;
   /** Colour and intensity emitted by the `window` material (the glass). */
   window: { color: string; intensity: number };
   /** One light per `light.lamp.NN` empty; none at low quality (FR-027). */
@@ -26,6 +28,7 @@ const DAY: AmbianceSettings = {
   hemisphere: { sky: '#ffffff', ground: '#b9a68f', intensity: 1.6 },
   sun: { color: '#fff3e0', intensity: 1.8, position: [5, 9, 6] },
   lampEmissive: 0,
+  neonEmissive: 0.6,
   window: { color: '#cfe6f5', intensity: 0.6 },
   pointLight: null,
 };
@@ -35,6 +38,7 @@ const NIGHT: AmbianceSettings = {
   hemisphere: { sky: '#46507a', ground: '#1e1b24', intensity: 0.7 },
   sun: { color: '#9fb4ff', intensity: 0.35, position: [-3, 7, -8] },
   lampEmissive: 2.2,
+  neonEmissive: 2.4,
   window: { color: '#1b2440', intensity: 0.5 },
   pointLight: { color: LAMP_GLOW, intensity: 6, distance: 6 },
 };
@@ -98,6 +102,7 @@ export function blend(a: AmbianceSettings, b: AmbianceSettings, t: number): Ambi
       ],
     },
     lampEmissive: lerp(a.lampEmissive, b.lampEmissive, t),
+    neonEmissive: lerp(a.neonEmissive, b.neonEmissive, t),
     window: {
       color: mix(a.window.color, b.window.color, t),
       intensity: lerp(a.window.intensity, b.window.intensity, t),

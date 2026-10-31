@@ -12,6 +12,7 @@ Les emplacements, le repère et les budgets décrits là restent valables.
 | matériau `window` | matériau | vitre ; le code règle sa couleur émise (ciel de jour, ciel de nuit) |
 | `light.lamp.NN` | objet vide | position d'une lumière ponctuelle de nuit, au centre d'une lampe ; 1 à 3 |
 | `decor.shelf` | groupe | étagère avec plantes (au moins 2 plantes), non interactive |
+| matériau `neon` | matériau | bandes LED (facultatif) ; le code le fait briller dans sa propre couleur, un peu de jour, fort de nuit |
 
 - Le mur des diplômes porte les `slot.education.NN`. Le support des projets (établi, bureau ou
   étagère selon le style) porte les `slot.project.NN` et les `featured.<id>`.
@@ -28,6 +29,7 @@ interface AmbianceSettings {
   hemisphere: { sky: string; ground: string; intensity: number };
   sun: { color: string; intensity: number; position: [number, number, number] };
   lampEmissive: number;
+  neonEmissive: number; // > 0 by day, higher at night
   window: { color: string; intensity: number };
   pointLight: { color: string; intensity: number; distance: number } | null;
 }

@@ -14,6 +14,12 @@ describe('settingsFor', () => {
     expect(settingsFor('night', 'high').lampEmissive).toBeGreaterThan(0);
   });
 
+  it('LED strips glow a little by day and much more at night', () => {
+    const day = settingsFor('day', 'high').neonEmissive;
+    expect(day).toBeGreaterThan(0);
+    expect(settingsFor('night', 'high').neonEmissive).toBeGreaterThan(day);
+  });
+
   it('has no point light by day', () => {
     for (const q of ['high', 'medium', 'low'] as const)
       expect(settingsFor('day', q).pointLight).toBeNull();
