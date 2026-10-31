@@ -3,20 +3,19 @@ title:
   fr: Portfolio 3D isométrique
   en: Isometric 3D portfolio
 summary:
-  fr: Un portfolio à explorer comme un petit monde en 3D vu de haut, doublé d'une version écrite. (Provisoire.)
-  en: A portfolio you explore like a small 3D world seen from above, with a written version. (Placeholder.)
+  fr: Ce portfolio, en deux versions issues du même contenu, une pièce en 3D à explorer et un site écrit, rapide et bilingue.
+  en: This portfolio, in two versions built from the same content, a 3D room to explore and a fast, bilingual written site.
 role:
-  fr: Conception et développement
-  en: Design and development
+  fr: Conception, développement et modélisation 3D
+  en: Design, development and 3D modelling
 period: { start: 2026-10 }
-categories: [web]
-technologies: [astro, typescript, threejs]
+categories: [web, 3d]
+technologies: [astro, typescript, threejs, blender]
 cover:
   src: ./cover.webp
   alt:
-    fr: Vue isométrique du portfolio
-    en: Isometric view of the portfolio
-links:
-  - { kind: code, url: https://github.com/CGSeb/personal-website }
-experience: [freelance-dev]
+    fr: "La scène 3D du portfolio : une pièce isométrique avec un bureau, une bibliothèque, un fauteuil, des cadres et un tableau de liège"
+    en: "The portfolio's 3D scene: an isometric room with a desk, a bookcase, an armchair, frames and a corkboard"
+links: []
+experience: [cg-seb]
 featured: true

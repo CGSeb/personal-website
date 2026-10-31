@@ -6,10 +6,10 @@ const pairs: [string, string][] = [
   ['/fr/', '/en/'],
   ['/fr/projets/', '/en/projects/'],
   ['/fr/projets/categorie/web/', '/en/projects/category/web/'],
-  ['/fr/projets/videos-ambiance/', '/en/projects/ambient-videos/'],
+  ['/fr/projets/voxelshift/', '/en/projects/voxelshift/'],
   ['/fr/parcours/', '/en/career/'],
-  ['/fr/parcours/experiences/freelance-dev/', '/en/career/experience/freelance-dev/'],
-  ['/fr/parcours/diplomes/master-informatique/', '/en/career/education/master-informatique/'],
+  ['/fr/parcours/experiences/cg-seb/', '/en/career/experience/cg-seb/'],
+  ['/fr/parcours/diplomes/exia-cesi/', '/en/career/education/exia-cesi/'],
 ];
 
 test.describe('language switcher (US3-1, FR-014)', () => {

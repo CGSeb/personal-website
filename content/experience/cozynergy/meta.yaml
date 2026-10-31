@@ -1,0 +1,7 @@
+id: cozynergy
+position: { fr: Ingénieur logiciel, en: Software engineer }
+organization: COZYNERGY
+location: { fr: "Toulouse, France", en: "Toulouse, France" }
+type: employment
+period: { start: 2025-02, end: 2026-06 }
+technologies: [php, symfony]

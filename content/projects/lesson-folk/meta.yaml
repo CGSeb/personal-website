@@ -3,26 +3,27 @@ title:
   fr: LessonFolk
   en: LessonFolk
 summary:
-  fr: Un tuteur qui enseigne l'IA à tous, des débutants aux praticiens, par la conversation. (Texte provisoire.)
-  en: A tutor that teaches AI to anyone, from beginners to practitioners, through conversation. (Placeholder.)
+  fr: Des cours d'IA libres, enseignés par une IA. On connecte son assistant à LessonFolk, et il devient un tuteur qui s'adapte à son niveau.
+  en: Open-source AI courses taught by an AI. Connect your assistant to LessonFolk and it becomes a tutor that adapts to your level.
 role:
-  fr: Fondateur, conception et développement
-  en: Founder, design and development
-period: { start: 2026-03 }
+  fr: Créateur, conception et développement
+  en: Creator, design and development
+period: { start: 2026-10 }
 categories: [education-tech, web]
-technologies: [typescript, nodejs, ai]
+technologies: [astro, typescript, nodejs, postgresql, ai]
 cover:
   src: ./cover.webp
   alt:
-    fr: Écran d'accueil de LessonFolk
-    en: LessonFolk home screen
+    fr: "Visuel de LessonFolk : « Learn AI by talking with an AI tutor », avec un message « Let's start learning AI » et la réponse « Welcome! Lesson 1: What is AI? »"
+    en: "LessonFolk visual: “Learn AI by talking with an AI tutor”, with a “Let's start learning AI” message and the reply “Welcome! Lesson 1: What is AI?”"
 gallery:
   - src: ./screen-1.webp
     alt:
-      fr: Une leçon en cours dans LessonFolk
-      en: A lesson in progress in LessonFolk
+      fr: "Suivi de progression : « Learn one lesson at a time », les trois leçons du cours AI Foundations terminées"
+      en: "Progress tracking: “Learn one lesson at a time”, the three lessons of the AI Foundations course finished"
 links:
-  - { kind: demo, url: https://example.com/lessonfolk }
-  - { kind: video, url: https://www.youtube.com/watch?v=aqz-KE-bpKQ }
-experience: [freelance-dev]
+  - { kind: demo, url: https://lessonfolk.com }
+  - { kind: code, url: https://github.com/CGSeb/lessonfolk }
+experience: [cg-seb]
 featured: true
+order: 1

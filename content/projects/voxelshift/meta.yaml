@@ -1,0 +1,28 @@
+id: voxelshift
+title:
+  fr: Voxel Shift
+  en: Voxel Shift
+summary:
+  fr: Une application de bureau libre pour gérer ses versions de Blender, rouvrir ses projets et planifier des rendus en arrière-plan.
+  en: An open-source desktop app to manage Blender versions, reopen projects and schedule background renders.
+role:
+  fr: Créateur, conception et développement
+  en: Creator, design and development
+period: { start: 2026-03 }
+categories: [desktop, 3d]
+technologies: [rust, tauri, react, typescript, blender, ai]
+cover:
+  src: ./cover.webp
+  alt:
+    fr: "Accueil de Voxel Shift : projets Blender récents avec leur miniature et versions de Blender favorites"
+    en: "Voxel Shift home: recent Blender projects with their thumbnails and favourite Blender versions"
+gallery:
+  - src: ./screen-releases.webp
+    alt:
+      fr: Bibliothèque des versions officielles de Blender, avec les versions installées et celles à installer
+      en: Library of official Blender releases, showing installed versions and those available to install
+links:
+  - { kind: code, url: https://github.com/CGSeb/voxelshift }
+  - { kind: other, url: https://github.com/CGSeb/voxelshift/releases/latest, label: { fr: Télécharger, en: Download } }
+experience: [cg-seb]
+featured: false

@@ -10,3 +10,29 @@
   label: { fr: Blender, en: Blender }
 - id: ai
   label: { fr: IA générative, en: Generative AI }
+- id: php
+  label: { fr: PHP, en: PHP }
+- id: symfony
+  label: { fr: Symfony, en: Symfony }
+- id: postgresql
+  label: { fr: PostgreSQL, en: PostgreSQL }
+- id: rabbitmq
+  label: { fr: RabbitMQ, en: RabbitMQ }
+- id: kafka
+  label: { fr: Kafka, en: Kafka }
+- id: neo4j
+  label: { fr: Neo4j, en: Neo4j }
+- id: kubernetes
+  label: { fr: Kubernetes, en: Kubernetes }
+- id: python
+  label: { fr: Python, en: Python }
+- id: javascript
+  label: { fr: JavaScript, en: JavaScript }
+- id: angular
+  label: { fr: Angular, en: Angular }
+- id: rust
+  label: { fr: Rust, en: Rust }
+- id: tauri
+  label: { fr: Tauri, en: Tauri }
+- id: react
+  label: { fr: React, en: React }

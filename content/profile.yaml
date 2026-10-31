@@ -1,25 +1,25 @@
-# Profil — textes provisoires à remplacer.
-name: Sébastien
+name: Sébastien Michon
 headline:
-  fr: Développeur et créateur de projets numériques
-  en: Developer and digital project maker
+  fr: Lead développeur et créateur de projets numériques
+  en: Lead developer and digital project maker
 summary:
-  fr: Je conçois des applications, des outils et des expériences interactives, du prototype à la mise en ligne. (Texte provisoire.)
-  en: I design applications, tools and interactive experiences, from prototype to launch. (Placeholder text.)
+  fr: Lead développeur à Toulouse, j'accompagne des équipes de la conception à la production, avec du code soigné, testé et des choix simples. Je mets l'IA au service des produits et de ceux qui les construisent.
+  en: Lead developer based in Toulouse, I guide teams from design to production, with clean, tested code and simple choices. I put AI to work for products and for the people who build them.
 photo:
   src: ./profile-photo.webp
   alt:
-    fr: Portrait de Sébastien
-    en: Portrait of Sébastien
+    fr: Portrait de Sébastien Michon, souriant, avec des lunettes et une barbe, en t-shirt rouge brique
+    en: Portrait of Sébastien Michon, smiling, wearing glasses and a beard, in a brick-red T-shirt
 location:
-  fr: France
-  en: France
+  fr: Toulouse, France
+  en: Toulouse, France
 languages:
   - { code: fr, level: { fr: Langue maternelle, en: Native } }
   - { code: en, level: { fr: Courant, en: Fluent } }
-email: contact@example.com
+email: contact@sebastienmichon.fr
 profiles:
   - { network: github, url: https://github.com/CGSeb }
+  - { network: linkedin, url: https://www.linkedin.com/in/michonsebastien/ }
 jobTitle:
-  fr: Développeur
-  en: Developer
+  fr: Lead développeur | Passionné d'IA
+  en: Lead developer | AI enthusiast

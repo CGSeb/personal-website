@@ -81,7 +81,7 @@ const fr = {
   'video.notice': 'La vidéo est hébergée par un service tiers et ne se charge qu’après un clic.',
   'footer.rights': 'Tous droits réservés.',
   'experienceType.employment': 'Emploi',
-  'experienceType.freelance': 'Freelance',
+  'experienceType.freelance': 'Indépendant',
   'experienceType.internship': 'Stage',
   'experienceType.apprenticeship': 'Alternance',
   'experienceType.volunteer': 'Bénévolat',

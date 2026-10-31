@@ -1,6 +1,6 @@
 ---
 title: Career
-description: "Sébastien's career: professional experience and education, most recent first."
+description: "The career of Sébastien Michon, lead developer: professional experience and education, most recent first."
 ---
 
-My experience and education. (Placeholder text.)
+My professional experience and education, most recent first.
