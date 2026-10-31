@@ -65,6 +65,6 @@ Suite complète : 250 tests de bout en bout réussis (37 ignorés par projet : s
 
 ### Vérification manuelle (à faire)
 
-- [ ] Téléphone Android de milieu de gamme réel
+- [x] Téléphone Android de milieu de gamme réel : la scène fonctionne (31/10/2026)
 - [ ] iPhone (Safari)
 - [ ] Lecteur d'écran (NVDA ou VoiceOver)
