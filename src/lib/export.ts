@@ -9,6 +9,8 @@ import type {
   Taxonomy,
 } from '../content/schemas';
 import { slugFor, urlFor, type PageType } from '../i18n/routes';
+import { buildHash } from '../scene/hash';
+import type { ItemType } from '../scene/layout';
 
 export const SCHEMA_VERSION = 1;
 
@@ -22,7 +24,10 @@ export interface ExportSite<I> {
   categories: Taxonomy[];
   technologies: Taxonomy[];
   /** Published projects, already sorted. */
-  projects: (Omit<Project, 'cover' | 'gallery'> & { cover?: Img<I> | undefined })[];
+  projects: (Omit<Project, 'cover' | 'gallery'> & {
+    cover?: Img<I> | undefined;
+    gallery: Img<I>[];
+  })[];
   /** Published diplomas and experiences, with the ids of their published projects. */
   education: (Education & { projects: string[] })[];
   experience: (Experience & { projects: string[] })[];
@@ -42,6 +47,12 @@ const urls = (
   en: urlFor(type, 'en', slugFor(element, 'en')),
 });
 
+/** The scene with the element's panel open (contracts/export-additions.md). */
+const scene = (type: ItemType, id: string) => ({
+  fr: urlFor('scene', 'fr') + buildHash({ type, id }, 'fr'),
+  en: urlFor('scene', 'en') + buildHash({ type, id }, 'en'),
+});
+
 const period = (p: { start: string; end?: string | undefined }) => ({
   start: p.start,
   end: p.end ?? null,
@@ -52,6 +63,11 @@ export function buildExport<I>(
   { baseUrl, generatedAt, imageUrl }: ExportOptions<I>,
 ) {
   const image = (img: Img<I>) => ({ url: imageUrl(img.image), alt: img.alt });
+  // Decorative gallery images have an empty alternative text: exported as null.
+  const galleryImage = (img: Img<I>) => ({
+    url: imageUrl(img.image),
+    alt: img.alt.fr && img.alt.en ? img.alt : null,
+  });
   return {
     schemaVersion: SCHEMA_VERSION,
     generatedAt,
@@ -71,38 +87,47 @@ export function buildExport<I>(
       title: p.title,
       summary: p.summary,
       role: p.role,
+      kind: p.kind,
       period: period(p.period),
       categories: p.categories,
       technologies: p.technologies,
       cover: p.cover ? image(p.cover) : null,
-      links: p.links.map((l) => ({ kind: l.kind, url: l.url })),
+      gallery: p.gallery.map(galleryImage),
+      links: p.links.map((l) => ({ kind: l.kind, url: l.url, label: l.label ?? null })),
       experience: p.experience,
       education: p.education,
       featured: p.featured,
       // Position in the site's own order (explicit `order`, then most recent first).
       order: index,
       urls: urls('project', p),
+      scene: scene('project', p.id),
     })),
     education: site.education.map((e) => ({
       id: e.id,
       title: e.title,
       institution: e.institution,
+      institutionUrl: e.institutionUrl ?? null,
       location: e.location,
       period: period(e.period),
+      obtained: e.obtained ?? false,
       level: e.level ?? null,
+      skills: e.skills,
       projects: e.projects,
       urls: urls('education', e),
+      scene: scene('education', e.id),
     })),
     experience: site.experience.map((e) => ({
       id: e.id,
       position: e.position,
       organization: e.organization,
+      organizationUrl: e.organizationUrl ?? null,
       location: e.location,
       type: e.type,
       period: period(e.period),
       technologies: e.technologies,
       projects: e.projects,
       urls: urls('experience', e),
+      scene: scene('experience', e.id),
     })),
   };
 }

@@ -3,3 +3,7 @@ title: { fr: Diplôme, en: Degree }
 institution: Université
 location: { fr: Paris, en: Paris }
 period: { start: 2015-09, end: 2017-06 }
+institutionUrl: https://example.com/universite
+obtained: true
+skills:
+  - { fr: Algorithmique, en: Algorithms }

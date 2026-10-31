@@ -9,7 +9,10 @@ export const GET: APIRoute = async ({ site: base }) => {
   const site = await getSite();
 
   // Optimized URLs of every exported image, computed ahead since buildExport is synchronous.
-  const images = [site.profile.photo, ...site.projects.flatMap((p) => (p.cover ? [p.cover] : []))];
+  const images = [
+    site.profile.photo,
+    ...site.projects.flatMap((p) => [...(p.cover ? [p.cover] : []), ...p.gallery]),
+  ];
   const urls = new Map<ImageMetadata, string>();
   for (const { image } of images) {
     urls.set(image, (await getImage({ src: image, width: 1200, format: 'webp' })).src);

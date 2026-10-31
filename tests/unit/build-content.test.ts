@@ -56,4 +56,18 @@ describe('build from fixtures', { timeout: 180_000 }, () => {
     const exported = JSON.parse(readFileSync(join(dist, 'data', 'portfolio.json'), 'utf8'));
     expect(exported.projects.map((p: { id: string }) => p.id)).toEqual(['alpha', 'beta']);
   });
+
+  it('puts published content in the scene manifest, drafts left out (US6-2)', () => {
+    for (const page of [join('fr', 'explorer'), join('en', 'explore')]) {
+      const html = readFileSync(join(out, 'valid', page, 'index.html'), 'utf8');
+      const json = /<script type="application\/json" id="scene-manifest">(.*?)<\/script>/s.exec(
+        html,
+      )?.[1];
+      expect(json, page).toBeDefined();
+      const keys = (JSON.parse(json!) as { key: string }[]).map((i) => i.key);
+      expect(keys).toContain('project/alpha');
+      expect(keys).toContain('project/beta');
+      expect(keys.some((k) => k.includes('gamma-draft'))).toBe(false);
+    }
+  });
 });

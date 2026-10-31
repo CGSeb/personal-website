@@ -181,13 +181,13 @@ testing of each story.
 
 ### Tests for User Story 6 ⚠️
 
-- [ ] T041 [P] [US6] Extend `tests/unit/export.test.ts` and `src/lib/export.schema.json` for contracts/export-additions.md: project `kind`, `gallery`, `links[].label`; diploma `skills`, `obtained`, `institutionUrl`; experience `organizationUrl`; `scene` URLs `{ fr, en }` on every item
-- [ ] T042 [P] [US6] Extend `tests/unit/build-content.test.ts`: the valid-fixture build has a scene page whose manifest lists `project/alpha` and `project/beta` but not `gamma-draft` (US6-2)
+- [X] T041 [P] [US6] Extend `tests/unit/export.test.ts` and `src/lib/export.schema.json` for contracts/export-additions.md: project `kind`, `gallery`, `links[].label`; diploma `skills`, `obtained`, `institutionUrl`; experience `organizationUrl`; `scene` URLs `{ fr, en }` on every item
+- [X] T042 [P] [US6] Extend `tests/unit/build-content.test.ts`: the valid-fixture build has a scene page whose manifest lists `project/alpha` and `project/beta` but not `gamma-draft` (US6-2)
 
 ### Implementation for User Story 6
 
-- [ ] T043 [US6] Add the export fields in `src/lib/export.ts` and `src/pages/data/portfolio.json.ts` (gallery image URLs via `getImage`), keep `schemaVersion: 1` (FR-016)
-- [ ] T044 [US6] Featured projects: in `src/scene/objects.ts`, load `public/models/featured/<id>.glb` for a featured project with a matching `featured.<id>` slot, falling back to the generic model when the file is missing (US6-3)
+- [X] T043 [US6] Add the export fields in `src/lib/export.ts` and `src/pages/data/portfolio.json.ts` (gallery image URLs via `getImage`), keep `schemaVersion: 1` (FR-016)
+- [X] T044 [US6] Featured projects: in `src/scene/objects.ts`, load `public/models/featured/<id>.glb` for a featured project with a matching `featured.<id>` slot, falling back to the generic model when the file is missing (US6-3)
 
 **Checkpoint**: the scene follows the content source with no scene edit
 

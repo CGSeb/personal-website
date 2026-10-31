@@ -10,3 +10,9 @@ featured: true
 cover: { src: ./cover.webp, alt: { fr: Couverture, en: Cover } }
 experience: [job-a]
 education: [degree]
+gallery:
+  - { src: ./cover.webp, alt: { fr: Capture, en: Screenshot } }
+  - { src: ./cover.webp, decorative: true }
+links:
+  - { kind: demo, url: https://example.com/alpha, label: { fr: Essayer, en: Try it } }
+  - { kind: code, url: https://example.com/alpha-code }
