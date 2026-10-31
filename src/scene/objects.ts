@@ -158,20 +158,33 @@ async function loadModel(
   );
 }
 
-/** Applies a project image or a badge to the replaceable surfaces of a loaded model. */
+/**
+ * Applies a project image or a badge to the replaceable surfaces of a loaded model. glTF UVs
+ * start at the top of the image, so these textures are not flipped.
+ */
 function fillSurfaces(
   model: THREE.Object3D,
-  item: SceneItem | undefined,
+  image: string | null | undefined,
+  badge: string | undefined,
   requestRender: () => void,
 ) {
   model.traverse((object) => {
     const mesh = object as THREE.Mesh;
     if (!mesh.isMesh) return;
     const material = mesh.material as THREE.MeshStandardMaterial;
-    if (material.name === 'screen' && item?.image) {
-      mesh.material = new THREE.MeshBasicMaterial({ map: imageTexture(item.image, requestRender) });
-    } else if (material.name === 'label' && item) {
-      mesh.material = standard({ map: badgeTexture(item.badge, '#fbf8f1') });
+    if (material.name === 'screen' && !image && badge) {
+      // A project without a picture shows its badge, like the coded stand-in.
+      const map = badgeTexture(badge, '#e8eaf6');
+      map.flipY = false;
+      mesh.material = standard({ map });
+    } else if (material.name === 'screen' && image) {
+      const map = imageTexture(image, requestRender);
+      map.flipY = false;
+      mesh.material = new THREE.MeshBasicMaterial({ map });
+    } else if (material.name === 'label' && badge) {
+      const map = badgeTexture(badge, '#fbf8f1');
+      map.flipY = false;
+      mesh.material = standard({ map });
     }
   });
 }
@@ -197,7 +210,9 @@ export async function placeObjects(
           const mesh = o as THREE.Mesh;
           if (mesh.isMesh) mesh.material = (mesh.material as THREE.Material).clone();
         });
-        fillSurfaces(model, item, requestRender);
+        // The overflow box has no item of its own: its label counts what it holds.
+        const badge = item?.badge ?? (placement.items ? `+${placement.items.length}` : undefined);
+        fillSurfaces(model, item?.image, badge, requestRender);
       }
       root.name = `object:${placement.key}`;
       if (!model) root.scale.setScalar(STAND_IN_SCALE);

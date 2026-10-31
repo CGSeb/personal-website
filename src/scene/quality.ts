@@ -29,8 +29,12 @@ export interface GovernorOptions {
 
 /** Frames further apart than this are idle gaps (render on demand), not slow frames. */
 const IDLE_GAP = 250;
-/** Frames needed in the window before judging. */
+/**
+ * Enough to judge: this many frames in the window, or frames covering this share of it (a
+ * device below 10 fps never gets 20 frames in 2 s, and must not escape the governor).
+ */
 const MIN_SAMPLES = 20;
+const MIN_COVERAGE = 0.75;
 
 export class QualityGovernor {
   level: QualityLevel;
@@ -63,10 +67,10 @@ export class QualityGovernor {
 
     this.samples.push({ at: now, interval });
     this.samples = this.samples.filter((s) => now - s.at <= this.window);
-    if (this.samples.length < MIN_SAMPLES || now - this.lastStep < this.cooldown) {
-      return { type: 'none' };
-    }
-    const average = this.samples.reduce((sum, s) => sum + s.interval, 0) / this.samples.length;
+    const covered = this.samples.reduce((sum, s) => sum + s.interval, 0);
+    const enough = this.samples.length >= MIN_SAMPLES || covered >= this.window * MIN_COVERAGE;
+    if (!enough || now - this.lastStep < this.cooldown) return { type: 'none' };
+    const average = covered / this.samples.length;
     if (1000 / average >= this.minFps) return { type: 'none' };
 
     this.samples = [];

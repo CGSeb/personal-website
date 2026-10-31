@@ -33,10 +33,12 @@ function describe(group: THREE.Object3D): Room {
   let bounds = new THREE.Box3(new THREE.Vector3(-4, 0, -4), new THREE.Vector3(4, 3, 4));
   group.updateMatrixWorld(true);
   group.traverse((object) => {
-    const slot = parseSlot(object.name);
+    // GLTFLoader strips dots from node names and keeps the original in userData.name.
+    const name: string = object.userData.name ?? object.name;
+    const slot = parseSlot(name);
     if (slot) slots.push({ ...slot, object });
-    if (object.name === 'camera.home') home = object.getWorldPosition(new THREE.Vector3());
-    if (object.name === 'bounds') {
+    if (name === 'camera.home') home = object.getWorldPosition(new THREE.Vector3());
+    if (name === 'bounds') {
       const center = object.getWorldPosition(new THREE.Vector3());
       const half = object.getWorldScale(new THREE.Vector3());
       bounds = new THREE.Box3(center.clone().sub(half), center.clone().add(half));

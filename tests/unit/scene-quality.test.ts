@@ -40,6 +40,13 @@ describe('quality governor', () => {
     expect(actions.map((a) => a.action.type)).toEqual(['propose-written']);
   });
 
+  it('also catches a device too slow to draw 20 frames in the window (5 fps)', () => {
+    const g = new QualityGovernor({ level: 'high', minFps: 30 });
+    const actions = run(g, 0, 20_000, 190);
+    expect(actions.map((a) => a.action.type)).toEqual(['down', 'down', 'propose-written']);
+    expect(g.level).toBe('low');
+  });
+
   it('ignores idle gaps between on-demand frames', () => {
     const g = new QualityGovernor({ level: 'high', minFps: 50 });
     // Bursts of fast frames separated by long pauses: never judged as slow.

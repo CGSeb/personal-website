@@ -197,9 +197,9 @@ testing of each story.
 
 **Purpose**: real 3D models, budgets and quality gates
 
-- [ ] T045 Model the room in Blender per contracts/scene-model.md (units, orientation, `slot.*`, `camera.home`, `bounds`, `screen` / `label` materials, baked lighting), source in `assets-src/models/room.blend`, export to `assets-src/models/room.glb`, optimize with `npm run models:optimize` into `public/models/room.glb` (≤ 1.5 MB)
-- [ ] T046 [P] Model the generic objects in Blender: `generic-project`, `generic-education`, `generic-experience`, `overflow` (`assets-src/models/*.blend` → `public/models/*.glb`, ≤ 150 / 100 / 100 / 100 KB)
-- [ ] T047 [P] Model the dedicated objects of the featured projects (`public/models/featured/<id>.glb`, ≤ 300 KB each) and add their `featured.<id>` empties to the room
+- [X] T045 Model the room in Blender per contracts/scene-model.md (units, orientation, `slot.*`, `camera.home`, `bounds`, `screen` / `label` materials, baked lighting), source in `assets-src/models/room.blend`, export to `assets-src/models/room.glb`, optimize with `npm run models:optimize` into `public/models/room.glb` (≤ 1.5 MB)
+- [X] T046 [P] Model the generic objects in Blender: `generic-project`, `generic-education`, `generic-experience`, `overflow` (`assets-src/models/*.blend` → `public/models/*.glb`, ≤ 150 / 100 / 100 / 100 KB)
+- [X] T047 [P] Model the dedicated objects of the featured projects (`public/models/featured/<id>.glb`, ≤ 300 KB each) and add their `featured.<id>` empties to the room
 - [X] T048 [P] Budget check `scripts/check-scene-budget.mjs` and npm script `check:scene`: sizes of `public/models/**` against contracts/scene-model.md and of the scene's JavaScript chunks in `dist/`; total before first interaction ≤ 3 MB (SC-002)
 - [X] T049 [P] Frame-rate test `tests/e2e/scene-perf.spec.ts` (Chromium only): CDP CPU throttling ×4, scripted pan / zoom for 10 s, frames counted with `__scene.frames()`; pass if ≥ 30 fps or if quality stepped down and then the too-slow proposal appeared (SC-003)
 - [X] T050 [P] Extend `tests/e2e/privacy.spec.ts` to the scene pages, waiting for `__scene.ready` and opening a panel: no third-party request, no cookie (FR-026, SC-008)
