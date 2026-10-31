@@ -216,9 +216,15 @@ since on phones the open panel covers the scene's own button.
 
 ## Phase 8: Polish & Cross-Cutting Concerns
 
-- [ ] T044 Delete `mockups/` and its registration in `astro.config.mjs`; remove the `mockups/styles/*` part of `tests/unit/design-tokens.test.ts`, the mockup part of `src/layouts/BaseLayout.astro` (`data-style`, noindex, banner and its style), `src/env.d.ts` (`App.Locals.mockup`), the `mockup.banner` label in `src/i18n/ui.ts`, the `mockups/models/raw/` line of `.gitignore`, and `@fontsource-variable/figtree` / `@fontsource-variable/space-grotesk` from `devDependencies` unless their style was chosen (then the font moves to `dependencies` in T026); keep the `check-seo.mjs` rule (FR-005)
-- [ ] T045 [P] Update `README.md` (design values and roles, theme button, day / night scene, link to spec 003) and `assets-src/models/README.md` (style of the room, lamps and window, contracts/scene-ambiance.md)
-- [ ] T046 [P] Update `specs/002-isometric-3d-scene/contracts/scene-model.md` with a link to `specs/003-visual-design-pass/contracts/scene-ambiance.md` for the `lamp`, `window`, `light.lamp.NN` and `decor.shelf` additions
+- [X] T044 Delete `mockups/` and its registration in `astro.config.mjs`; remove the `mockups/styles/*` part of `tests/unit/design-tokens.test.ts`, the mockup part of `src/layouts/BaseLayout.astro` (`data-style`, noindex, banner and its style), `src/env.d.ts` (`App.Locals.mockup`), the `mockup.banner` label in `src/i18n/ui.ts`, the `mockups/models/raw/` line of `.gitignore`, and `@fontsource-variable/figtree` / `@fontsource-variable/space-grotesk` from `devDependencies` unless their style was chosen (then the font moves to `dependencies` in T026); keep the `check-seo.mjs` rule (FR-005)
+- [X] T045 [P] Update `README.md` (design values and roles, theme button, day / night scene, link to spec 003) and `assets-src/models/README.md` (style of the room, lamps and window, contracts/scene-ambiance.md)
+- [X] T046 [P] Update `specs/002-isometric-3d-scene/contracts/scene-model.md` with a link to `specs/003-visual-design-pass/contracts/scene-ambiance.md` for the `lamp`, `window`, `light.lamp.NN` and `decor.shelf` additions
+
+Done (31/10): besides the T044 list, the scene options that only served the mockups are gone too
+(`SceneView` `roomUrl`, `bakedMaps`, `modelUrls` and their reading in `labels.ts`, `room.ts`,
+`objects.ts`, `scene3d.ts`), and `scene-ambiance.md` no longer mentions `bakedMaps`. Space
+Grotesk stays (chosen style); Figtree is removed. `src/env.d.ts` held only `App.Locals.mockup`
+and is deleted.
 
 ---
 

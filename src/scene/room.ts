@@ -1,10 +1,10 @@
-// The room: the page's room model (public/models/room.glb, or a mockup's) when it exists,
+// The room: public/models/room.glb when it exists,
 // otherwise a provisional room built in code with the same named empties
 // (contracts/scene-model.md, specs/003-visual-design-pass/contracts/scene-ambiance.md).
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
-import { bakedTextureUrls, loadBakedMaterial, type BakedMaps, type BakedMaterial } from './baked';
+import { bakedTextureUrls, loadBakedMaterial, type BakedMaterial } from './baked';
 import { parseSlot, type Slot } from './layout';
 
 export interface RoomSlot extends Slot {
@@ -84,15 +84,10 @@ function describe(group: THREE.Object3D): Room {
   };
 }
 
-/** `url`: the page's room (a mockup sets its own); otherwise room.glb when it was built. */
-export async function loadRoom(
-  models: string[],
-  url?: string,
-  bakedMaps?: BakedMaps,
-): Promise<Room> {
-  const src = url ?? (models.includes('room.glb') ? ROOM_URL : null);
-  if (!src) return describe(provisionalRoom());
-  const gltf = await gltfLoader().loadAsync(src);
+/** room.glb when it was built, otherwise the provisional room. */
+export async function loadRoom(models: string[]): Promise<Room> {
+  if (!models.includes('room.glb')) return describe(provisionalRoom());
+  const gltf = await gltfLoader().loadAsync(ROOM_URL);
   const room = describe(gltf.scene);
   // A baked room carries its light in two textures next to the model (baked.ts).
   const bakedMeshes: THREE.Mesh[] = [];
@@ -101,7 +96,7 @@ export async function loadRoom(
     if (mesh.isMesh && (mesh.material as THREE.Material).name === 'baked') bakedMeshes.push(mesh);
   });
   if (bakedMeshes.length) {
-    room.baked = await loadBakedMaterial(bakedMaps ?? bakedTextureUrls(src));
+    room.baked = await loadBakedMaterial(bakedTextureUrls(ROOM_URL));
     for (const mesh of bakedMeshes) mesh.material = room.baked;
   }
   return room;

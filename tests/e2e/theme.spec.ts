@@ -42,14 +42,23 @@ test.describe('with JavaScript', () => {
     expect(dark).not.toBe(light);
 
     await expect(toggle(page)).toHaveAttribute('data-state', 'system');
-    expect(await state(page)).toMatchObject({ dataTheme: null, stored: null, scheme: 'light', bg: light });
+    expect(await state(page)).toMatchObject({
+      dataTheme: null,
+      stored: null,
+      scheme: 'light',
+      bg: light,
+    });
 
     const events = page.evaluate(
       () =>
         new Promise<string>((resolve) =>
-          document.addEventListener('themechange', (e) => resolve((e as CustomEvent).detail.theme), {
-            once: true,
-          }),
+          document.addEventListener(
+            'themechange',
+            (e) => resolve((e as CustomEvent).detail.theme),
+            {
+              once: true,
+            },
+          ),
         ),
     );
     await page.emulateMedia({ colorScheme: 'dark' });
@@ -68,15 +77,30 @@ test.describe('with JavaScript', () => {
     await expect(button).toHaveAccessibleName(LABELS.en.system);
     await button.click();
     await expect(button).toHaveAccessibleName(LABELS.en.light);
-    expect(await state(page)).toMatchObject({ dataTheme: 'light', stored: 'light', scheme: 'light', bg: light });
+    expect(await state(page)).toMatchObject({
+      dataTheme: 'light',
+      stored: 'light',
+      scheme: 'light',
+      bg: light,
+    });
 
     await button.click();
     await expect(button).toHaveAccessibleName(LABELS.en.dark);
-    expect(await state(page)).toMatchObject({ dataTheme: 'dark', stored: 'dark', scheme: 'dark', bg: dark });
+    expect(await state(page)).toMatchObject({
+      dataTheme: 'dark',
+      stored: 'dark',
+      scheme: 'dark',
+      bg: dark,
+    });
 
     await button.click();
     await expect(button).toHaveAccessibleName(LABELS.en.system);
-    expect(await state(page)).toMatchObject({ dataTheme: null, stored: null, scheme: 'dark', bg: dark });
+    expect(await state(page)).toMatchObject({
+      dataTheme: null,
+      stored: null,
+      scheme: 'dark',
+      bg: dark,
+    });
   });
 
   test('the choice holds across pages, languages and a new page', async ({ page, context }) => {
@@ -114,7 +138,9 @@ test.describe('with JavaScript', () => {
       });
     });
     await page.goto('/en/');
-    expect(await page.evaluate(() => (window as unknown as { firstBg: string }).firstBg)).toBe(dark);
+    expect(await page.evaluate(() => (window as unknown as { firstBg: string }).firstBg)).toBe(
+      dark,
+    );
   });
 
   test('with storage blocked, the button still changes the page', async ({ page }) => {

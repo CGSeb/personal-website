@@ -1,8 +1,7 @@
 // Compresses every raw export of assets-src/models/ (.glb) into public/models/ with gltfpack, and
 // converts the baked lighting textures (*-day.png, *-night.png) to WebP
 // (Meshopt geometry, compressed textures). Usage: npm run models:optimize
-// Other folders: node scripts/optimize-models.mjs <src> <out> (style mockups of spec 003:
-// mockups/models/raw -> mockups/models).
+// Other folders: node scripts/optimize-models.mjs <src> <out>.
 //   -kn  keeps the named empties (slot.*, featured.*, camera.home, bounds) the scene reads
 //   -km  keeps the named materials (screen, label) the scene fills
 //   -kv  keeps the UVs of untextured surfaces, which receive an image or a badge at runtime

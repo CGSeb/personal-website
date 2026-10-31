@@ -49,17 +49,14 @@ const seo = seoTags({
   imageAlt: ogImageAlt,
   type: ogType,
 });
-// Style mockups of spec 003 (`astro dev` only); removed with the mockups after the decision.
-const mockup = Astro.locals.mockup;
 ---
 
 <!doctype html>
-<html lang={lang} data-style={mockup?.style}>
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <ThemeScript />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    {mockup && <meta name="robots" content="noindex, nofollow" />}
     <title>{seo.fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={seo.canonical} />
@@ -80,16 +77,6 @@ const mockup = Astro.locals.mockup;
     <a class="skip-link" href="#main">
       {t(lang, 'skip')}
     </a>
-    {mockup && (
-      <div class="mockup-banner" role="note">
-        <strong>{t(lang, 'mockup.banner', { style: mockup.name })}</strong>
-        {mockup.links.map((link) => (
-          <a href={link.href} aria-current={link.current ? 'page' : undefined}>
-            {link.label}
-          </a>
-        ))}
-      </div>
-    )}
     <Header lang={lang} currentPath={canonicalPath} alternatePath={alternatePath} />
     <main id="main">
       <slot />
@@ -97,22 +84,3 @@ const mockup = Astro.locals.mockup;
     <Footer lang={lang} />
   </body>
 </html>
-
-<style>
-  .mockup-banner {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2xs) var(--space-m);
-    padding: var(--space-xs) var(--gutter);
-    font-size: var(--step--1);
-    color: var(--color-on-accent);
-    background: var(--color-accent);
-  }
-  .mockup-banner a {
-    color: inherit;
-  }
-  .mockup-banner a[aria-current='page'] {
-    font-weight: 700;
-    text-decoration: none;
-  }
-</style>

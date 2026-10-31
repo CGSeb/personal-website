@@ -1,6 +1,6 @@
 // Contrast of the role pairs in both themes, and no literal colour outside the design values
 // (specs/003-visual-design-pass/contracts/design-tokens.md).
-import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
@@ -25,20 +25,13 @@ function block(css: string, selector: RegExp): Values {
   return values;
 }
 
-const escape = (s: string) => s.replace(/[[\]().*+?^$|\\]/g, '\\$&');
-
-/**
- * Light and dark values of a stylesheet whose blocks start with `root` (`:root`, or
- * `:root[data-style='…']` for a candidate style laid over `base`); the two dark blocks must agree.
- */
-function themes(css: string, root = ':root', base?: Record<Theme, Values>): Record<Theme, Values> {
-  const r = escape(root);
-  const own = block(css, new RegExp(`^${r}\\s*\\{`, 'm'));
-  const system = block(css, new RegExp(`${r}:not\\(\\[data-theme='light'\\]\\)\\s*\\{`));
-  const chosen = block(css, new RegExp(`${r}\\[data-theme='dark'\\]\\s*\\{`));
+/** Light and dark values of the design values; the two dark blocks must agree. */
+function themes(css: string): Record<Theme, Values> {
+  const light = block(css, /^:root\s*\{/m);
+  const system = block(css, /:root:not\(\[data-theme='light'\]\)\s*\{/);
+  const chosen = block(css, /:root\[data-theme='dark'\]\s*\{/);
   expect(system, 'the two dark blocks differ').toEqual(chosen);
-  const light = { ...base?.light, ...own };
-  return { light, dark: { ...base?.dark, ...light, ...chosen } };
+  return { light, dark: { ...light, ...chosen } };
 }
 
 function resolve(values: Values, name: string, seen: string[] = []): string {
@@ -76,21 +69,9 @@ const PAIRS: [string, string[], number][] = [
 ];
 
 const TOKENS = 'src/styles/tokens.css';
-const site = themes(readFileSync(TOKENS, 'utf8'));
+const values = themes(readFileSync(TOKENS, 'utf8'));
 
-/** The site's values, plus the candidate styles while their mockups exist (spec 003, US1). */
-const STYLESHEETS: [string, Record<Theme, Values>][] = [
-  [TOKENS, site],
-  ...['atelier', 'bureau', 'tour']
-    .map((style) => `mockups/styles/${style}.css`)
-    .filter((file) => existsSync(file))
-    .map((file): [string, Record<Theme, Values>] => {
-      const style = file.match(/(\w+)\.css$/)![1];
-      return [file, themes(readFileSync(file, 'utf8'), `:root[data-style='${style}']`, site)];
-    }),
-];
-
-describe.each(STYLESHEETS)('%s', (_, values) => {
+describe(TOKENS, () => {
   for (const theme of ['light', 'dark'] as const) {
     for (const [fg, bgs, min] of PAIRS) {
       for (const bg of bgs) {
