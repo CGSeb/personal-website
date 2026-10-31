@@ -70,6 +70,9 @@ test('a third-party video loads only after a click', async ({ page, javaScriptEn
   expect(videoRequests).toEqual([]);
   await expect(page.locator('.video-facade iframe')).toHaveCount(0);
 
+  // Real content: runs again as soon as the project has a video link.
+  test.skip((await page.locator('.video-facade').count()) === 0, 'no video link in the content');
+
   test.skip(!javaScriptEnabled, 'without JavaScript the facade is a plain link to the video');
   await page.locator('.video-facade .video-link').click();
   await expect(page.locator('.video-facade iframe')).toHaveAttribute(

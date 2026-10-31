@@ -15,9 +15,9 @@ test('without JavaScript the scene page lists every item with links to the writt
     'href',
     '/fr/projets/lesson-folk/',
   );
-  await expect(list.getByRole('link', { name: 'Master en informatique' })).toHaveAttribute(
+  await expect(list.getByRole('link', { name: 'Ingénieur en ingénierie logicielle' })).toHaveAttribute(
     'href',
-    '/fr/parcours/diplomes/master-informatique/',
+    '/fr/parcours/diplomes/exia-cesi/',
   );
   await expect(page.locator('.scene-panel:visible')).toHaveCount(0);
 });

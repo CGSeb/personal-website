@@ -1,6 +1,6 @@
 ---
 title: Contact
-description: "Get in touch with Sébastien by e-mail or through online profiles."
+description: "Get in touch with Sébastien Michon, lead developer in Toulouse, by e-mail or on LinkedIn and GitHub."
 ---
 
-A question, a project? Write to me. (Placeholder text.)
+A project, a job, a collaboration or just a question? Write to me, I reply within a few days.

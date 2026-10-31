@@ -2,5 +2,7 @@
   label: { fr: Web, en: Web }
 - id: education-tech
   label: { fr: Éducation, en: Education }
-- id: video
-  label: { fr: Vidéo, en: Video }
+- id: desktop
+  label: { fr: Application de bureau, en: Desktop app }
+- id: 3d
+  label: { fr: 3D, en: 3D }

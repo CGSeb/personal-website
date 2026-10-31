@@ -1,0 +1,7 @@
+id: openstudio-lead
+position: { fr: Lead développeur, en: Lead developer }
+organization: OpenStudio
+location: { fr: "Toulouse, France", en: "Toulouse, France" }
+type: employment
+period: { start: 2026-07 }
+technologies: [php, symfony, postgresql]

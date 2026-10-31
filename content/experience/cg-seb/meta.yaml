@@ -1,0 +1,7 @@
+id: cg-seb
+position: { fr: "Artiste 3D et développeur d'extensions Blender", en: 3D artist and Blender add-on developer }
+organization: CG Seb
+location: { fr: "Toulouse, France", en: "Toulouse, France" }
+type: freelance
+period: { start: 2023-02 }
+technologies: [blender, python]

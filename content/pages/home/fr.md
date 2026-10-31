@@ -1,6 +1,6 @@
 ---
-title: Sébastien
-description: "Portfolio de Sébastien, développeur : projets web, outils et créations interactives, parcours et contact."
+title: Sébastien Michon
+description: "Portfolio de Sébastien Michon, lead développeur à Toulouse passionné d'IA : projets web, outils d'IA, créations 3D, parcours et contact."
 ---
 
-Bienvenue sur mon portfolio. J'aime transformer une idée en produit utilisable : je conçois, je code, je teste et je mets en ligne. Vous trouverez ici une sélection de mes projets. (Texte provisoire.)
+Bienvenue ! Je suis Sébastien, lead développeur. Ici, vous trouverez les projets que j'ai conçus et menés jusqu'à la mise en ligne, mon parcours, et une version 3D du portfolio à explorer comme une petite pièce.

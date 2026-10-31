@@ -1,0 +1,13 @@
+id: bts-iris
+title:
+  fr: BTS IRIS, informatique et réseaux
+  en: BTS IRIS, computing and networks
+institution: Lycée Léonce Vieljeux
+location: { fr: La Rochelle, France, en: "La Rochelle, France" }
+period: { start: 2013-09, end: 2015-06 }
+obtained: true
+level: { fr: Bac+2, en: Two-year degree }
+skills:
+  - { fr: Programmation orientée objet, en: Object-oriented programming }
+  - { fr: C et C++, en: C and C++ }
+  - { fr: Bases du management de projet, en: Project management basics }

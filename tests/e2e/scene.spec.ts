@@ -75,15 +75,15 @@ test.describe('scene (US1)', () => {
 
   test('a diploma and an experience open their panels (US1-3, US1-5)', async ({ page }) => {
     await openScene(page);
-    await clickObject(page, 'education/master-informatique');
-    await expect(page.locator('#panel-education-master-informatique')).toBeVisible();
-    await expect(page.locator('#panel-education-master-informatique')).toContainText('Bac+5');
+    await clickObject(page, 'education/exia-cesi');
+    await expect(page.locator('#panel-education-exia-cesi')).toBeVisible();
+    await expect(page.locator('#panel-education-exia-cesi')).toContainText('Bac+5');
     // The open panel may cover other objects on small screens: close it first.
     await page.keyboard.press('Escape');
-    await expect(page.locator('#panel-education-master-informatique')).toBeHidden();
-    await clickObject(page, 'experience/freelance-dev');
-    await expect(page.locator('#panel-experience-freelance-dev')).toBeVisible();
-    await expect(page.locator('#panel-experience-freelance-dev')).toContainText('Depuis');
+    await expect(page.locator('#panel-education-exia-cesi')).toBeHidden();
+    await clickObject(page, 'experience/cg-seb');
+    await expect(page.locator('#panel-experience-cg-seb')).toBeVisible();
+    await expect(page.locator('#panel-experience-cg-seb')).toContainText('Depuis');
   });
 
   test('close button, Escape and a click outside close the panel (US1-6)', async ({ page }) => {
@@ -108,9 +108,9 @@ test.describe('scene (US1)', () => {
     await openScene(page);
     await page
       .locator('.scene-list')
-      .getByRole('button', { name: 'Master en informatique' })
+      .getByRole('button', { name: 'Ingénieur en ingénierie logicielle' })
       .click();
-    await expect(page.locator('#panel-education-master-informatique')).toBeVisible();
+    await expect(page.locator('#panel-education-exia-cesi')).toBeVisible();
   });
 });
 
@@ -151,12 +151,12 @@ test.describe('scene (US2)', () => {
   });
 
   test('a shared link opens its panel, in English (FR-014)', async ({ page }) => {
-    await openScene(page, '/en/explore/#education/master-informatique');
-    const panel = page.locator('#panel-education-master-informatique');
+    await openScene(page, '/en/explore/#education/exia-cesi');
+    const panel = page.locator('#panel-education-exia-cesi');
     await expect(panel).toBeVisible();
     await expect(panel.getByRole('link', { name: /Learn more/ })).toHaveAttribute(
       'href',
-      '/en/career/education/master-informatique/',
+      '/en/career/education/exia-cesi/',
     );
   });
 });
@@ -227,9 +227,9 @@ test.describe('keyboard, screen readers and languages (US5)', () => {
       buttons.map((b) => b.getAttribute('data-key')),
     );
     expect(keys.slice(0, 3)).toEqual([
-      'project/portfolio-3d',
       'project/lesson-folk',
-      'project/ambient-videos',
+      'project/portfolio-3d',
+      'project/voxelshift',
     ]);
     await list.first().focus();
     for (const key of keys.slice(0, 4)) {
@@ -247,10 +247,10 @@ test.describe('keyboard, screen readers and languages (US5)', () => {
     page,
   }) => {
     await openScene(page);
-    const button = page.locator('.scene-list button[data-key="education/master-informatique"]');
+    const button = page.locator('.scene-list button[data-key="education/exia-cesi"]');
     await button.focus();
     await page.keyboard.press('Enter');
-    const panel = page.locator('#panel-education-master-informatique');
+    const panel = page.locator('#panel-education-exia-cesi');
     await expect(panel).toBeVisible();
     await expect(panel).toBeFocused();
     await page.keyboard.press('Escape');
@@ -271,14 +271,14 @@ test.describe('keyboard, screen readers and languages (US5)', () => {
     await openScene(page);
     await page
       .locator('.scene-list')
-      .getByRole('button', { name: 'Master en informatique' })
+      .getByRole('button', { name: 'Ingénieur en ingénierie logicielle' })
       .click();
     const switcher = page.locator('.language-switcher');
-    await expect(switcher).toHaveAttribute('href', '/en/explore/#education/master-informatique');
+    await expect(switcher).toHaveAttribute('href', '/en/explore/#education/exia-cesi');
     await switcher.click();
     await sceneReady(page);
-    await expect(page).toHaveURL(/\/en\/explore\/#education\/master-informatique$/);
-    await expect(page.locator('#panel-education-master-informatique')).toBeVisible();
+    await expect(page).toHaveURL(/\/en\/explore\/#education\/exia-cesi$/);
+    await expect(page.locator('#panel-education-exia-cesi')).toBeVisible();
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   });
 });

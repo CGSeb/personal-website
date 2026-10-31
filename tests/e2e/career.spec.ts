@@ -49,7 +49,7 @@ for (const lang of ['fr', 'en'] as const) {
 
     test('the ongoing dot pulses, and only fades with reduced motion', async ({ page }) => {
       const dot = (selector: string) =>
-        page.locator(selector).evaluate((el) => {
+        page.locator(selector).first().evaluate((el) => {
           const s = getComputedStyle(el, '::before');
           return { bg: s.backgroundColor, animation: s.animationName };
         });

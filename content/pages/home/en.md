@@ -1,6 +1,6 @@
 ---
-title: Sébastien
-description: "Portfolio of Sébastien, developer: web projects, tools and interactive work, career and contact."
+title: Sébastien Michon
+description: "Portfolio of Sébastien Michon, lead developer in Toulouse with a passion for AI: web projects, AI tools, 3D work, career and contact."
 ---
 
-Welcome to my portfolio. I like turning an idea into a usable product: I design, code, test and ship. Here is a selection of my projects. (Placeholder text.)
+Welcome! I'm Sébastien, a lead developer. Here you'll find the projects I designed and took all the way to launch, my career, and a 3D version of this portfolio to explore like a small room.

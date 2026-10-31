@@ -62,7 +62,7 @@ const jsonLd = graph(
 
 <BaseLayout
   lang={lang}
-  title={title}
+  title={`${title}, ${organization.name}`}
   description={description}
   canonicalPath={path}
   alternatePath={alternateOf(kind, lang, item)}

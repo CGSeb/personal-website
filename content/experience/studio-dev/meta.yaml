@@ -1,7 +1,0 @@
-id: studio-dev
-position: { fr: Développeur web, en: Web developer }
-organization: Studio (à préciser)
-location: { fr: France, en: France }
-type: employment
-period: { start: 2020-09, end: 2024-12 }
-technologies: [typescript, nodejs]

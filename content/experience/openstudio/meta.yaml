@@ -1,0 +1,7 @@
+id: openstudio
+position: { fr: Ingénieur logiciel, en: Software engineer }
+organization: OpenStudio
+location: { fr: "Toulouse, France", en: "Toulouse, France" }
+type: employment
+period: { start: 2021-01, end: 2024-05 }
+technologies: [php, symfony, rabbitmq, postgresql]

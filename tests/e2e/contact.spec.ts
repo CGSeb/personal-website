@@ -1,7 +1,7 @@
 // User Story 5 — get in touch: protected e-mail link and profile links, no form.
 import { expect, test } from '@playwright/test';
 
-const EMAIL = 'contact@example.com'; // seed content
+const EMAIL = 'contact@sebastienmichon.fr'; // content/profile.yaml
 const L = {
   fr: { contact: 'Contact', path: '/fr/contact/' },
   en: { contact: 'Contact', path: '/en/contact/' },

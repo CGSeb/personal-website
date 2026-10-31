@@ -1,0 +1,7 @@
+id: helloprint
+position: { fr: Développeur PHP, en: PHP developer }
+organization: Helloprint
+location: { fr: "Rotterdam, Pays-Bas", en: "Rotterdam, Netherlands" }
+type: employment
+period: { start: 2019-08, end: 2020-12 }
+technologies: [php, kafka, neo4j, postgresql, kubernetes]

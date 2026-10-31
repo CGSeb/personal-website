@@ -1,0 +1,7 @@
+id: mrwork
+position: { fr: Développeur web (stages), en: Web developer (internships) }
+organization: MrWork
+location: { fr: "Rotterdam, Pays-Bas", en: "Rotterdam, Netherlands" }
+type: internship
+period: { start: 2017-09, end: 2019-07 }
+technologies: [php, symfony, javascript, angular]
