@@ -33,9 +33,8 @@ function loadRedirects() {
   return redirects;
 }
 
-// `site` is a placeholder until hosting and the domain are chosen.
 export default defineConfig({
-  site: 'https://example.com',
+  site: 'https://sebastienmichon.fr',
   output: 'static',
   trailingSlash: 'always',
   build: {

@@ -122,5 +122,6 @@ Le projet suit [Spec Kit](https://github.com/github/spec-kit) :
 
 ## Hébergement
 
-Pas encore choisi. Le site est entièrement statique (`dist/`) et fonctionne sur n'importe quel
-hébergement statique ; `site` dans `astro.config.mjs` reste à régler avec le vrai domaine.
+Domaine : `https://sebastienmichon.fr` (`site` dans `astro.config.mjs` : adresses canoniques,
+hreflang, sitemap, Open Graph, JSON-LD). L'hébergeur n'est pas encore choisi : le site est
+entièrement statique (`dist/`) et fonctionne sur n'importe quel hébergement statique.
