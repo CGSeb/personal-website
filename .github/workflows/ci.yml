@@ -35,6 +35,9 @@ jobs:
       - name: SEO check
         run: npm run check:seo
 
+      - name: Scene budget
+        run: npm run check:scene
+
       - name: Playwright browsers
         run: npx playwright install --with-deps chromium webkit
 
