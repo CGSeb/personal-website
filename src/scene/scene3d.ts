@@ -247,8 +247,8 @@ export async function createScene(
   stage.requestRender();
 
   panels.openFromHash(screenPosition);
-  stage.onRender(() => {
-    const action = governor.frame(performance.now());
+  stage.onRender((requestedAt) => {
+    const action = governor.frame(performance.now(), requestedAt);
     if (action.type === 'down') {
       stage.setPixelRatio(QUALITY[action.level].pixelRatio);
       shown = settingsFor(ambiance, action.level);
