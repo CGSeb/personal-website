@@ -1,7 +1,7 @@
 # Maquettes des styles (spec 003)
 
 Exploration seulement : trois styles candidats du portfolio, « atelier », « bureau moderne » et
-« tour » (bureau moderne en haut d'un immeuble, sci-fi),
+« tour » (petit bureau chaleureux en haut d'un immeuble, lumière précalculée),
 montrés sur l'accueil réel et la scène réelle. Contrat :
 [`specs/003-visual-design-pass/contracts/mockups.md`](../specs/003-visual-design-pass/contracts/mockups.md).
 Captures et comparaison :
@@ -11,7 +11,8 @@ Captures et comparaison :
   `/_maquettes/atelier/`, `/_maquettes/bureau/` et `/_maquettes/tour/`, la pièce en `…/scene/`, l'anglais en
   `…/en/`. `astro build` ne les construit jamais.
 - `styles/<style>.css` : palette et rôles du style, limités à `:root[data-style='<style>']`.
-- `models/room-<style>.glb` : pièce simplifiée du style.
+- `models/room-<style>.glb` : pièce du style ; pour « tour », avec `room-tour-day.webp` et
+  `room-tour-night.webp` (lumière précalculée par Cycles, quelques minutes sur GPU).
 
 ```bash
 blender --background --python assets-src/models/build_models.py -- --style atelier --out mockups/models/raw

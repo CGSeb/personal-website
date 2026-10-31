@@ -40,6 +40,7 @@ export function createLighting(scene: THREE.Scene, room: Room): Lighting {
       sun.position.set(...s.sun.position);
       for (const m of room.lampMaterials) m.emissiveIntensity = s.lampEmissive;
       for (const m of room.neonMaterials) m.emissiveIntensity = s.neonEmissive;
+      room.baked?.setNight(s.bakedNight);
       for (const m of room.windowMaterials) {
         m.emissive.setStyle(s.window.color);
         m.emissiveIntensity = s.window.intensity;

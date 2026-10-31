@@ -27,6 +27,8 @@ export interface PageData {
   models: string[];
   /** Room model of the page (a mockup's); absent: room.glb or the provisional room. */
   roomUrl?: string;
+  /** Baked day / night textures of that room, when they are not next to it. */
+  bakedMaps?: { day: string; night: string };
 }
 
 const json = <T>(id: string): T => JSON.parse(document.getElementById(id)!.textContent!) as T;
@@ -40,5 +42,9 @@ export function readPageData(): PageData {
     labels: json('scene-labels'),
     models: json('scene-models'),
     roomUrl: page.dataset.roomUrl || undefined,
+    bakedMaps:
+      page.dataset.bakedDay && page.dataset.bakedNight
+        ? { day: page.dataset.bakedDay, night: page.dataset.bakedNight }
+        : undefined,
   };
 }

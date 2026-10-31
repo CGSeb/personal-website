@@ -91,6 +91,13 @@ class Builder:
             matrix=matrix(x, y, z, rot, 0.0, (rx, h, rz)),
         )
 
+    def blob(self, material, w, h, d, x, y, z, rot=0.0, tilt=0.0):
+        """Ellipsoid of half-sizes (w, h, d) centred at (x, y, z) (leaves, cushions)."""
+        bmesh.ops.create_uvsphere(
+            self._bm(material), u_segments=12, v_segments=6, radius=1,
+            matrix=matrix(x, y, z, rot, tilt, (w, h, d)),
+        )
+
     def sphere(self, material, r, x, y, z):
         bmesh.ops.create_uvsphere(
             self._bm(material), u_segments=10, v_segments=6, radius=r, matrix=matrix(x, y, z)
@@ -289,38 +296,12 @@ def desk_support(b):
     b.box("desk-leg", 2.9, 0.03, 0.03, 0.6, 0.7, -0.2)
 
 
-TOUR_PALETTE = {
-    **ROOM_PALETTE,
-    "floor": ("#5a3f2c", 0.45),
-    "plank": "#3e2b1f",
-    "wall": ("#7b7f82", 0.9),
-    "walnut": "#6b4428",
-    "dark-wood": "#1f242b",
-    "cork": ("#111418", 0.25),
-    "rug": "#2b2f35",
-    "fabric": "#e9ecef",
-    "chair": ("#22262b", 0.5),
-    "sofa": "#3a3f46",
-    "pot": "#2a2d31",
-    "leaf": "#4f9a6a",
-    "metal": ("#8a939e", 0.3),
-    "lamp": "#f5efe6",
-    "window": ("#a9c7e8", 0.08),
-    "window-frame": ("#16191d", 0.4),
-    "city": "#26303d",
-    "neon": "#3ee6ff",
-    "desk": ("#16191d", 0.35),
-    "desk-leg": "#0f1114",
-    "slat": "#7a4f2e",
-    "slat-back": "#121417",
-}
-
-
 STYLES = {
     "site": (ROOM_PALETTE, table_support),
     "atelier": (ATELIER_PALETTE, workbench_support),
     "bureau": (BUREAU_PALETTE, desk_support),
-    "tour": (TOUR_PALETTE, lambda b: long_desk(b)),
+    # « tour » is built and baked by tower_room.py (build_tower_room_baked).
+    "tour": (None, None),
 }
 
 
@@ -358,8 +339,6 @@ def build_shelf(palette):
 
 
 def build_room(style="site"):
-    if style == "tour":
-        return build_tower_room()
     palette, support = STYLES[style]
     b = Builder(palette)
 
@@ -463,168 +442,6 @@ def room_markers(
         empty(f"light.neon.{pad(i + 1)}", *place)
     empty("camera.home", 0, 0.9, -0.4)
     empty("bounds", 0, 1.5, 0, scale=(4, 1.5, 4))
-
-
-# « Tour » layout (references sent by Sébastien, 31/10/2026): the whole north side is glass over
-# the city; a long floating desk faces the view, the featured projects in its middle; the west
-# wall is concrete with, from the glass towards the camera, built-in wooden shelving, the
-# diplomas under a lit wooden slat panel, and the black experience panel; a lounge faces the
-# view in the foreground.
-DESK_Z = -3.45  # centre of the desk's depth
-DESK_TOP = 0.8
-
-
-def long_desk(b):
-    """Tour: a long black desk floating in front of the glass, a cyan LED line under its front
-    edge, slim end panels and a drawer unit; an ergonomic chair facing the view."""
-    b.box("desk", 7.2, 0.05, 0.8, 0, DESK_TOP - 0.025, DESK_Z)
-    b.box("neon", 7.1, 0.014, 0.014, 0, DESK_TOP - 0.06, DESK_Z + 0.39)
-    for x in (-3.55, 3.55):
-        b.box("desk-leg", 0.05, DESK_TOP - 0.05, 0.7, x, (DESK_TOP - 0.05) / 2, DESK_Z)
-    b.box("desk-leg", 0.5, 0.55, 0.65, -1.15, 0.47, DESK_Z - 0.02)
-    for y in (0.36, 0.56):
-        b.box("metal", 0.2, 0.012, 0.01, -1.15, y, DESK_Z + 0.31)
-    # Chair, back to the camera, facing the desk and the city.
-    cx, cz = 0, -2.55
-    b.box("fabric", 0.52, 0.07, 0.5, cx, 0.48, cz)
-    b.box("chair", 0.5, 0.7, 0.07, cx, 0.92, cz + 0.27, tilt=math.radians(-10))
-    b.box("chair", 0.3, 0.14, 0.06, cx, 1.36, cz + 0.33, tilt=math.radians(-10))
-    for side in (-1, 1):
-        b.box("chair", 0.05, 0.04, 0.34, cx + side * 0.29, 0.66, cz)
-        b.box("chair", 0.04, 0.18, 0.04, cx + side * 0.29, 0.56, cz + 0.08)
-    b.cylinder("metal", 0.03, 0.38, cx, 0.24, cz, 10)
-    for i in range(5):
-        a = i * 2 * math.pi / 5
-        b.box("chair", 0.32, 0.03, 0.05, cx + math.cos(a) * 0.16, 0.04, cz - math.sin(a) * 0.16, rot=a)
-
-
-def build_tower_shelf(palette):
-    """Tour: built-in walnut shelving on the west wall by the glass, warm LED under each shelf,
-    books, objects and plants (decor.shelf)."""
-    b = Builder(palette)
-    z0, z1, depth = -3.75, -2.15, 0.38
-    zc, x = (z0 + z1) / 2, -4.0 + depth / 2
-    b.box("walnut", depth, 0.06, z1 - z0, x, 0.03, zc)
-    b.box("walnut", depth, 0.04, z1 - z0, x, 2.6, zc)
-    for z in (z0, z1):
-        b.box("walnut", depth, 2.6, 0.04, x, 1.3, z)
-    for y in (0.55, 1.05, 1.55, 2.05):
-        b.box("walnut", depth, 0.035, z1 - z0, x, y, zc)
-        b.box("lamp", 0.012, 0.01, z1 - z0 - 0.1, x + depth / 2 - 0.03, y - 0.024, zc)
-    books = ("book-a", "book-b", "book-c", "book-d")
-    for shelf, y in enumerate((0.0675, 0.5675, 1.0675, 1.5675, 2.0675)):
-        if shelf in (1, 3):  # objects instead of books
-            continue
-        z = z0 + 0.06 + shelf * 0.12
-        for i in range(6 + shelf % 2):
-            h = 0.24 + ((i * 7 + shelf * 3) % 5) * 0.025
-            w = 0.05 + ((i + shelf) % 3) * 0.015
-            b.box(books[(i + shelf) % 4], 0.24, h, w, x, y + h / 2, z + w / 2)
-            z += w + 0.012
-    b.sphere("metal", 0.08, x, 0.65, -3.0)
-    b.box("dark-wood", 0.16, 0.22, 0.16, x, 1.17, -2.5)
-    b.box("dark-wood", 0.2, 0.12, 0.2, x, 1.13, -3.4)
-    plant(b, x, 0.585, -2.45, 0.9)
-    plant(b, x, 1.585, -3.0, 1.0)
-    plant(b, x, 2.085, -2.45, 0.8)
-    b.build("decor.shelf")
-
-
-def build_tower_room():
-    """« Tour »: a modern office high up in a tower, after Sébastien's references."""
-    palette, support = STYLES["tour"]
-    b = Builder(palette)
-
-    # Warm wooden floor.
-    b.box("floor", 8, 0.1, 8, 0, -0.05, 0)
-    for i in range(1, 32):
-        b.box("plank", 0.008, 0.004, 8, -4 + i * 0.25, 0.001, 0)
-
-    # North side: glass from wall to wall over the city, thin dark mullions.
-    b.box("window", 8.15, 3, 0.04, -0.075, 1.5, -4.05)
-    b.box("window-frame", 8.15, 0.06, 0.08, -0.075, 0.03, -4.0)
-    b.box("window-frame", 8.15, 0.06, 0.08, -0.075, 2.97, -4.0)
-    for x in (-4.0, -2.0, 0.0, 2.0, 4.0):
-        b.box("window-frame", 0.05, 3, 0.08, x, 1.5, -4.0)
-    # The city below, seen through the glass: silhouettes on the glass, lit windows (`lamp`
-    # glows at night) and a few LED signs (`neon`). Tall enough to show above the screens.
-    heights = (2.3, 2.85, 1.9, 2.6, 2.2, 2.9, 2.0, 2.5, 2.75, 1.8, 2.4, 2.65)
-    widths = (0.34, 0.26, 0.44, 0.3, 0.38, 0.24, 0.46, 0.32, 0.28, 0.4, 0.3, 0.36)
-    x, i = -3.95, 0
-    while True:
-        w, h = widths[i % len(widths)], heights[(i * 5) % len(heights)]
-        if x + w > 3.95:
-            break
-        b.box("city", w, h, 0.01, x + w / 2, h / 2, -4.02)
-        for row in range(int((h - 0.1) / 0.14)):
-            for col in range(max(1, int(w / 0.09))):
-                if (i * 7 + row * 3 + col * 5) % 4 == 0:
-                    continue
-                b.box("lamp", 0.035, 0.05, 0.004, x + 0.05 + col * 0.09, 0.12 + row * 0.14, -4.013)
-        if i % 3 == 1:
-            b.box("neon", 0.03, 0.5, 0.004, x + w - 0.04, h - 0.45, -4.012)
-        x += w + 0.03
-        i += 1
-
-    # West wall: concrete; wooden slats with a warm LED underneath over the diplomas; black
-    # experience panel framed by a cyan LED line.
-    b.box("wall", 0.15, 3, 8.15, -4.075, 1.5, -0.075)
-    for k in range(26):
-        b.box("slat", 0.04, 0.75, 0.05, -3.98, 2.6, -1.9 + k * 0.12)
-    b.box("slat-back", 0.02, 0.8, 3.15, -4.0, 2.6, -0.4)
-    b.box("lamp", 0.012, 0.012, 3.1, -3.97, 2.215, -0.4)
-    b.box("cork", 0.04, 1.5, 1.9, -3.98, 1.7, 2.45)
-    for y in (0.94, 2.46):
-        b.box("neon", 0.02, 0.02, 1.94, -3.955, y, 2.45)
-    for z in (1.49, 3.41):
-        b.box("neon", 0.02, 1.54, 0.02, -3.955, 1.7, z)
-
-    # Projects: the long desk facing the city.
-    support(b)
-
-    # Plants: a tall one at the east end of the desk, one by the sofa.
-    for px, pz, size in ((3.6, -2.55, 1.0), (-3.6, 3.75, 0.8)):
-        b.box("pot", 0.42 * size, 0.5 * size, 0.42 * size, px, 0.25 * size, pz)
-        for k, (dx, dz, h) in enumerate(
-            ((0, 0, 1.2), (0.12, 0.06, 0.95), (-0.11, 0.09, 1.0), (0.05, -0.12, 1.1))
-        ):
-            b.cylinder(
-                "leaf", (0.13 - k * 0.015) * size, h * size, px + dx * size,
-                0.5 * size + h * size / 2, pz + dz * size, 6, r2=0.0,
-            )
-
-    # Lounge in the foreground, facing the view: rug, low sofa (back to the camera), low
-    # table, floor lamp beside the sofa.
-    b.box("rug", 3.2, 0.012, 2.2, 0.3, 0.006, 2.4)
-    sx, sz = 0.3, 3.2
-    b.box("sofa", 2.3, 0.36, 0.85, sx, 0.2, sz)
-    b.box("sofa", 2.3, 0.45, 0.2, sx, 0.55, sz + 0.33)
-    for side in (-1, 1):
-        b.box("sofa", 0.18, 0.24, 0.85, sx + side * 1.06, 0.48, sz)
-    b.box("walnut", 1.2, 0.05, 0.6, sx, 0.36, 2.0)
-    for dx in (-0.5, 0.5):
-        b.box("desk-leg", 0.04, 0.34, 0.5, sx + dx, 0.17, 2.0)
-    lx, lz = 1.85, 3.45
-    b.cylinder("metal", 0.16, 0.03, lx, 0.015, lz, 20)
-    b.cylinder("metal", 0.015, 1.3, lx, 0.66, lz, 8)
-    b.cylinder("lamp", 0.17, 0.3, lx, 1.4, lz, 20, r2=0.14)
-
-    b.build("room")
-    build_tower_shelf(palette)
-    # Generic projects on both sides of the featured ones, nearest first.
-    room_markers(
-        lamps=((lx, 1.35, lz), (0.0, 1.9, -2.9), (-3.85, 2.1, -0.4)),
-        projects=[(x, DESK_TOP, DESK_Z, 0.0) for x in (-1.75, 1.75, -2.55, 2.55, 3.3, -3.3)],
-        featured={
-            "lesson-folk": (-0.5, DESK_TOP, DESK_Z, 0.0),
-            "portfolio-3d": (0.55, DESK_TOP, DESK_Z, 0.0),
-        },
-        education=[(-3.97, 1.65, z, math.pi / 2) for z in (-1.55, -0.85, -0.15, 0.55)],
-        experience=[
-            (-3.95, y, z, math.pi / 2) for y in (2.05, 1.35) for z in (1.95, 2.95)
-        ],
-        neon_lights=((0.0, 0.45, DESK_Z + 0.5), (-3.6, 1.7, 2.45)),
-    )
 
 
 # ---------------------------------------------------------------------------------------------
@@ -738,6 +555,9 @@ MODELS = {
 
 
 def main(names=None, style=None, out=None):
+    if style == "tour":
+        build_tower_room_baked(out)
+        return
     if style:
         reset()
         build_room(style)
@@ -747,6 +567,10 @@ def main(names=None, style=None, out=None):
         reset()
         MODELS[name]()
         save(name, out)
+
+
+# The « tour » room (baked lighting) lives in its own file.
+exec(open(os.path.join(ROOT, "tower_room.py"), encoding="utf-8").read())
 
 
 def cli_args():

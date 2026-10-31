@@ -21,6 +21,8 @@ export interface AmbianceSettings {
    * on the floor and the furniture); at high quality only.
    */
   neonLight: { intensity: number; distance: number } | null;
+  /** Baked rooms: 0 shows the day texture, 1 the night texture. */
+  bakedNight: number;
 }
 
 /** Colour the lamps glow with, at night. */
@@ -37,6 +39,7 @@ const DAY: AmbianceSettings = {
   window: { color: '#cfe6f5', intensity: 0.6 },
   pointLight: null,
   neonLight: null,
+  bakedNight: 0,
 };
 
 // Moonlight comes in through the window on the north wall; pools of warm light from the lamps
@@ -49,6 +52,7 @@ const NIGHT: AmbianceSettings = {
   window: { color: '#1b2440', intensity: 0.5 },
   pointLight: { color: LAMP_GLOW, intensity: 6, distance: 6 },
   neonLight: { intensity: 3, distance: 2.6 },
+  bakedNight: 1,
 };
 
 export function settingsFor(ambiance: Ambiance, quality: QualityLevel): AmbianceSettings {
@@ -122,6 +126,7 @@ export function blend(a: AmbianceSettings, b: AmbianceSettings, t: number): Ambi
     },
     lampEmissive: lerp(a.lampEmissive, b.lampEmissive, t),
     neonEmissive: lerp(a.neonEmissive, b.neonEmissive, t),
+    bakedNight: lerp(a.bakedNight, b.bakedNight, t),
     window: {
       color: mix(a.window.color, b.window.color, t),
       intensity: lerp(a.window.intensity, b.window.intensity, t),

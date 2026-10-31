@@ -20,6 +20,14 @@ describe('settingsFor', () => {
     expect(settingsFor('night', 'high').neonEmissive).toBeGreaterThan(day);
   });
 
+  it('shows the day texture of a baked room by day and the night one at night', () => {
+    expect(settingsFor('day', 'low').bakedNight).toBe(0);
+    expect(settingsFor('night', 'low').bakedNight).toBe(1);
+    expect(blend(settingsFor('day', 'high'), settingsFor('night', 'high'), 0.25).bakedNight).toBe(
+      0.25,
+    );
+  });
+
   it('has no point light by day', () => {
     for (const q of ['high', 'medium', 'low'] as const)
       expect(settingsFor('day', q).pointLight).toBeNull();

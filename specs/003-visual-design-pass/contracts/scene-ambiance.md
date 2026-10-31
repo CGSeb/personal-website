@@ -32,6 +32,7 @@ interface AmbianceSettings {
   lampEmissive: number;
   neonEmissive: number; // > 0 by day, higher at night
   neonLight: { intensity: number; distance: number } | null; // night, high quality only
+  bakedNight: number; // baked rooms: 0 day texture, 1 night texture
   window: { color: string; intensity: number };
   pointLight: { color: string; intensity: number; distance: number } | null;
 }
@@ -60,3 +61,18 @@ function blend(a: AmbianceSettings, b: AmbianceSettings, t: number): AmbianceSet
 - La vue, le panneau ouvert, la langue et le niveau de qualité sont conservés.
 - Crochet de test : `__scene.ambiance()` renvoie `'day'` ou `'night'` (développement et tests
   seulement, comme les autres crochets de `test-hook.ts`).
+
+## Pièce précalculée (lumière cuite)
+
+Une pièce peut porter sa lumière dans des textures plutôt que dans des lumières temps réel
+(pièce « tour », spec 003) :
+
+- toute la géométrie fixe est fusionnée en un maillage dont le matériau s'appelle `baked`
+  (gltfpack retire les noms des maillages, pas ceux des matériaux) ; ses coordonnées de texture
+  couvrent un atlas ;
+- deux textures, `<pièce>-day.webp` et `<pièce>-night.webp`, à côté du `.glb` (ou passées par la
+  page : `SceneView` `bakedMaps`), contiennent la couleur éclairée de jour et de nuit ;
+- le code (`src/scene/baked.ts`) affiche ce maillage sans éclairage et mélange les deux textures
+  selon `bakedNight` (0 le jour, 1 la nuit, interpolé pendant le fondu) ; les objets placés
+  (projets, diplômes, expériences) restent éclairés en temps réel par les réglages ci-dessus ;
+- budget : modèle et textures ensemble ≤ 1,5 Mo ; textures en 2048 px au plus.

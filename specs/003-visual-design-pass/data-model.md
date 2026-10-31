@@ -58,6 +58,7 @@ Seules exceptions : les couleurs de repli de la scène, documentées dans
 | `lampEmissive` | intensité | 0 | > 0 |
 | `windowEmissive` | couleur, intensité | ciel clair | ciel nocturne sombre |
 | `pointLights` | par `light.lamp.NN` | éteintes | allumées en qualité moyenne et haute, absentes en basse |
+| `bakedNight` | nombre (pièce précalculée) | 0 (texture de jour) | 1 (texture de nuit) |
 
 **Transitions** : jour ↔ nuit sur l'événement `themechange` ou sur un changement du système sans
 choix enregistré. Avec « réduire les animations », le passage est instantané ; sinon il suit un

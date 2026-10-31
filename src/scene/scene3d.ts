@@ -87,7 +87,7 @@ export async function createScene(
   const initialQuality: QualityLevel = readQuality() ?? (coarse ? 'medium' : 'high');
   const governor = new QualityGovernor({ level: initialQuality, minFps: coarse ? 30 : 50 });
 
-  const room = await loadRoom(data.models, data.roomUrl);
+  const room = await loadRoom(data.models, data.roomUrl, data.bakedMaps);
   const stage = createStage(container, {
     home: room.home,
     bounds: room.bounds,

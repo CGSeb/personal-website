@@ -4,6 +4,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { bakedTextureUrls, loadBakedMaterial, type BakedMaps, type BakedMaterial } from './baked';
 import { parseSlot, type Slot } from './layout';
 
 export interface RoomSlot extends Slot {
@@ -26,6 +27,8 @@ export interface Room {
   windowMaterials: THREE.MeshStandardMaterial[];
   /** Materials named `neon` (LED strips), glowing in their own colour. */
   neonMaterials: THREE.MeshStandardMaterial[];
+  /** Material of a baked room (`room.baked` mesh), or null when the room is lit in real time. */
+  baked: BakedMaterial | null;
 }
 
 export const ROOM_URL = '/models/room.glb';
@@ -77,15 +80,31 @@ function describe(group: THREE.Object3D): Room {
     lampMaterials: [...lampMaterials],
     windowMaterials: [...windowMaterials],
     neonMaterials: [...neonMaterials],
+    baked: null,
   };
 }
 
 /** `url`: the page's room (a mockup sets its own); otherwise room.glb when it was built. */
-export async function loadRoom(models: string[], url?: string): Promise<Room> {
+export async function loadRoom(
+  models: string[],
+  url?: string,
+  bakedMaps?: BakedMaps,
+): Promise<Room> {
   const src = url ?? (models.includes('room.glb') ? ROOM_URL : null);
   if (!src) return describe(provisionalRoom());
   const gltf = await gltfLoader().loadAsync(src);
-  return describe(gltf.scene);
+  const room = describe(gltf.scene);
+  // A baked room carries its light in two textures next to the model (baked.ts).
+  const bakedMeshes: THREE.Mesh[] = [];
+  gltf.scene.traverse((object) => {
+    const mesh = object as THREE.Mesh;
+    if (mesh.isMesh && (mesh.material as THREE.Material).name === 'baked') bakedMeshes.push(mesh);
+  });
+  if (bakedMeshes.length) {
+    room.baked = await loadBakedMaterial(bakedMaps ?? bakedTextureUrls(src));
+    for (const mesh of bakedMeshes) mesh.material = room.baked;
+  }
+  return room;
 }
 
 const material = (color: string, name = '') =>

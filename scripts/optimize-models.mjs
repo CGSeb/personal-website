@@ -1,4 +1,5 @@
-// Compresses every raw export of assets-src/models/ (.glb) into public/models/ with gltfpack
+// Compresses every raw export of assets-src/models/ (.glb) into public/models/ with gltfpack, and
+// converts the baked lighting textures (*-day.png, *-night.png) to WebP
 // (Meshopt geometry, compressed textures). Usage: npm run models:optimize
 // Other folders: node scripts/optimize-models.mjs <src> <out> (style mockups of spec 003:
 // mockups/models/raw -> mockups/models).
@@ -38,5 +39,20 @@ for (const file of files) {
     console.error(`✗ ${file} : gltfpack n'a rien écrit (code ${result.status})`);
     process.exit(result.status || 1);
   }
+  console.log(`✓ ${target} (${Math.round(statSync(target).size / 1024)} Ko)`);
+}
+
+// Baked lighting of a room (<room>-day.png, <room>-night.png, spec 003): WebP next to the model.
+const sharp = (await import('sharp')).default;
+const bakedFiles = (dir) =>
+  readdirSync(dir).flatMap((name) => {
+    const path = join(dir, name);
+    if (statSync(path).isDirectory()) return bakedFiles(path);
+    return /-(day|night)\.png$/.test(name) ? [path] : [];
+  });
+for (const file of bakedFiles(src)) {
+  const target = join(out, relative(src, file)).replace(/\.png$/, '.webp');
+  mkdirSync(dirname(target), { recursive: true });
+  await sharp(file).webp({ quality: 82, effort: 6 }).toFile(target);
   console.log(`✓ ${target} (${Math.round(statSync(target).size / 1024)} Ko)`);
 }

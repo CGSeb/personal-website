@@ -10,6 +10,8 @@ import './styles/tour.css';
 import roomAtelier from './models/room-atelier.glb?url';
 import roomBureau from './models/room-bureau.glb?url';
 import roomTour from './models/room-tour.glb?url';
+import tourDay from './models/room-tour-day.webp?url';
+import tourNight from './models/room-tour-night.webp?url';
 import HomeView from '../src/views/HomeView.astro';
 import SceneView from '../src/views/SceneView.astro';
 import type { Lang } from '../src/i18n/routes';
@@ -17,10 +19,13 @@ import type { Lang } from '../src/i18n/routes';
 type Style = 'atelier' | 'bureau' | 'tour';
 type View = 'home' | 'scene';
 
-const STYLES: Record<Style, { name: string; room: string }> = {
+const STYLES: Record<
+  Style,
+  { name: string; room: string; baked?: { day: string; night: string } }
+> = {
   atelier: { name: 'Atelier', room: roomAtelier },
   bureau: { name: 'Bureau moderne', room: roomBureau },
-  tour: { name: 'Tour (sci-fi)', room: roomTour },
+  tour: { name: 'Tour', room: roomTour, baked: { day: tourDay, night: tourNight } },
 };
 
 const pathOf = (style: Style, lang: Lang, view: View) =>
@@ -74,7 +79,7 @@ Astro.locals.mockup = {
 ---
 
 {view === 'scene' ? (
-  <SceneView lang={lang} roomUrl={STYLES[style].room} />
+  <SceneView lang={lang} roomUrl={STYLES[style].room} bakedMaps={STYLES[style].baked} />
 ) : (
   <HomeView lang={lang} />
 )}

@@ -6,7 +6,7 @@
 |---|---|
 | `/_maquettes/atelier/` | style « atelier », accueil |
 | `/_maquettes/bureau/` | style « bureau moderne », accueil |
-| `/_maquettes/tour/` | style « tour » (bureau en haut d'un immeuble, sci-fi), accueil |
+| `/_maquettes/tour/` | style « tour » (petit bureau chaleureux en haut d'un immeuble, lumière précalculée), accueil |
 | `/_maquettes/<style>/scene/` | la pièce du style |
 | `/_maquettes/<style>/en/`, `/_maquettes/<style>/en/scene/` | les mêmes en anglais |
 
@@ -31,7 +31,9 @@
 3. Le bouton de thème, qui bascule la page et la pièce.
 
 Pièces : `build_models.py -- --style <style> --out mockups/models/raw` (ignoré par git), puis
-`node scripts/optimize-models.mjs mockups/models/raw mockups/models`.
+`node scripts/optimize-models.mjs mockups/models/raw mockups/models`. La pièce « tour » est
+précalculée (Cycles, GPU) : le script produit aussi `room-tour-day.png` et `room-tour-night.png`,
+convertis en WebP à côté du modèle ; `MockupPage.astro` les importe avec `?url`.
 
 ## Exclusion de la production
 

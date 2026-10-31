@@ -17,3 +17,11 @@ Le script enregistre la source de chaque modèle (`<nom>.blend`) et son export b
 (`<nom>.glb`) ici ; `models:optimize` produit les fichiers servis dans `public/models/`. Pour un
 nouveau projet mis en avant, ajouter son objet vide `featured.<id>` dans `build_room()` et une
 fonction de construction dans `MODELS`.
+
+La pièce candidate « tour » de la spec 003 est construite par [`tower_room.py`](tower_room.py)
+(chargé par `build_models.py`) et sa lumière est précalculée avec Cycles (GPU) :
+
+```bash
+blender --background --python assets-src/models/build_models.py -- --style tour --out mockups/models/raw
+node scripts/optimize-models.mjs mockups/models/raw mockups/models
+```
