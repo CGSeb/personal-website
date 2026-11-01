@@ -14,7 +14,7 @@ const pairs: [string, string][] = [
 
 test.describe('language switcher (US3-1, FR-014)', () => {
   for (const [fr, en] of pairs) {
-    test(`${fr} <-> ${en}`, async ({ page }) => {
+    test(`${fr} <-> ${en}`, { tag: '@narrow' }, async ({ page }) => {
       await page.goto(fr);
       await page.getByRole('link', { name: 'English' }).click();
       await expect(page).toHaveURL(new RegExp(`${en}$`));

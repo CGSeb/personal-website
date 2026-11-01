@@ -1,9 +1,9 @@
 name: CI
 
+# Run by hand (Actions → CI → Run workflow): the same checks as `npm run ci`, on Linux. A showcase
+# site does not need them on every change, and on these runners they take over 10 minutes.
 on:
-  pull_request:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}

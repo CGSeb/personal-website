@@ -90,6 +90,19 @@ const jsonLd = graph(
         </button>
       </div>
       <div class="scene-tooltip" aria-hidden="true" hidden></div>
+      <div
+        class="scene-bubble"
+        data-avatar-bubble
+        role="dialog"
+        aria-labelledby="scene-bubble-text"
+        tabindex="-1"
+        hidden
+      >
+        <p id="scene-bubble-text">{t(lang, 'scene.avatar.welcome')}</p>
+        <button type="button" class="close" aria-label={t(lang, 'scene.close')}>
+          ×
+        </button>
+      </div>
       <div class="scene-panels">
         {items.map((item) => {
           if (item.type === 'project')
@@ -161,6 +174,10 @@ const jsonLd = graph(
         project: t(lang, 'scene.overflow.project'),
         education: t(lang, 'scene.overflow.education'),
         experience: t(lang, 'scene.overflow.experience'),
+      },
+      avatar: {
+        name: t(lang, 'scene.avatar.name'),
+        welcome: t(lang, 'scene.avatar.welcome'),
       },
     })}
   />
@@ -309,6 +326,57 @@ const jsonLd = graph(
     border-radius: var(--radius-s);
     pointer-events: none;
     transform: translate(-50%, calc(-100% - 12px));
+  }
+  /* Welcome bubble of the figure: above its head (bubble.ts), its tail pointing at the head. */
+  .scene-bubble {
+    position: absolute;
+    z-index: 3;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2xs);
+    width: min(19rem, calc(100% - 1rem));
+    padding: var(--space-xs) var(--space-xs) var(--space-xs) var(--space-s);
+    font-size: var(--step--1);
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-2);
+    outline: none;
+  }
+  .scene-bubble[hidden] {
+    display: none;
+  }
+  .scene-bubble::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: var(--tail-x, 50%);
+    width: 0.625rem;
+    height: 0.625rem;
+    background: var(--color-surface);
+    border-right: 1px solid var(--color-border-strong);
+    border-bottom: 1px solid var(--color-border-strong);
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+  .scene-bubble p {
+    margin: 0;
+    padding-block: var(--space-2xs);
+  }
+  .scene-bubble .close {
+    flex: none;
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 1.4rem;
+    line-height: 1;
+    color: var(--color-text);
+    background: none;
+    border: 0;
+    border-radius: var(--radius-s);
+    cursor: pointer;
+  }
+  .scene-bubble .close:hover {
+    background: var(--color-surface-raised);
   }
   /* Panels: anchored next to the object on wide screens, bottom sheet on phones. */
   .scene-panels :global(.scene-panel) {

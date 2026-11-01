@@ -28,8 +28,18 @@ export function parseHash(hash: string): HashTarget | null {
 export const buildHash = ({ type, id }: HashTarget, lang: Lang): string =>
   `#${TYPE_SEGMENTS[type][lang]}/${id}`;
 
+// The figure's welcome bubble has its own fragment, not an item's (specs/004, contracts/avatar.md).
+const WELCOME_HASHES: Record<Lang, string> = { fr: '#bienvenue', en: '#welcome' };
+
+export const welcomeHash = (lang: Lang): string => WELCOME_HASHES[lang];
+
+/** True for the welcome fragment of either language. */
+export const isWelcomeHash = (hash: string): boolean =>
+  Object.values(WELCOME_HASHES).includes(hash);
+
 /** Same item, segment in the other language; unknown fragments become empty. */
 export function translateHash(hash: string, to: Lang): string {
+  if (isWelcomeHash(hash)) return welcomeHash(to);
   const target = parseHash(hash);
   return target ? buildHash(target, to) : '';
 }

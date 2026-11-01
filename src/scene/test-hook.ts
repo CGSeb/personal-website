@@ -10,6 +10,7 @@ export interface SceneTestHook {
   ambiance(): 'day' | 'night';
   fading(): boolean;
   roomNodes(): string[];
+  avatar(): { shown: boolean; waving: boolean; waves: number };
 }
 
 declare global {

@@ -43,6 +43,15 @@ const groups: ItemType[] = ['project', 'education', 'experience'];
           )
         );
       })}
+      {/* Revealed by the scene once the figure is loaded (spec 004): never without the 3D. */}
+      <section data-avatar-entry hidden>
+        <h3>{t(lang, 'scene.group.welcome')}</h3>
+        <ul>
+          <li>
+            <button type="button">{t(lang, 'scene.avatar.name')}</button>
+          </li>
+        </ul>
+      </section>
     </div>
   </details>
   <script is:inline>

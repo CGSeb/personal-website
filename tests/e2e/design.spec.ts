@@ -68,7 +68,7 @@ test.describe('page colours follow the roles of the theme', () => {
   }
 });
 
-test('no horizontal scroll at 320 px', async ({ page }, info) => {
+test('no horizontal scroll at 320 px', { tag: '@narrow' }, async ({ page }, info) => {
   test.skip(info.project.name !== 'chromium-320', 'run by the 320 px project');
   for (const [, path] of ALL) {
     await page.goto(path);

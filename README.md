@@ -76,12 +76,15 @@ Le contrat entre Blender et le code est dans
 (échelle, emplacements `slot.*`, `featured.<id>`, `camera.home`, `bounds`, matériaux `screen`
 et `label`, budgets), complété pour le jour et la nuit par
 [`specs/003-visual-design-pass/contracts/scene-ambiance.md`](specs/003-visual-design-pass/contracts/scene-ambiance.md)
-(lampes, fenêtre, pièce à lumière précalculée). La pièce et ses objets sont générés par script
-dans Blender : voir [`assets-src/models/README.md`](assets-src/models/README.md).
+(lampes, fenêtre, pièce à lumière précalculée), et pour la figurine de Sébastien assise au bureau
+par [`specs/004-scene-avatar/contracts/avatar.md`](specs/004-scene-avatar/contracts/avatar.md)
+(`avatar.glb`, marqueur `avatar.seat`, salut et bulle). La pièce et ses objets sont générés par
+script dans Blender : voir [`assets-src/models/README.md`](assets-src/models/README.md).
 
 1. Modéliser dans `assets-src/models/*.blend` (sources, non publiées).
-2. Exporter en glTF binaire dans `assets-src/models/` (`room.glb`, `generic-project.glb`,
-   `generic-education.glb`, `generic-experience.glb`, `overflow.glb`, `featured/<id>.glb`).
+2. Exporter en glTF binaire dans `assets-src/models/` (`room.glb`, `avatar.glb`,
+   `generic-project.glb`, `generic-education.glb`, `generic-experience.glb`, `overflow.glb`,
+   `featured/<id>.glb`).
 3. `npm run models:optimize` : compresse avec gltfpack (Meshopt, textures) vers
    `public/models/`.
 4. `npm run build && npm run check:scene` : vérifie les budgets.
@@ -101,9 +104,17 @@ en code, avec les mêmes emplacements.
 | `npm run lhci` | après `build` : Lighthouse ≥ 90 partout, LCP < 2,5 s, CLS < 0,1, JavaScript ≤ 50 Ko sur la version écrite ; sur la scène, accessibilité, bonnes pratiques et SEO ≥ 90, poids total ≤ 3 Mo |
 | `npm run check:links` | les liens externes du contenu (avertissements seulement) |
 
-La CI GitHub (`.github/workflows/ci.yml`) lance tout cela sur chaque pull request, sauf
-Lighthouse : ses scores varient d'un passage à l'autre, il tourne donc chaque lundi sur `main`
-et à la demande (`.github/workflows/lighthouse.yml`, onglet Actions → Lighthouse → Run
+`npm run ci` lance les types, les tests unitaires, la construction, les tests de bout en bout, le
+SEO et le budget de la scène, à lancer à la main avant de fusionner : rien ne le fait
+automatiquement sur les pull requests. Un serveur de développement ouvert sur le port 4321 serait
+réutilisé par les tests et le site ne serait pas reconstruit : le fermer avant.
+
+Le même contrôle existe sur GitHub, sous Linux, à lancer à la main (onglet Actions → CI → Run
+workflow) : à faire avant une mise en ligne, car Windows ne voit pas une erreur de majuscules dans
+un chemin de fichier. Il lance aussi `check:links`.
+
+Lighthouse reste à part : ses scores varient d'un passage à l'autre, il tourne donc chaque lundi
+sur `main` et à la demande (`.github/workflows/lighthouse.yml`, onglet Actions → Lighthouse → Run
 workflow), et toujours avant une mise en ligne.
 
 Sous Windows, si Lighthouse ne parvient pas à lancer Chrome (`spawn UNKNOWN`), démarrer un

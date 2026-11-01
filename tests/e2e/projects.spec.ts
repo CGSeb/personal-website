@@ -69,7 +69,7 @@ for (const lang of ['fr', 'en'] as const) {
       expect(filtered).toBeLessThanOrEqual(all);
     });
 
-    test('no horizontal scroll (FR-024)', async ({ page }) => {
+    test('no horizontal scroll (FR-024)', { tag: '@narrow' }, async ({ page }) => {
       for (const path of [`/${lang}/`, `/${lang}/${lang === 'fr' ? 'projets' : 'projects'}/`]) {
         await page.goto(path);
         const overflow = await page.evaluate(

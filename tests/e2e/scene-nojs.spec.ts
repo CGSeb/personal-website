@@ -21,3 +21,14 @@ test('without JavaScript the scene page lists every item with links to the writt
   );
   await expect(page.locator('.scene-panel:visible')).toHaveCount(0);
 });
+
+test('without JavaScript there is no figure: no entry, no bubble, even with its fragment (FR-021)', async ({
+  page,
+  javaScriptEnabled,
+}) => {
+  test.skip(javaScriptEnabled, 'only meaningful with JavaScript disabled');
+  await page.goto('/fr/explorer/#bienvenue');
+  await expect(page.locator('[data-avatar-entry]')).toBeHidden();
+  await expect(page.locator('[data-avatar-bubble]')).toBeHidden();
+  await expect(page.locator('.scene-list').getByRole('link', { name: 'LessonFolk' })).toBeVisible();
+});

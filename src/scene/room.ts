@@ -27,6 +27,8 @@ export interface Room {
   windowMaterials: THREE.MeshStandardMaterial[];
   /** Materials named `neon` (LED strips), glowing in their own colour. */
   neonMaterials: THREE.MeshStandardMaterial[];
+  /** `avatar.seat` empty: where the figure sits. Null means no figure (provisional room). */
+  avatarSeat: THREE.Object3D | null;
   /** Material of a baked room (`room.baked` mesh), or null when the room is lit in real time. */
   baked: BakedMaterial | null;
 }
@@ -47,6 +49,7 @@ function describe(group: THREE.Object3D): Room {
   const lampMaterials = new Set<THREE.MeshStandardMaterial>();
   const windowMaterials = new Set<THREE.MeshStandardMaterial>();
   const neonMaterials = new Set<THREE.MeshStandardMaterial>();
+  let avatarSeat: THREE.Object3D | null = null;
   let home = new THREE.Vector3(0, 0.8, 0);
   let bounds = new THREE.Box3(new THREE.Vector3(-4, 0, -4), new THREE.Vector3(4, 3, 4));
   group.updateMatrixWorld(true);
@@ -63,6 +66,7 @@ function describe(group: THREE.Object3D): Room {
       if (material.name === 'window') windowMaterials.add(material);
       if (material.name === 'neon') neonMaterials.add(material);
     }
+    if (name === 'avatar.seat') avatarSeat = object;
     if (name === 'camera.home') home = object.getWorldPosition(new THREE.Vector3());
     if (name === 'bounds') {
       const center = object.getWorldPosition(new THREE.Vector3());
@@ -80,6 +84,7 @@ function describe(group: THREE.Object3D): Room {
     lampMaterials: [...lampMaterials],
     windowMaterials: [...windowMaterials],
     neonMaterials: [...neonMaterials],
+    avatarSeat,
     baked: null,
   };
 }

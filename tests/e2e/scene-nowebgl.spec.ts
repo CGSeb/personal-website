@@ -4,22 +4,38 @@ import { expect, test } from '@playwright/test';
 
 test.use({ launchOptions: { args: ['--disable-webgl', '--disable-3d-apis'] } });
 
-test('without WebGL: message, written version, list and panels still work', async ({
+test(
+  'without WebGL: message, written version, list and panels still work',
+  { tag: '@narrow' },
+  async ({ page, browserName, javaScriptEnabled }) => {
+    test.skip(browserName !== 'chromium', 'WebGL can only be switched off in Chromium'); // see playwright.config.ts
+    test.skip(!javaScriptEnabled, 'covered by scene-nojs.spec.ts');
+    await page.goto('/fr/explorer/');
+    const status = page.locator('#scene .scene-status');
+    await expect(status).toContainText('ne peut pas afficher la 3D');
+    await expect(status.getByRole('link', { name: 'Voir la version écrite' })).toHaveAttribute(
+      'href',
+      '/fr/',
+    );
+    await expect(page.locator('#scene canvas')).toHaveCount(0);
+    await page.locator('.scene-list summary').click();
+    await page.locator('.scene-list').getByRole('button', { name: 'LessonFolk' }).click();
+    await expect(page.locator('#panel-project-lesson-folk')).toBeVisible();
+  },
+);
+
+test('without WebGL there is no figure: no entry, no bubble, even with its fragment (FR-021)', async ({
   page,
   browserName,
   javaScriptEnabled,
 }) => {
-  test.skip(browserName !== 'chromium', 'WebGL can only be switched off in Chromium'); // see playwright.config.ts
+  test.skip(browserName !== 'chromium', 'WebGL can only be switched off in Chromium');
   test.skip(!javaScriptEnabled, 'covered by scene-nojs.spec.ts');
-  await page.goto('/fr/explorer/');
-  const status = page.locator('#scene .scene-status');
-  await expect(status).toContainText('ne peut pas afficher la 3D');
-  await expect(status.getByRole('link', { name: 'Voir la version écrite' })).toHaveAttribute(
-    'href',
-    '/fr/',
-  );
-  await expect(page.locator('#scene canvas')).toHaveCount(0);
+  await page.goto('/fr/explorer/#bienvenue');
+  await expect(page.locator('#scene .scene-status')).toContainText('ne peut pas afficher la 3D');
   await page.locator('.scene-list summary').click();
+  await expect(page.locator('[data-avatar-entry]')).toBeHidden();
+  await expect(page.locator('[data-avatar-bubble]')).toBeHidden();
   await page.locator('.scene-list').getByRole('button', { name: 'LessonFolk' }).click();
   await expect(page.locator('#panel-project-lesson-folk')).toBeVisible();
 });

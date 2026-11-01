@@ -7,8 +7,10 @@ test('no request outside the site and no cookie, on every page, in both themes',
   context,
   request,
   baseURL,
-  javaScriptEnabled,
-}) => {
+}, info) => {
+  // The pages are the same in every project, and with JavaScript they ask for all they ask for
+  // without it (the site has no <noscript> content): this one crawl covers the no-JavaScript case.
+  test.skip(info.project.name !== 'desktop-chromium', 'one browser is enough');
   test.setTimeout(120_000);
   const origin = new URL(baseURL!).origin;
   const sitemap = await (await request.get('/sitemap.xml')).text();
@@ -29,10 +31,8 @@ test('no request outside the site and no cookie, on every page, in both themes',
       await page.goto(path, { waitUntil: 'networkidle' });
     }
     // The button itself: one full cycle on the last page.
-    if (javaScriptEnabled) {
-      for (let i = 0; i < 3; i++) await page.locator('.site-header [data-theme-toggle]').click();
-      await page.waitForLoadState('networkidle');
-    }
+    for (let i = 0; i < 3; i++) await page.locator('.site-header [data-theme-toggle]').click();
+    await page.waitForLoadState('networkidle');
   }
   expect(outside).toEqual([]);
   expect(await context.cookies()).toEqual([]);
