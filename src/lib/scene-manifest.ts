@@ -36,6 +36,8 @@ export interface ManifestSite<I> {
 
 const BADGE_MAX = 40;
 const year = (ym: string) => ym.slice(0, 4);
+const years = ({ start, end }: { start: string; end?: string }) =>
+  end && year(end) !== year(start) ? `${year(start)}–${year(end)}` : year(start);
 const badge = (text: string) =>
   text.length <= BADGE_MAX ? text : `${text.slice(0, BADGE_MAX - 1).trimEnd()}…`;
 
@@ -79,7 +81,7 @@ export function buildManifest<I>(
       order,
       featured: false,
       image: null,
-      badge: badge(e.organization),
+      badge: badge(`${e.organization} · ${years(e.period)}`),
       href: urlFor('experience', lang, slugFor(e, lang)),
       panelId: `panel-experience-${e.id}`,
     })),

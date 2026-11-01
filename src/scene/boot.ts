@@ -92,6 +92,7 @@ export async function start() {
     highlighted: () => handle?.highlighted() ?? null,
     ambiance: () => handle?.ambiance() ?? 'day',
     fading: () => handle?.fading() ?? false,
+    inviting: () => handle?.inviting() ?? false,
     roomNodes: () => handle?.roomNodes() ?? [],
     avatar: () => handle?.avatar() ?? { shown: false, waving: false, waves: 0 },
   });

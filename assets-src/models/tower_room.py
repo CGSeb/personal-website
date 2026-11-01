@@ -81,6 +81,8 @@ def mat_wood(name, c1, c2, scale=3.0, rough=0.45, along="X"):
     # Stretch the grain along the requested axis.
     stretch = {"X": (0.08, 1, 1), "Y": (1, 0.08, 1), "Z": (1, 1, 0.08)}[along]
     mapping.inputs["Scale"].default_value = stretch
+    if along == "Y":  # the wave's bands follow X: turn them so the grain is the same as along X
+        mapping.inputs["Rotation"].default_value = (0, 0, math.pi / 2)
     nt.links.new(coord.outputs["Object"], mapping.inputs["Vector"])
     wave = nt.nodes.new("ShaderNodeTexWave")
     wave.inputs["Scale"].default_value = scale
@@ -109,7 +111,7 @@ def tower_materials():
         bpy.data.materials.remove(m)
     mat_wood("floor", "#4a2f1f", "#6b4630", scale=2.0, along="X")
     mat_wood("walnut", "#5c3720", "#8a5634", scale=4.0, along="X")
-    mat_wood("walnut-z", "#5c3720", "#8a5634", scale=4.0, along="Z")
+    mat_wood("walnut-z", "#5c3720", "#8a5634", scale=4.0, along="Y")  # object Y is glTF Z
     mat_wood("slat", "#7a4523", "#a8642f", scale=6.0, along="Z", rough=0.5)
     mat_noise("paint", "#2e3032", "#383a3d", scale=60, rough=0.85)
     mat_plain("cap", "#e8e1d4", rough=0.7)
@@ -288,12 +290,12 @@ def build_tower_geometry():
     wa_x1, wa_z1 = -H + 0.66, -0.45
     b.box("walnut-z", wa_x1 + H, t, wa_z1 - nz1, (-H + wa_x1) / 2, top - t / 2, (nz1 + wa_z1) / 2)
     b.box("led", nx1 - nx0 - 0.1, 0.01, 0.01, (nx0 + nx1) / 2, top - t - 0.01, nz1 - 0.03)
-    # Drawer units (black) under the east end and the west arm's end.
+    # Drawer units (black) under the east end and the west arm's end, their drawers towards the chair.
     for cx0, cx1, cz0, cz1 in ((0.27, 0.78, nz0 + 0.02, nz1 - 0.02), (-H + 0.02, wa_x1 - 0.02, wa_z1 - 0.5, wa_z1 - 0.02)):
         b.box("black", cx1 - cx0, top - t - 0.02, cz1 - cz0, (cx0 + cx1) / 2, (top - t - 0.02) / 2, (cz0 + cz1) / 2)
         for d in range(5):
             y = 0.1 + d * 0.13
-            if cz1 - cz0 > cx1 - cx0:  # west arm unit: drawers face +X
+            if cx0 < TOWER_SEAT[0]:  # west arm unit: drawers face +X
                 b.box("steel", 0.01, 0.015, 0.14, cx1 + 0.005, y + 0.05, (cz0 + cz1) / 2)
                 b.box("felt", 0.004, 0.004, cz1 - cz0 - 0.02, cx1 + 0.002, y + 0.12, (cz0 + cz1) / 2)
             else:
@@ -314,19 +316,19 @@ def build_tower_geometry():
     b.box("metal", 0.008, 0.008, 0.3, dlx, top + 0.43, dlz - 0.13, tilt=math.radians(-20))
     b.cylinder("lampshade", 0.06, 0.08, dlx, top + 0.4, dlz, 16, r2=0.035)
     b.cylinder("ceramic", 0.04, 0.09, 0.1, top + 0.045, nz1 - 0.12, 16)
-    _plant(b, -H + 0.2, top, nz0 + 0.18, 0.7, pot="pot-dark")
+    _plant(b, -H + 0.24, top, nz0 + 0.26, 0.7, pot="pot-dark")  # leaves clear of the slats
 
     # Ergonomic chair turned away from the desk, towards the camera: the figure sits on it.
     _chair(b, TOWER_SEAT[0], TOWER_SEAT[2], TOWER_SEAT[3])
 
     # Floating shelf on the slats, with plants and books.
-    b.box("walnut", 1.4, 0.035, 0.24, -1.2, 2.0, -H + 0.16)
-    _plant(b, -1.7, 2.0175, -H + 0.15, 0.9, dark=True)
+    b.box("walnut", 1.4, 0.035, 0.34, -1.2, 2.0, -H + 0.21)
+    _plant(b, -1.65, 2.0175, -H + 0.25, 0.7, dark=True)  # leaves clear of the slats
     _books(b, -H + 0.16, 2.0175, -1.25, -0.75, axis="x", depth=0.18)
     b.cylinder("ceramic", 0.06, 0.16, -0.62, 2.1, -H + 0.15, 16)
 
     # North wall, east part: the experience board, a large cork board in a walnut frame under a
-    # brass picture lamp (the cards and their red string are placed by the scene); a snake
+    # brass picture lamp (the cards and their chevrons are placed by the scene); a snake
     # plant on the floor beside it.
     bx0, bx1, by0, by1 = 0.35, 2.05, 1.05, 2.55
     bxc, byc = (bx0 + bx1) / 2, (by0 + by1) / 2
@@ -337,20 +339,21 @@ def build_tower_geometry():
     b.box("led", 0.86, 0.008, 0.03, bxc, by1 + 0.097, -H + 0.17)
     _snake_plant(b, 1.85, 0, -1.75, 1.1)
 
-    # Large grey rug.
-    b.box("rug", 3.3, 0.02, 2.9, 0.05, 0.01, 0.45)
+    # Large grey rug, its west edge clear of the west arm's drawer unit.
+    b.box("rug", 3.08, 0.02, 2.9, 0.16, 0.01, 0.45)
 
     # Plant stand in the south-west corner, by the window: two walnut shelves on a black frame.
-    px0, px1, pz0, pz1 = -H + 0.02, -H + 0.42, 1.2, H - 0.05
-    for y in (0.15, 0.62):
+    # Sized so the leaves stay under the upper shelf and clear of the walls.
+    px0, px1, pz0, pz1 = -H + 0.02, -H + 0.5, 1.2, H - 0.05
+    for y in (0.15, 0.8):
         b.box("walnut-z", px1 - px0, 0.03, pz1 - pz0, (px0 + px1) / 2, y, (pz0 + pz1) / 2)
     for x in (px0 + 0.02, px1 - 0.02):
         for z in (pz0 + 0.02, pz1 - 0.02):
-            b.box("metal", 0.025, 1.0, 0.025, x, 0.5, z)
-    _plant(b, -H + 0.22, 0.165, 1.45, 1.1)
-    _plant(b, -H + 0.22, 0.165, 1.85, 0.9, dark=True)
-    _plant(b, -H + 0.22, 0.635, 1.42, 1.2)
-    _plant(b, -H + 0.22, 0.635, 1.85, 0.8)
+            b.box("metal", 0.025, 1.2, 0.025, x, 0.6, z)
+    _plant(b, (px0 + px1) / 2, 0.165, 1.49, 0.8)
+    _plant(b, (px0 + px1) / 2, 0.165, 1.86, 0.72, dark=True)
+    _plant(b, (px0 + px1) / 2, 0.815, 1.49, 0.9)
+    _plant(b, (px0 + px1) / 2, 0.815, 1.86, 0.72)
 
     # Leather armchair and a round side table in the south-east corner, facing the desk; a
     # floor lamp beside it.
@@ -404,7 +407,10 @@ def tower_markers(lights):
         education=[(-H + 0.01, 1.85, z, math.pi / 2) for z in (-1.65, -0.8)],
         # The board: a zigzag timeline, the most recent card (slot 01) on the right.
         experience=[
-            (1.82 - i * 0.248, 2.15 if i % 2 == 0 else 1.55, -H + 0.046, 0.0) for i in range(6)
+            # Most recent first, along an S: the top row from the left, the bottom row back from
+            # the right; room for the board's title at the top.
+            (0.58 + (i if i < 3 else 5 - i) * 0.62, 2.08 if i < 3 else 1.42, -H + 0.046, 0.0)
+            for i in range(6)
         ],
         neon_lights=(),
         avatar_seat=TOWER_SEAT,
@@ -419,11 +425,11 @@ def tower_markers(lights):
 AMBIANCES = {
     # world colour and strength, sun (strength, direction), emitter strengths
     "day": {
-        "world": ("#cfdcec", 0.9),
+        "world": ("#cfdcec", 1.2),
         "sun": (3.5, (math.radians(55), 0, math.radians(-110))),
         "emit": {"led": 0.0, "lampshade": 0.0, "sky": 3.5, "city-light": 0.4, "city-neon": 0.5},
         "lights": {},
-        "exposure": 0.0,
+        "exposure": 0.7,
     },
     "night": {
         "world": ("#16203a", 0.35),
@@ -678,9 +684,9 @@ def build_tower_education():
 
 def build_tower_experience():
     b = Builder(collections.defaultdict(lambda: None))
-    b.box("paper", 0.3, 0.2, 0.003, 0, 0, 0.0015)
-    b.plane("label", 0.28, 0.18, 0, -0.005, 0.0035)
-    b.sphere("pin", 0.012, 0, 0.08, 0.012)
+    b.box("paper", 0.44, 0.3, 0.003, 0, 0, 0.0015)
+    b.plane("label", 0.42, 0.262, 0, -0.008, 0.0035)
+    b.sphere("pin", 0.016, 0, 0.128, 0.014)
     b.build("generic-experience", bevel=0, flat=("label",))
 
 
@@ -694,9 +700,10 @@ def build_tower_lesson_folk():
     b.box("cap", 0.32, 0.014, 0.32, 0, 0.172, 0, rot=turn)
     b.cylinder("tassel", 0.016, 0.012, 0, 0.185, 0, 12)
     # Cord from the button to the front corner, tassel hanging over the edge.
-    cx = 0.152 * (math.cos(turn) + math.sin(turn))
-    cz = 0.152 * (math.cos(turn) - math.sin(turn))
-    b.box("tassel", math.hypot(cx, cz), 0.006, 0.008, cx / 2, 0.181, cz / 2, rot=math.atan2(cz, cx))
+    cx = 0.164 * (math.cos(turn) + math.sin(turn))
+    cz = 0.164 * (math.cos(turn) - math.sin(turn))
+    # `rot` turns towards -z (Blender's +Y): the cord aims at the corner with the opposite sign.
+    b.box("tassel", math.hypot(cx, cz), 0.006, 0.008, cx / 2, 0.181, cz / 2, rot=math.atan2(-cz, cx))
     b.cylinder("tassel", 0.004, 0.06, cx, 0.15, cz, 6)
     b.cylinder("tassel", 0.014, 0.07, cx, 0.09, cz, 12, r2=0.008)
     b.build("lesson-folk", bevel=0.003)

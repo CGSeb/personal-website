@@ -9,6 +9,7 @@ export interface SceneTestHook {
   highlighted(): string | null;
   ambiance(): 'day' | 'night';
   fading(): boolean;
+  inviting(): boolean;
   roomNodes(): string[];
   avatar(): { shown: boolean; waving: boolean; waves: number };
 }

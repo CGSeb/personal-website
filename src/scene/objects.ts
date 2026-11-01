@@ -11,6 +11,8 @@ export interface PlacedObject {
   root: THREE.Object3D;
   hit: THREE.Mesh;
   setState(state: ObjectState): void;
+  /** The theme's tint at any intensity (0: none), for the board's invitation. */
+  setGlow(intensity: number): void;
 }
 
 /** Coded stand-ins are drawn larger than life so they read well from the isometric view. */
@@ -48,6 +50,32 @@ function badgeTexture(text: string, background: string, color = '#2b2b2b'): THRE
   lines.forEach((line, i) => ctx.fillText(line, 256, 160 + (i - (lines.length - 1) / 2) * 56));
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
+/** An experience card: `Organization · years`, the name as large as it fits, the years below. */
+function cardTexture(badge: string): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas');
+  canvas.width = 768;
+  canvas.height = 480;
+  const ctx = canvas.getContext('2d')!;
+  ctx.fillStyle = '#fffdf6';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#2b2b2b';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const [name = '', years = ''] = badge.split(' · ');
+  const font = (px: number) => `700 ${px}px "Inter Variable", system-ui, sans-serif`;
+  ctx.font = font(120);
+  const width = ctx.measureText(name).width;
+  ctx.font = font(Math.max(48, Math.min(120, Math.floor((120 * 700) / width))));
+  ctx.fillText(name, 384, 225, 700);
+  ctx.fillStyle = '#6b4630';
+  ctx.font = font(72);
+  ctx.fillText(years, 384, 365);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 8; // the board is seen at an angle
   return texture;
 }
 
@@ -95,7 +123,7 @@ function standIn(placement: Placement, item: SceneItem | undefined, requestRende
   if (placement.model === 'generic-experience') {
     const card = new THREE.Mesh(
       new THREE.PlaneGeometry(0.5, 0.32),
-      standard({ map: badgeTexture(item?.badge || '', '#fffdf6'), side: THREE.DoubleSide }),
+      standard({ map: cardTexture(item?.badge || ''), side: THREE.DoubleSide }),
     );
     const pin = new THREE.Mesh(new THREE.SphereGeometry(0.025, 12, 8), standard({ color: '#d33' }));
     pin.position.set(0, 0.13, 0.02);
@@ -171,6 +199,7 @@ function fillSurfaces(
   model: THREE.Object3D,
   image: string | null | undefined,
   badge: string | undefined,
+  card: boolean,
   requestRender: () => void,
 ) {
   model.traverse((object) => {
@@ -187,7 +216,7 @@ function fillSurfaces(
       map.flipY = false;
       mesh.material = new THREE.MeshBasicMaterial({ map });
     } else if (material.name === 'label' && badge) {
-      const map = badgeTexture(badge, '#fbf8f1');
+      const map = card ? cardTexture(badge) : badgeTexture(badge, '#fbf8f1');
       map.flipY = false;
       mesh.material = standard({ map });
     }
@@ -221,14 +250,15 @@ export function withHitShape(
     if (m && 'emissive' in m && !GLOWING.has(m.name)) materials.push(m);
   });
   // Highlighted and selected share the theme's tint; the selected object glows more.
-  const setState = (state: ObjectState) => {
-    const tint = state === 'idle' ? new THREE.Color(0) : highlightColor();
+  const setGlow = (intensity: number) => {
+    const tint = intensity === 0 ? new THREE.Color(0) : highlightColor();
     for (const m of materials) {
       m.emissive.copy(tint);
-      m.emissiveIntensity = state === 'idle' ? 0 : glow[state];
+      m.emissiveIntensity = intensity;
     }
   };
-  return { key, root, hit, setState };
+  const setState = (state: ObjectState) => setGlow(state === 'idle' ? 0 : glow[state]);
+  return { key, root, hit, setState, setGlow };
 }
 
 export async function placeObjects(
@@ -254,7 +284,8 @@ export async function placeObjects(
         });
         // The overflow box has no item of its own: its label counts what it holds.
         const badge = item?.badge ?? (placement.items ? `+${placement.items.length}` : undefined);
-        fillSurfaces(model, item?.image, badge, requestRender);
+        const card = placement.model === 'generic-experience';
+        fillSurfaces(model, item?.image, badge, card, requestRender);
       }
       root.name = `object:${placement.key}`;
       if (!model) root.scale.setScalar(STAND_IN_SCALE);

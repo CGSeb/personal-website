@@ -54,7 +54,7 @@ et échoue si une paire est sous son seuil. Il échoue aussi si une couleur litt
 dans `src/` hors de `tokens.css`. Exceptions : `src/scene/ambiance.ts` (lumières et ciel,
 [scene-ambiance.md](scene-ambiance.md)), `src/scene/objects.ts`, `src/scene/room.ts`,
 `src/scene/lighting.ts` et `src/scene/timeline.ts` (matériaux et textures des objets 3D
-construits en code : halo des lampes de tableau, fil rouge des expériences), `src/pages/og/[lang].png.ts` (image de partage).
+construits en code : halo des lampes de tableau, titre et chevrons du panneau des expériences), `src/pages/og/[lang].png.ts` (image de partage).
 
 ## Autres valeurs
 

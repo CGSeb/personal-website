@@ -35,8 +35,8 @@ export const ambianceFor = (theme: 'light' | 'dark'): Ambiance =>
 // objects (diplomas, cards, the desk's objects) so they match it. By day: daylight from the
 // window, a warm bounce from the walnut and the rug.
 const DAY: AmbianceSettings = {
-  hemisphere: { sky: '#ffffff', ground: '#b09074', intensity: 1.6 },
-  sun: { color: '#fff3e0', intensity: 1.8, position: [5, 9, 6] },
+  hemisphere: { sky: '#ffffff', ground: '#b09074', intensity: 2.0 },
+  sun: { color: '#fff3e0', intensity: 2.2, position: [5, 9, 6] },
   lampEmissive: 0,
   neonEmissive: 0.6,
   window: { color: '#cfe6f5', intensity: 0.6 },

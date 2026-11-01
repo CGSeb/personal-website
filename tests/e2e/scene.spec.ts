@@ -63,6 +63,59 @@ test.describe('scene (US1)', () => {
     await expect(page.locator('.scene-tooltip')).toHaveText('LessonFolk');
   });
 
+  test('the edge of a diploma selects it, not its neighbour', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'no hover on touch screens');
+    await openScene(page);
+    const keys = ['education/exia-cesi', 'education/bts-iris'];
+    const [a, b] = await Promise.all(keys.map((key) => objectPoint(page, key)));
+    // Just inside each frame, on the side facing the other one (they are 0.85 apart, 0.8 wide).
+    for (const [key, from, to] of [
+      [keys[0], a, b],
+      [keys[1], b, a],
+    ] as const) {
+      await page.mouse.move(from.x + (to.x - from.x) * 0.44, from.y + (to.y - from.y) * 0.44);
+      await expect.poll(() => page.evaluate(() => window.__scene!.highlighted())).toBe(key);
+    }
+  });
+
+  test('the board starts on the left with the latest experience and its invitation ends', async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      window.__sceneTest = true;
+    });
+    await page.goto('/fr/explorer/');
+    await sceneReady(page);
+    // Back to rest, with no frame left to draw.
+    await expect.poll(() => page.evaluate(() => window.__scene!.inviting())).toBe(false);
+    // An S: the top row from the left, the bottom row back from the right.
+    const newest = await objectPoint(page, 'experience/openstudio-lead');
+    const next = await objectPoint(page, 'experience/cozynergy');
+    const oldest = await objectPoint(page, 'experience/mrwork');
+    expect(newest.x).toBeLessThan(next.x);
+    expect(newest.y).toBeLessThan(oldest.y);
+    // The figure may still arrive and ask for a last frame: the scene comes to rest after it.
+    await expect
+      .poll(async () => {
+        const before = await page.evaluate(() => window.__scene!.frames());
+        await page.waitForTimeout(300);
+        return (await page.evaluate(() => window.__scene!.frames())) - before;
+      })
+      .toBe(0);
+  });
+
+  test('the board does not light up under reduced motion', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.addInitScript(() => {
+      window.__sceneTest = true;
+    });
+    await page.goto('/fr/explorer/');
+    // Reduced motion asks first (choice screen).
+    await page.getByRole('button', { name: 'Continuer en 3D' }).click();
+    await sceneReady(page);
+    expect(await page.evaluate(() => window.__scene!.inviting())).toBe(false);
+  });
+
   test('a project opens its panel in the scene (US1-4)', async ({ page }) => {
     await openScene(page);
     await clickObject(page, 'project/lesson-folk');

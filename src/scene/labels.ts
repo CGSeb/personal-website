@@ -17,6 +17,7 @@ export interface SceneLabels {
   written: string;
   writtenHref: string;
   overflow: Record<ItemType, string>;
+  board: string;
   avatar: { name: string; welcome: string };
 }
 
