@@ -83,8 +83,8 @@ Une pièce peut porter sa lumière dans des textures plutôt que dans des lumiè
 Les objets placés (`lighting.adopt`) suivent aussi l'ambiance : matériau `lamp` (s'allume la
 nuit), `neon` (brille dans sa couleur), `glow` (plan remplacé par un halo additif chaud, comme la
 lumière d'une lampe de tableau sur un cadre, invisible le jour). La mise en évidence (survol,
-sélection) ne touche pas à ces matériaux. Les fiches d'expérience sont reliées par un fil rouge,
-de la plus ancienne à la plus récente, d'une punaise (matériau `pin`) à l'autre.
+sélection) ne touche pas à ces matériaux. Les fiches d'expérience suivent un S, de la plus récente
+(en haut à gauche) à la plus ancienne ; un chevron rouge entre deux fiches pointe vers la plus récente.
 
 ## Objets propres à une pièce
 

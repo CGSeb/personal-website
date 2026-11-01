@@ -11,7 +11,8 @@ import { layout } from './layout';
 import { placeObjects, type PlacedObject } from './objects';
 import type { Panels } from './panels';
 import { createLighting } from './lighting';
-import { experienceString } from './timeline';
+import { inviteGlow, inviteMs } from './invite';
+import { experienceChevrons, experienceTitle } from './timeline';
 import { attachPicking } from './picking';
 import { createStage, HOME_ZOOM, type CameraView } from './renderer';
 import { QUALITY, QualityGovernor, type QualityLevel } from './quality';
@@ -44,6 +45,8 @@ export interface SceneHandle {
   ambiance(): Ambiance;
   /** True while the day / night fade runs. */
   fading(): boolean;
+  /** True while the experience cards light up, at the opening of the scene. */
+  inviting(): boolean;
   /** Names of the room's named nodes (slots, markers, baked mesh). */
   roomNodes(): string[];
   /** Whether the figure is in the scene, whether it is waving, how many waves have started. */
@@ -68,6 +71,25 @@ const themeDuration = (): number => {
   const value = parseFloat(raw);
   if (!Number.isFinite(value)) return 0;
   return raw.trim().endsWith('ms') ? value : value * 1000;
+};
+
+const INVITE_KEY = 'scene.invited';
+/** Peak glow of the cards during the invitation, the selected objects' own. */
+const INVITE_GLOW = 0.45;
+const INVITE_GROW = 0.14;
+const readInvited = (): boolean => {
+  try {
+    return sessionStorage.getItem(INVITE_KEY) !== null;
+  } catch {
+    return false;
+  }
+};
+const saveInvited = () => {
+  try {
+    sessionStorage.setItem(INVITE_KEY, '1');
+  } catch {
+    // Private browsing: the invitation simply plays again next time.
+  }
 };
 
 const QUALITY_KEY = 'scene.quality';
@@ -158,14 +180,19 @@ export async function createScene(
     lighting.adopt(object.root);
     byKey.set(object.key, object);
   }
-  // Experience cards joined by a red string, oldest to newest (spec 003).
-  const timeline = experienceString(
-    data.items
-      .filter((i) => i.type === 'experience')
-      .sort((a, b) => b.order - a.order)
-      .flatMap((i) => byKey.get(i.key)?.root ?? []),
-  );
+  // Experience cards from the newest (top left) to the oldest, chevrons pointing forward in time
+  // (spec 003).
+  const cards = data.items
+    .filter((i) => i.type === 'experience')
+    .sort((a, b) => a.order - b.order)
+    .flatMap((i) => byKey.get(i.key) ?? []);
+  const timeline = experienceChevrons(cards.map((c) => c.root));
   if (timeline) stage.scene.add(timeline);
+  const boardTitle = experienceTitle(
+    cards.map((c) => c.root),
+    data.labels.board,
+  );
+  if (boardTitle) stage.scene.add(boardTitle);
   lighting.apply(shown);
   // Items inside an overflow box are reached through that box.
   const container_ = new Map<string, string>();
@@ -187,12 +214,10 @@ export async function createScene(
 
   // States: one selected (open panel), one highlighted (hover).
   let hovered: string | null = null;
+  const selectedKey = () =>
+    bubble.isOpen ? AVATAR_KEY : panels.current ? objectFor(panels.current)?.key : null;
   const refreshStates = () => {
-    const selected = bubble.isOpen
-      ? AVATAR_KEY
-      : panels.current
-        ? objectFor(panels.current)?.key
-        : null;
+    const selected = selectedKey();
     for (const o of objects)
       o.setState(o.key === selected ? 'selected' : o.key === hovered ? 'highlighted' : 'idle');
     stage.requestRender();
@@ -295,6 +320,33 @@ export async function createScene(
   stage.requestRender();
 
   panels.openFromHash(screenPosition);
+
+  // The board's invitation, once per visit: only while it runs, like the wave, no frame at rest.
+  let invite = 0;
+  if (!reducedMotion && cards.length > 0 && !readInvited()) {
+    saveInvited();
+    const start = performance.now();
+    const sizes = cards.map((card) => card.root.scale.x);
+    const step = (now: number) => {
+      const elapsed = now - start;
+      const selected = selectedKey();
+      cards.forEach((card, i) => {
+        const pulse = inviteGlow(elapsed, i);
+        // A glow alone hardly shows on the pale paper by day: the card also grows a little.
+        card.root.scale.setScalar(sizes[i]! * (1 + pulse * INVITE_GROW));
+        if (card.key !== hovered && card.key !== selected) card.setGlow(pulse * INVITE_GLOW);
+      });
+      stage.requestRender();
+      if (elapsed < inviteMs(cards.length)) {
+        invite = requestAnimationFrame(step);
+      } else {
+        invite = 0;
+        refreshStates();
+      }
+    };
+    invite = requestAnimationFrame(step);
+  }
+
   void avatarLoad.then((figure) => {
     if (!figure) return;
     avatar = figure;
@@ -342,6 +394,7 @@ export async function createScene(
     highlighted: () => hovered,
     ambiance: () => ambiance,
     fading: () => fade !== 0,
+    inviting: () => invite !== 0,
     roomNodes: () => {
       const names: string[] = [];
       // three.js strips the dots from glTF names; the original stays in userData.

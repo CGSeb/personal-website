@@ -35,7 +35,15 @@ export function attachPicking(
       false,
     );
     // An object that yields only gets the ray when no other object is on it, whatever the distance.
-    const hit = hits.find((h) => !h.object.userData.yields) ?? hits[0];
+    const firm = hits.filter((h) => !h.object.userData.yields);
+    const candidates = firm.length > 0 ? firm : hits;
+    // Hit shapes are larger than the objects and can overlap: the object really under the pointer
+    // wins over the margin of a nearer one.
+    const onObject = candidates.find((h) => {
+      const object = objects.find((o) => o.hit === h.object);
+      return object && raycaster.intersectObject(object.root, true).length > 0;
+    });
+    const hit = onObject ?? candidates[0];
     return (hit?.object.userData.key as string | undefined) ?? null;
   };
 
