@@ -14,6 +14,9 @@ export default defineConfig({
   testDir: 'tests/e2e',
   fullyParallel: true,
   reporter: process.env.CI ? [['github'], ['list']] : 'list',
+  // Without a GPU, a frame of the scene can block the page for over a second: the default 5 s is
+  // too short there for checks that are otherwise fine (the figure's wave draws many frames).
+  expect: { timeout: process.env.CI ? 15_000 : 5_000 },
   use: {
     baseURL: `http://localhost:${port}`,
   },
