@@ -12,10 +12,10 @@ period: { start: 2026-10 }
 categories: [web, 3d]
 technologies: [astro, typescript, threejs, blender]
 cover:
-  src: ./cover.webp
+  src: ./cover-room.webp
   alt:
-    fr: "La scène 3D du portfolio sur fond gris foncé : un petit bureau isométrique avec un bureau en L en noyer, un mur de lattes de bois, deux diplômes encadrés, un tableau de liège avec les expériences, une fenêtre sur la ville, un tapis et un fauteuil en cuir"
-    en: "The portfolio's 3D scene on a dark grey background: a small isometric study with an L-shaped walnut desk, a wall of wooden slats, two framed diplomas, a cork board with the experience, a window over the city, a rug and a leather armchair"
+    fr: "La scène 3D du portfolio sur fond beige : un petit bureau isométrique avec Sébastien assis à son bureau en L en noyer, un mur de lattes de bois, deux diplômes encadrés, un tableau de liège avec les expériences, une fenêtre sur la ville, un tapis et un fauteuil en cuir"
+    en: "The portfolio's 3D scene on a beige background: a small isometric study with Sébastien sitting at his L-shaped walnut desk, a wall of wooden slats, two framed diplomas, a cork board with the experience, a window over the city, a rug and a leather armchair"
 links: []
 experience: [cg-seb]
 featured: true

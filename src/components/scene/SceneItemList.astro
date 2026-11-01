@@ -115,9 +115,12 @@ const groups: ItemType[] = ['project', 'education', 'experience'];
     letter-spacing: 0.06em;
   }
   ul {
-    list-style: none;
-    padding: 0;
+    list-style: disc;
+    padding: 0 0 0 1.25rem;
     margin: 0;
+  }
+  li::marker {
+    color: var(--color-accent);
   }
   li + li {
     margin-top: var(--space-2xs);
@@ -125,7 +128,8 @@ const groups: ItemType[] = ['project', 'education', 'experience'];
   /* Same look for the link (no JavaScript) and the button (enhanced). */
   a,
   :global(.scene-list button) {
-    display: inline-block;
+    display: block;
+    width: fit-content;
     padding: var(--space-2xs) 0;
     font: inherit;
     color: var(--color-text);
