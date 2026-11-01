@@ -58,10 +58,10 @@ testing of each story.
 
 ### Model and validation
 
-- [ ] T005 [US1] Add the `avatar-*` materials and `build_tower_avatar()` to `assets-src/models/tower_room.py`, following contracts/avatar.md and research § 1–3: origin on the seat, front towards +Z, rigid parts, faceted, no texture; oversized head, short brown hair with volume on top, short full beard and moustache, dark rectangular glasses, fair skin, brick-red T-shirt, dark trousers, seated pose; right arm under the empty `avatar.arm` at the shoulder, its parts bent and rigid; empty `avatar.head` at the top of the head; register it in `TOWER_OBJECTS` (scale 1.0)
-- [ ] T006 [US1] Add `assets-src/models/render_avatar.py`: renders `avatar` from the front and at three-quarters, and in the room from the scene's isometric direction `(1, 1, 1)`, to `specs/004-scene-avatar/captures/` (PNG, with an extra crop at the size of a phone view: a head of about 20 px)
-- [ ] T007 [US1] Build and render: run `build_models.py -- --only avatar` then `render_avatar.py`; place the photo `content/profile-photo.webp` beside the renders in `specs/004-scene-avatar/captures/README.md`, and iterate on T005 until the main features read at phone size
-- [ ] T008 [US1] **Validation by Sébastien** (quickstart A, scenarios 1–2): show the renders, adjust on feedback, record the decision in `specs/004-scene-avatar/quickstart.md`
+- [x] T005 [US1] Add the `avatar-*` materials and `build_tower_avatar()` to `assets-src/models/tower_room.py`, following contracts/avatar.md and research § 1–3: origin on the seat, front towards +Z, rigid parts, faceted, no texture; oversized head, short brown hair with volume on top, short full beard and moustache, dark rectangular glasses, fair skin, brick-red T-shirt, dark trousers, seated pose; right arm under the empty `avatar.arm` at the shoulder, its parts bent and rigid; empty `avatar.head` at the top of the head; register it in `TOWER_OBJECTS` (scale 1.0)
+- [x] T006 [US1] Add `assets-src/models/render_avatar.py`: renders `avatar` from the front and at three-quarters, and in the room from the scene's isometric direction `(1, 1, 1)`, to `specs/004-scene-avatar/captures/` (PNG, with an extra crop at the size of a phone view: a head of about 20 px)
+- [x] T007 [US1] Build and render: run `build_models.py -- --only avatar` then `render_avatar.py`; place the photo `content/profile-photo.webp` beside the renders in `specs/004-scene-avatar/captures/README.md`, and iterate on T005 until the main features read at phone size
+- [x] T008 [US1] **Validation by Sébastien** (quickstart A, scenarios 1–2): show the renders, adjust on feedback, record the decision in `specs/004-scene-avatar/quickstart.md`
 
 **Checkpoint**: likeness validated; only now may the bake start
 

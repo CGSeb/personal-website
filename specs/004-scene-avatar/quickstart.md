@@ -25,6 +25,11 @@ npm run models:optimize
 
 La validation de Sébastien est consignée ici avant de passer à la suite.
 
+**Validation du 01/11/2026 (scénarios 1 et 2)** : Sébastien valide la figurine sur les rendus de
+[captures/](captures/README.md). Ajustements demandés avant de valider : moins de volume dans la barbe, puis un menton plus
+marqué, à la même hauteur mais pointé vers l'avant. Ces rendus sont faits dans Blender, sans précalcul et avec une lumière
+qui imite celle du site. Le regard final sur le site reste à faire (scénarios 23 et 25). Le scénario 3 reste à faire avec T009.
+
 ## B. Contrôles automatiques
 
 ```bash

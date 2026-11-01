@@ -1,0 +1,54 @@
+# Rendus de la figurine
+
+Rendus pour la validation de la ressemblance (T008). Ils se régénèrent avec :
+
+```bash
+blender --background --python assets-src/models/build_models.py -- --only avatar
+```
+
+```bash
+blender --background --python assets-src/models/render_avatar.py
+```
+
+Dans ces rendus, la pièce est `room.blend` avec ses textures précalculées, comme dans la scène. Les objets posés
+(écrans, diplômes, fiches) n'y figurent pas, et la chaise est tournée pour ce rendu seulement, comme le fera T009.
+L'ombre de la figurine n'y est pas non plus : elle viendra du précalcul.
+
+## La photo et la tête
+
+| Photo | Rendus |
+|---|---|
+| ![Photo de profil](../../../content/profile-photo.webp) | ![Face, trois-quarts et profil](compare-head.png) |
+
+## Le corps
+
+Face, trois-quarts et angle de la scène :
+
+![Le corps](compare-body.png)
+
+## Dans la pièce
+
+| Téléphone, jour | Téléphone, nuit |
+|---|---|
+| ![Jour](room-phone-day.png) | ![Nuit](room-phone-night.png) |
+
+Ordinateur, jour et nuit :
+
+![Ordinateur, jour](room-desktop-day.png)
+
+![Ordinateur, nuit](room-desktop-night.png)
+
+## À la taille réelle d'un téléphone
+
+Environ 58 px par mètre, la tête fait une vingtaine de pixels de large. Le recadrage est à sa taille réelle, puis agrandi
+cinq fois sans lissage.
+
+| Jour | Nuit |
+|---|---|
+| ![Jour](phone-crop-day.png) ![Jour, agrandi](phone-crop-day-x5.png) | ![Nuit](phone-crop-night.png) ![Nuit, agrandi](phone-crop-night-x5.png) |
+
+## Le bras levé
+
+Contrôle du pivot `avatar.arm` à l'épaule (axe et angle : `RAISED` dans `render_avatar.py`) :
+
+![Bras levé](avatar-arm-raised.png)
