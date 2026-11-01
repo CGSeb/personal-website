@@ -131,16 +131,18 @@ test.describe('with JavaScript', () => {
     await page.emulateMedia({ colorScheme: 'light' });
     await page.addInitScript(() => {
       localStorage.setItem('theme', 'dark');
+      // The stylesheet may still be loading here (WebKit), and nothing is painted before it: what
+      // must already be set is the theme it will apply.
       document.addEventListener('DOMContentLoaded', () => {
-        (window as unknown as { firstBg: string }).firstBg = getComputedStyle(
-          document.body,
-        ).backgroundColor;
+        (window as unknown as { firstTheme?: string }).firstTheme =
+          document.documentElement.dataset.theme;
       });
     });
     await page.goto('/en/');
-    expect(await page.evaluate(() => (window as unknown as { firstBg: string }).firstBg)).toBe(
-      dark,
-    );
+    expect(
+      await page.evaluate(() => (window as unknown as { firstTheme?: string }).firstTheme),
+    ).toBe('dark');
+    expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe(dark);
   });
 
   test('with storage blocked, the button still changes the page', async ({ page }) => {

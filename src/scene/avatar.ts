@@ -15,6 +15,8 @@ export interface Avatar extends PlacedObject {
   /** Plays the wave unless one is running or motion is reduced. */
   wave(): void;
   waving(): boolean;
+  /** How many waves have started. */
+  waves(): number;
   /** World position of the `avatar.head` anchor. */
   head(): THREE.Vector3;
 }
@@ -59,10 +61,12 @@ export async function loadAvatar(
 
   // Only while the gesture runs, like the day / night fade: no frame at rest (FR-010).
   let frame = 0;
+  let waves = 0;
   const rest = arm.quaternion.clone();
   const lift = new THREE.Quaternion();
   const wave = () => {
     if (frame !== 0 || options.reducedMotion) return;
+    waves++;
     const start = performance.now();
     const step = (now: number) => {
       const elapsed = now - start;
@@ -78,6 +82,7 @@ export async function loadAvatar(
     ...placed,
     wave,
     waving: () => frame !== 0,
+    waves: () => waves,
     head: () => anchor.getWorldPosition(new THREE.Vector3()),
   };
 }

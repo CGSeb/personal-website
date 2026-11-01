@@ -46,8 +46,8 @@ export interface SceneHandle {
   fading(): boolean;
   /** Names of the room's named nodes (slots, markers, baked mesh). */
   roomNodes(): string[];
-  /** Whether the figure is in the scene, and whether it is waving. */
-  avatar(): { shown: boolean; waving: boolean };
+  /** Whether the figure is in the scene, whether it is waving, how many waves have started. */
+  avatar(): { shown: boolean; waving: boolean; waves: number };
 }
 
 export interface SceneOptions {
@@ -351,6 +351,10 @@ export async function createScene(
       });
       return names;
     },
-    avatar: () => ({ shown: avatar !== null, waving: avatar?.waving() ?? false }),
+    avatar: () => ({
+      shown: avatar !== null,
+      waving: avatar?.waving() ?? false,
+      waves: avatar?.waves() ?? 0,
+    }),
   };
 }

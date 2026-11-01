@@ -40,6 +40,8 @@ export interface Avatar extends PlacedObject {
   /** Plays the wave unless one is running or motion is reduced. */
   wave(): void;
   waving(): boolean;
+  /** How many waves have started. */
+  waves(): number;
   /** World position of the `avatar.head` anchor. */
   head(): THREE.Vector3;
 }
@@ -127,7 +129,7 @@ passent par `onHover` et `onSelect` avec la clé `avatar`. L'info-bulle affiche 
 ## Crochet de test (`src/scene/test-hook.ts`)
 
 ```ts
-avatar(): { shown: boolean; waving: boolean };
+avatar(): { shown: boolean; waving: boolean; waves: number };
 ```
 
 `screenPosition('avatar')` donne la position de la figurine, `frames()` sert à vérifier l'absence d'images au repos.

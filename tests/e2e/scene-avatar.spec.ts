@@ -133,37 +133,17 @@ test.describe('the wave and the bubble (US2)', () => {
     test.skip(isMobile, 'no hover on touch screens');
     await openScene(page);
     const { x, y } = await objectPoint(page, AVATAR);
-    // Timed in the page: round trips with a busy test machine say nothing about the gesture.
-    const gestures = page.evaluate(
-      () =>
-        new Promise<number[]>((resolve) => {
-          const done: number[] = [];
-          const begin = performance.now();
-          let since: number | null = null;
-          const step = (now: number) => {
-            const on = window.__scene!.avatar().waving;
-            if (on && since === null) since = now;
-            if (!on && since !== null) {
-              done.push(now - since);
-              since = null;
-            }
-            if (now - begin < 4000) requestAnimationFrame(step);
-            else resolve(done);
-          };
-          requestAnimationFrame(step);
-        }),
-    );
     await page.mouse.move(x, y);
     await expect.poll(() => waving(page)).toBe(true);
-    await expect(page.locator('.scene-tooltip')).toHaveText('Sébastien');
 
     // Leaving and coming back in the middle of the gesture neither restarts nor stacks one.
-    await page.waitForTimeout(800);
+    // Counted, not timed: slow frames on a busy test machine say nothing about the gesture, whose
+    // length is checked in tests/unit/scene-wave.test.ts.
     await page.mouse.move(2, 2);
     await page.mouse.move(x, y);
-    const measured = await gestures;
-    expect(measured).toHaveLength(1);
-    expect(measured[0]!).toBeLessThan(2200); // a restart would last about 2.4 s
+    await expect(page.locator('.scene-tooltip')).toHaveText('Sébastien');
+    await expect.poll(() => waving(page), { timeout: 15_000 }).toBe(false);
+    expect(await page.evaluate(() => window.__scene!.avatar().waves)).toBe(1);
     await expect(bubbleOf(page)).toBeHidden();
   });
 
@@ -409,9 +389,10 @@ test.describe('nothing to pay for it (US4)', () => {
     if (isMobile) await page.touchscreen.tap(x, y);
     else await page.mouse.move(x, y);
     await expect.poll(() => waving(page)).toBe(true);
-    await expect.poll(() => waving(page), { timeout: 4000 }).toBe(false);
-    // The last frame asked by the gesture is drawn on the next animation frame.
-    await page.waitForTimeout(100);
+    await expect.poll(() => waving(page), { timeout: 15_000 }).toBe(false);
+    // The last frame asked by the gesture is drawn on the next animation frame, later on a busy
+    // test machine.
+    await framesSettled(page);
     const after = await page.evaluate(() => window.__scene!.frames());
     expect(after).toBeGreaterThan(rest);
     await page.waitForTimeout(1000);
