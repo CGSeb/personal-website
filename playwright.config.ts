@@ -21,7 +21,8 @@ export default defineConfig({
     baseURL: `http://localhost:${port}`,
   },
   webServer: {
-    command: `npm run build && npm run preview -- --port ${port}`,
+    // On CI the workflow has already built the site: only start it.
+    command: `${process.env.CI ? '' : 'npm run build && '}npm run preview -- --port ${port}`,
     url: `http://localhost:${port}/en/`,
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
