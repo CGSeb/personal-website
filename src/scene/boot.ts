@@ -93,6 +93,7 @@ export async function start() {
     ambiance: () => handle?.ambiance() ?? 'day',
     fading: () => handle?.fading() ?? false,
     roomNodes: () => handle?.roomNodes() ?? [],
+    avatar: () => handle?.avatar() ?? { shown: false, waving: false },
   });
 
   const load = async () => {

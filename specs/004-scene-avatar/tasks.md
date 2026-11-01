@@ -34,8 +34,8 @@ testing of each story.
 
 **Purpose**: the texts and the budget line every later phase relies on
 
-- [ ] T001 [P] Give `avatar.glb` a row with no per-file cap in `scripts/check-scene-budget.mjs` (its size is printed, it never fails on its own); the 3 MB total stays blocking and still counts it (research § 11)
-- [ ] T002 [P] Add `scene.avatar.name`, `scene.avatar.welcome` and `scene.group.welcome` in both languages in `src/i18n/ui.ts`, with the exact texts of contracts/avatar.md; add `avatar: { name, welcome }` to `SceneLabels` in `src/scene/labels.ts` and to the `scene-labels` JSON in `src/views/SceneView.astro`
+- [x] T001 [P] Give `avatar.glb` a row with no per-file cap in `scripts/check-scene-budget.mjs` (its size is printed, it never fails on its own); the 3 MB total stays blocking and still counts it (research § 11)
+- [x] T002 [P] Add `scene.avatar.name`, `scene.avatar.welcome` and `scene.group.welcome` in both languages in `src/i18n/ui.ts`, with the exact texts of contracts/avatar.md; add `avatar: { name, welcome }` to `SceneLabels` in `src/scene/labels.ts` and to the `scene-labels` JSON in `src/views/SceneView.astro`
 
 ---
 
@@ -43,8 +43,8 @@ testing of each story.
 
 **Purpose**: what lets the figure behave like the placed objects
 
-- [ ] T003 Extract from `placeObjects` in `src/scene/objects.ts` an exported `withHitShape(key, root)` that builds the invisible hit shape (`HIT_SCALE`) and `setState`, and returns a `PlacedObject`; `placeObjects` uses it, with no change of behaviour (`npm run test:e2e -- scene.spec` still passes)
-- [ ] T004 [P] Add `avatar(): { shown: boolean; waving: boolean }` to `SceneTestHook` in `src/scene/test-hook.ts`, to `SceneHandle` in `src/scene/scene3d.ts` (`shown: false`, `waving: false` for now) and to `installTestHook` in `src/scene/boot.ts`
+- [x] T003 Extract from `placeObjects` in `src/scene/objects.ts` an exported `withHitShape(key, root)` that builds the invisible hit shape (`HIT_SCALE`) and `setState`, and returns a `PlacedObject`; `placeObjects` uses it, with no change of behaviour (`npm run test:e2e -- scene.spec` still passes)
+- [x] T004 [P] Add `avatar(): { shown: boolean; waving: boolean }` to `SceneTestHook` in `src/scene/test-hook.ts`, to `SceneHandle` in `src/scene/scene3d.ts` (`shown: false`, `waving: false` for now) and to `installTestHook` in `src/scene/boot.ts`
 
 **Checkpoint**: nothing visible has changed; all existing checks pass
 
@@ -90,9 +90,9 @@ testing of each story.
 
 **Independent Test**: hover then click the figure, in both languages, on desktop and phone, and check the wave, the text of the bubble and how it closes
 
-- [ ] T018 [P] [US2] Create `tests/unit/scene-wave.test.ts`: `waveAngle` is 0 at 0 and from `WAVE_MS` on, `WAVE_MS ≤ 2000`, the arm goes up in between
-- [ ] T019 [P] [US2] Create `tests/unit/scene-bubble.test.ts` for `bubblePosition` (above and centred on the anchor; kept inside the scene at each edge and at 320 px) and extend `tests/unit/scene-hash.test.ts` for `welcomeHash`, `isWelcomeHash` and `translateHash` on `#bienvenue` / `#welcome`, with `parseHash` still null for them
-- [ ] T020 [P] [US2] Create `src/scene/wave.ts` (`WAVE_MS`, `waveAngle`: up, two beats, down) and add `welcomeHash` and `isWelcomeHash` to `src/scene/hash.ts`, with the `translateHash` case
+- [x] T018 [P] [US2] Create `tests/unit/scene-wave.test.ts`: `waveAngle` is 0 at 0 and from `WAVE_MS` on, `WAVE_MS ≤ 2000`, the arm goes up in between
+- [x] T019 [P] [US2] Create `tests/unit/scene-bubble.test.ts` for `bubblePosition` (above and centred on the anchor; kept inside the scene at each edge and at 320 px) and extend `tests/unit/scene-hash.test.ts` for `welcomeHash`, `isWelcomeHash` and `translateHash` on `#bienvenue` / `#welcome`, with `parseHash` still null for them
+- [x] T020 [P] [US2] Create `src/scene/wave.ts` (`WAVE_MS`, `waveAngle`: up, two beats, down) and add `welcomeHash` and `isWelcomeHash` to `src/scene/hash.ts`, with the `translateHash` case
 - [ ] T021 [US2] Implement `wave()` and `waving()` in `src/scene/avatar.ts`: a `requestAnimationFrame` loop that lives only during the gesture, as the day / night fade in `scene3d.ts`, rotates `avatar.arm` with `waveAngle`, calls `requestRender` and ends at exactly the rest pose; ignored while running and when `reducedMotion` is true (data-model.md § États du geste)
 - [ ] T022 [US2] Add the bubble element to `src/views/SceneView.astro` per contracts/avatar.md (`role="dialog"`, `aria-labelledby`, `tabindex="-1"`, `hidden`, text, close button with `scene.close`, **no link**) and its styles, with a tail towards the head, the scene's colour roles, AA contrast in both themes, text wrapping at 320 px
 - [ ] T023 [US2] Create `src/scene/bubble.ts`: class `Bubble` and pure `bubblePosition` per contracts/avatar.md. Open: show, focus (`preventScroll`), set the fragment with `history.replaceState`. Close by its button, Escape and a click outside; `.language-switcher`, `[data-theme-toggle]`, `.scene-list`, `[data-recenter]` and the canvas are excluded from "outside", as for the panels. On close: fragment removed, focus back to the opener

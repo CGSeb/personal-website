@@ -194,6 +194,39 @@ function fillSurfaces(
   });
 }
 
+/** Gives a placed root its invisible hit shape and its highlight states. */
+export function withHitShape(key: string, root: THREE.Object3D): PlacedObject {
+  // Invisible, larger hit shape: easier to touch on phones.
+  const size = new THREE.Box3().setFromObject(root).getSize(new THREE.Vector3());
+  const hit = new THREE.Mesh(
+    new THREE.BoxGeometry(
+      Math.max(size.x, 0.3) * HIT_SCALE,
+      Math.max(size.y, 0.3) * HIT_SCALE,
+      Math.max(size.z, 0.3) * HIT_SCALE,
+    ),
+    new THREE.MeshBasicMaterial({ visible: false }),
+  );
+  const center = new THREE.Box3().setFromObject(root).getCenter(new THREE.Vector3());
+  hit.position.copy(center);
+  hit.userData.key = key;
+
+  // Lamps, LEDs and halos keep their own glow (lighting.ts); the rest shows the states.
+  const materials: THREE.MeshStandardMaterial[] = [];
+  root.traverse((o) => {
+    const m = (o as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined;
+    if (m && 'emissive' in m && !GLOWING.has(m.name)) materials.push(m);
+  });
+  // Highlighted and selected share the theme's tint; the selected object glows more.
+  const setState = (state: ObjectState) => {
+    const tint = state === 'idle' ? new THREE.Color(0) : highlightColor();
+    for (const m of materials) {
+      m.emissive.copy(tint);
+      m.emissiveIntensity = state === 'idle' ? 0 : state === 'selected' ? 0.45 : 0.3;
+    }
+  };
+  return { key, root, hit, setState };
+}
+
 export async function placeObjects(
   placements: Placement[],
   slots: RoomSlot[],
@@ -223,36 +256,7 @@ export async function placeObjects(
       if (!model) root.scale.setScalar(STAND_IN_SCALE);
       slot.object.getWorldPosition(root.position);
       slot.object.getWorldQuaternion(root.quaternion);
-
-      // Invisible, larger hit shape: easier to touch on phones.
-      const size = new THREE.Box3().setFromObject(root).getSize(new THREE.Vector3());
-      const hit = new THREE.Mesh(
-        new THREE.BoxGeometry(
-          Math.max(size.x, 0.3) * HIT_SCALE,
-          Math.max(size.y, 0.3) * HIT_SCALE,
-          Math.max(size.z, 0.3) * HIT_SCALE,
-        ),
-        new THREE.MeshBasicMaterial({ visible: false }),
-      );
-      const center = new THREE.Box3().setFromObject(root).getCenter(new THREE.Vector3());
-      hit.position.copy(center);
-      hit.userData.key = placement.key;
-
-      // Lamps, LEDs and halos keep their own glow (lighting.ts); the rest shows the states.
-      const materials: THREE.MeshStandardMaterial[] = [];
-      root.traverse((o) => {
-        const m = (o as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined;
-        if (m && 'emissive' in m && !GLOWING.has(m.name)) materials.push(m);
-      });
-      // Highlighted and selected share the theme's tint; the selected object glows more.
-      const setState = (state: ObjectState) => {
-        const tint = state === 'idle' ? new THREE.Color(0) : highlightColor();
-        for (const m of materials) {
-          m.emissive.copy(tint);
-          m.emissiveIntensity = state === 'idle' ? 0 : state === 'selected' ? 0.45 : 0.3;
-        }
-      };
-      return { key: placement.key, root, hit, setState };
+      return withHitShape(placement.key, root);
     }),
   );
 }

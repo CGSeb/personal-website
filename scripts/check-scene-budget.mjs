@@ -24,7 +24,9 @@ const format = (bytes) =>
   bytes >= MB ? `${(bytes / MB).toFixed(2)} Mo` : `${Math.round(bytes / KB)} Ko`;
 
 // 1. Model files, against their budgets. .glb files are already compressed (Meshopt, WebP).
+// The figure has no cap of its own (spec 004): its size is printed and counts in the total.
 const modelBudget = (path) => {
+  if (path === 'avatar.glb') return undefined;
   if (path === 'room.glb') return 1.5 * MB;
   if (path === 'generic-project.glb') return 150 * KB;
   if (path.startsWith('featured/')) return 300 * KB;
@@ -39,7 +41,8 @@ const models = existsSync(modelsDir)
 for (const { path, size } of models) {
   const budget = modelBudget(path);
   rows.push([`models/${path}`, size, budget]);
-  if (size > budget) errors.push(`models/${path} : ${format(size)} > ${format(budget)}`);
+  if (budget !== undefined && size > budget)
+    errors.push(`models/${path} : ${format(size)} > ${format(budget)}`);
 }
 
 // Baked lighting of the room (room-day.webp, room-night.webp, spec 003): both are loaded with
