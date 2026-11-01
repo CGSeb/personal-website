@@ -8,7 +8,7 @@ LessonFolk is a collection of open-source AI courses designed to be taught *by* 
 
 - **A website and an MCP server** (Model Context Protocol, the standard that lets AI assistants use tools): the assistant gets the courses and the tutor's instructions there, and saves progress there
 - **A personal path**: the tutor asks about your level and interests, recommends a path, then teaches one short lesson at a time, with check questions and targeted reviews
-- **15 courses in 4 themes**: understanding AI, using AI tools, building with AI, AI and society; from the fundamentals to RAG and agents
+- **Courses by theme**: understanding AI, using AI tools, building with AI, AI and society; from the fundamentals to RAG and agents
 - **Hosted or at home**: on lessonfolk.com with a GitHub or Google account, or on your own computer with Docker, with no data sent anywhere
 - **A Claude Code plugin** that connects LessonFolk in one command
 
@@ -16,7 +16,7 @@ LessonFolk is a collection of open-source AI courses designed to be taught *by* 
 
 An open-source project: the code is MIT-licensed, the courses CC BY 4.0. Writing a course takes no code: open your AI agent in the repository, say "create a course about…", and it interviews the author, proposes an outline, writes the lessons with them and checks them.
 
-Under the hood: an Astro dashboard, a TypeScript MCP server, progress stored in PostgreSQL, OAuth sign-in, automated tests and regular releases (1.6.2 at the end of October 2026).
+Under the hood: an Astro dashboard, a TypeScript MCP server, progress stored in PostgreSQL, OAuth sign-in, automated tests and regular releases.
 
 ## What's next
 
