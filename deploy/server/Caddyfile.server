@@ -1,0 +1,13 @@
+# Server Caddyfile: the one already in place, unchanged, plus the site.
+# Mounted over /etc/caddy/Caddyfile by docker-compose.override.yml, so that
+# "caddy reload --config /etc/caddy/Caddyfile" reloads the site too.
+import /etc/caddy/base.Caddyfile
+
+sebastienmichon.fr {
+	encode zstd gzip
+	reverse_proxy portfolio-site-1:8080
+}
+
+www.sebastienmichon.fr {
+	redir https://sebastienmichon.fr{uri} permanent
+}
