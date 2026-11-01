@@ -114,7 +114,7 @@ Aucun lien dans la bulle. Couleurs tirées des rôles de la scène (`tokens.css`
 | Clé | Français | Anglais |
 |---|---|---|
 | `scene.avatar.name` | Sébastien | Sébastien |
-| `scene.avatar.welcome` | Bonjour, c'est Sébastien, bienvenue sur mon portfolio 3D. Navigue dans la pièce pour la découvrir. | Hi, it's Sébastien, welcome to my 3D portfolio. Move around the room to discover it. |
+| `scene.avatar.welcome` | Bonjour, c’est Sébastien, bienvenue sur mon portfolio 3D. Navigue dans la pièce pour la découvrir. | Hi, it’s Sébastien, welcome to my 3D portfolio. Move around the room to discover it. |
 | `scene.group.welcome` | Bienvenue | Welcome |
 
 Le bouton de fermeture reprend `scene.close`. `SceneLabels` reçoit `avatar: { name, welcome }`.

@@ -195,7 +195,11 @@ function fillSurfaces(
 }
 
 /** Gives a placed root its invisible hit shape and its highlight states. */
-export function withHitShape(key: string, root: THREE.Object3D): PlacedObject {
+export function withHitShape(
+  key: string,
+  root: THREE.Object3D,
+  glow: { highlighted: number; selected: number } = { highlighted: 0.3, selected: 0.45 },
+): PlacedObject {
   // Invisible, larger hit shape: easier to touch on phones.
   const size = new THREE.Box3().setFromObject(root).getSize(new THREE.Vector3());
   const hit = new THREE.Mesh(
@@ -221,7 +225,7 @@ export function withHitShape(key: string, root: THREE.Object3D): PlacedObject {
     const tint = state === 'idle' ? new THREE.Color(0) : highlightColor();
     for (const m of materials) {
       m.emissive.copy(tint);
-      m.emissiveIntensity = state === 'idle' ? 0 : state === 'selected' ? 0.45 : 0.3;
+      m.emissiveIntensity = state === 'idle' ? 0 : glow[state];
     }
   };
   return { key, root, hit, setState };

@@ -4,6 +4,8 @@
 import * as THREE from 'three';
 import { ambianceFor, blend, settingsFor, type Ambiance, type AmbianceSettings } from './ambiance';
 import { AVATAR_KEY, loadAvatar, type Avatar } from './avatar';
+import { Bubble } from './bubble';
+import { isWelcomeHash } from './hash';
 import type { PageData } from './labels';
 import { layout } from './layout';
 import { placeObjects, type PlacedObject } from './objects';
@@ -186,36 +188,15 @@ export async function createScene(
   // States: one selected (open panel), one highlighted (hover).
   let hovered: string | null = null;
   const refreshStates = () => {
-    const selected = panels.current ? objectFor(panels.current)?.key : null;
+    const selected = bubble.isOpen
+      ? AVATAR_KEY
+      : panels.current
+        ? objectFor(panels.current)?.key
+        : null;
     for (const o of objects)
       o.setState(o.key === selected ? 'selected' : o.key === hovered ? 'highlighted' : 'idle');
     stage.requestRender();
   };
-
-  attachPicking(stage.renderer.domElement, stage.camera, objects, {
-    onHover(key, at) {
-      if (key !== hovered) {
-        hovered = key;
-        refreshStates();
-      }
-      const label = !key
-        ? ''
-        : key === AVATAR_KEY
-          ? data.labels.avatar.name
-          : (panels.item(key)?.label ?? data.labels.overflow[key.split('/')[1] as 'project']);
-      tooltip.hidden = !key;
-      if (key) {
-        tooltip.textContent = label;
-        tooltip.style.left = `${at.x}px`;
-        tooltip.style.top = `${at.y}px`;
-      }
-    },
-    onSelect(key) {
-      if (key === AVATAR_KEY) return;
-      if (key) panels.open(key, screenPosition(key), stage.renderer.domElement);
-      else panels.close();
-    },
-  });
 
   const bringIntoView = (key: string) => {
     const object = objectFor(key);
@@ -224,9 +205,60 @@ export async function createScene(
       stage.moveTo(object.hit.getWorldPosition(new THREE.Vector3()));
     }
   };
+
+  // The welcome bubble (spec 004): one of bubble or panel at a time, placed as soon as it opens.
+  const bubble = new Bubble(data.lang, (open) => {
+    tooltip.hidden = true;
+    refreshStates();
+    const entry = document.querySelector('[data-avatar-entry] button');
+    if (open) entry?.setAttribute('aria-current', 'true');
+    else entry?.removeAttribute('aria-current');
+    if (open && avatar) {
+      bubble.reposition(stage.toScreen(avatar.head()));
+      bringIntoView(AVATAR_KEY);
+    }
+  });
+  /** A gesture of the visitor on the figure: it waves, and the bubble opens or closes. */
+  const greet = (from: HTMLElement) => {
+    avatar?.wave();
+    // The panel first: closing it gives the focus back, which the bubble then takes.
+    if (!bubble.isOpen) panels.close();
+    bubble.toggle(from);
+  };
+
+  attachPicking(stage.renderer.domElement, stage.camera, objects, {
+    onHover(key, at) {
+      if (key !== hovered) {
+        hovered = key;
+        refreshStates();
+        if (key === AVATAR_KEY) avatar?.wave();
+      }
+      const label = !key
+        ? ''
+        : key === AVATAR_KEY
+          ? data.labels.avatar.name
+          : (panels.item(key)?.label ?? data.labels.overflow[key.split('/')[1] as 'project']);
+      tooltip.hidden = !key;
+      if (key) {
+        // Above the figure's head, not on its face while it waves.
+        const spot = key === AVATAR_KEY && avatar ? stage.toScreen(avatar.head()) : at;
+        tooltip.textContent = label;
+        tooltip.style.left = `${spot.x}px`;
+        tooltip.style.top = `${spot.y}px`;
+      }
+    },
+    onSelect(key) {
+      if (key === AVATAR_KEY) return greet(stage.renderer.domElement);
+      bubble.close();
+      if (key) panels.open(key, screenPosition(key), stage.renderer.domElement);
+      else panels.close();
+    },
+  });
+
   // Bring an item into view when it is opened from the list or the fragment.
   panels.events.onChange = (key) => {
     tooltip.hidden = true;
+    if (key) bubble.close({ keepFocus: true });
     refreshStates();
     if (key) bringIntoView(key);
   };
@@ -238,6 +270,7 @@ export async function createScene(
   };
   stage.onRender(() => {
     if (panels.current) panels.reposition(screenPosition(panels.current));
+    if (bubble.isOpen && avatar) bubble.reposition(stage.toScreen(avatar.head()));
   });
 
   // US2: restore the view after a visit to the written site, and keep it up to date.
@@ -247,6 +280,9 @@ export async function createScene(
   stage.controls.addEventListener('change', () => {
     clearTimeout(saveTimer);
     saveTimer = window.setTimeout(() => saveView(stage.view()), 300);
+    // Only when the visitor moves the view, never during a move that brings the figure into view.
+    const figure = screenPosition(AVATAR_KEY);
+    if (bubble.isOpen && figure && !isVisible(figure)) bubble.close();
   });
 
   recenter.hidden = false;
@@ -267,6 +303,21 @@ export async function createScene(
     objects.push(figure);
     byKey.set(figure.key, figure);
     stage.requestRender();
+    // The figure's entry in the list, with the same preview as the other entries (US5 of spec 002).
+    const entry = document.querySelector<HTMLElement>('[data-avatar-entry]');
+    const button = entry?.querySelector('button');
+    if (entry && button) {
+      entry.hidden = false;
+      button.addEventListener('click', () => greet(button));
+      const preview = () => panels.events.onPreview?.(AVATAR_KEY);
+      const leave = () => panels.events.onPreview?.(null);
+      button.addEventListener('focus', preview);
+      button.addEventListener('mouseenter', preview);
+      button.addEventListener('blur', leave);
+      button.addEventListener('mouseleave', leave);
+    }
+    // Back from the other language: open again, without a wave (the visitor did not ask for one).
+    if (isWelcomeHash(location.hash)) bubble.open();
   });
   stage.onRender((requestedAt) => {
     const action = governor.frame(performance.now(), requestedAt);
@@ -300,6 +351,6 @@ export async function createScene(
       });
       return names;
     },
-    avatar: () => ({ shown: avatar !== null, waving: false }),
+    avatar: () => ({ shown: avatar !== null, waving: avatar?.waving() ?? false }),
   };
 }

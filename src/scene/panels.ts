@@ -133,7 +133,7 @@ export class Panels {
     for (const b of document.querySelectorAll('.scene-list button[aria-current]'))
       b.removeAttribute('aria-current');
     this.listButton(key)?.setAttribute('aria-current', 'true');
-    this.syncLanguageSwitcher();
+    syncLanguageSwitcher(this.lang);
     this.events.onChange?.(key);
   }
 
@@ -144,7 +144,7 @@ export class Panels {
     history.replaceState(null, '', location.pathname + location.search);
     for (const b of document.querySelectorAll('.scene-list button[aria-current]'))
       b.removeAttribute('aria-current');
-    this.syncLanguageSwitcher();
+    syncLanguageSwitcher(this.lang);
     this.events.onChange?.(null);
     this.returnFocus?.focus({ preventScroll: true });
     this.returnFocus = null;
@@ -212,12 +212,12 @@ export class Panels {
     panel.style.left = `${Math.max(margin, Math.min(left, box.width - width - margin))}px`;
     panel.style.top = `${Math.max(margin, Math.min(top, box.height - height - margin))}px`;
   }
+}
 
-  /** The header switcher keeps the open item in the other language (FR-018). */
-  private syncLanguageSwitcher() {
-    const link = document.querySelector<HTMLAnchorElement>('.language-switcher');
-    if (!link) return;
-    const base = link.getAttribute('href')!.split('#')[0];
-    link.setAttribute('href', base + translateHash(location.hash, otherLang(this.lang)));
-  }
+/** The header switcher keeps the open item or bubble in the other language (FR-018). */
+export function syncLanguageSwitcher(lang: Lang) {
+  const link = document.querySelector<HTMLAnchorElement>('.language-switcher');
+  if (!link) return;
+  const base = link.getAttribute('href')!.split('#')[0];
+  link.setAttribute('href', base + translateHash(location.hash, otherLang(lang)));
 }

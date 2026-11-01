@@ -53,7 +53,8 @@ export async function loadAvatar(
   root.name = `object:${AVATAR_KEY}`;
   seat.getWorldPosition(root.position);
   seat.getWorldQuaternion(root.quaternion);
-  const placed = withHitShape(AVATAR_KEY, root);
+  // A faint tint: the objects' stronger one turns hair, beard and clothes into one flat colour.
+  const placed = withHitShape(AVATAR_KEY, root, { highlighted: 0.05, selected: 0.08 });
   placed.hit.userData.yields = true; // every other object wins a shared click (picking.ts)
 
   // Only while the gesture runs, like the day / night fade: no frame at rest (FR-010).
