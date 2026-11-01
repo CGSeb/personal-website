@@ -76,12 +76,15 @@ Le contrat entre Blender et le code est dans
 (échelle, emplacements `slot.*`, `featured.<id>`, `camera.home`, `bounds`, matériaux `screen`
 et `label`, budgets), complété pour le jour et la nuit par
 [`specs/003-visual-design-pass/contracts/scene-ambiance.md`](specs/003-visual-design-pass/contracts/scene-ambiance.md)
-(lampes, fenêtre, pièce à lumière précalculée). La pièce et ses objets sont générés par script
-dans Blender : voir [`assets-src/models/README.md`](assets-src/models/README.md).
+(lampes, fenêtre, pièce à lumière précalculée), et pour la figurine de Sébastien assise au bureau
+par [`specs/004-scene-avatar/contracts/avatar.md`](specs/004-scene-avatar/contracts/avatar.md)
+(`avatar.glb`, marqueur `avatar.seat`, salut et bulle). La pièce et ses objets sont générés par
+script dans Blender : voir [`assets-src/models/README.md`](assets-src/models/README.md).
 
 1. Modéliser dans `assets-src/models/*.blend` (sources, non publiées).
-2. Exporter en glTF binaire dans `assets-src/models/` (`room.glb`, `generic-project.glb`,
-   `generic-education.glb`, `generic-experience.glb`, `overflow.glb`, `featured/<id>.glb`).
+2. Exporter en glTF binaire dans `assets-src/models/` (`room.glb`, `avatar.glb`,
+   `generic-project.glb`, `generic-education.glb`, `generic-experience.glb`, `overflow.glb`,
+   `featured/<id>.glb`).
 3. `npm run models:optimize` : compresse avec gltfpack (Meshopt, textures) vers
    `public/models/`.
 4. `npm run build && npm run check:scene` : vérifie les budgets.

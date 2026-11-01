@@ -35,5 +35,13 @@ et `room-night.webp`. Les textures brutes (`room-day.png`, `room-night.png`, que
 pas suivies par git : relancer le précalcul (`--only room`) avant `models:optimize` sur une autre
 machine.
 
+La figurine (`avatar`, spec 004) est construite dans `tower_room.py` avec les autres objets, à partir
+de pièces rigides, son bras sous le nœud `avatar.arm` que le code fait pivoter pour le salut. Elle est
+présente dans la scène Blender pendant les deux précalculs, puis retirée avant l'export : `room.glb`
+n'en garde que l'ombre, dans ses textures, et le marqueur `avatar.seat`. **Changer sa pose ou la chaise
+demande donc un nouveau précalcul** (`--only avatar --only room`). `render_avatar.py` produit les rendus
+de contrôle, sans précalcul, dans `specs/004-scene-avatar/captures/`. Contrat :
+[`contracts/avatar.md`](../../specs/004-scene-avatar/contracts/avatar.md).
+
 Pour un nouveau projet mis en avant : son emplacement `featured.<id>` dans `tower_markers()` et sa
 fonction de construction dans `TOWER_OBJECTS` (`tower_room.py`).

@@ -126,9 +126,9 @@ testing of each story.
 
 **Independent Test**: run the existing budget, frame-rate and Lighthouse checks, and measure that no frame is drawn at rest or after a wave
 
-- [ ] T032 [US4] Extend `tests/e2e/scene-avatar.spec.ts`: `__scene.frames()` stays still at rest and within a second after a wave (quickstart 8, SC-005); with `avatar.glb` blocked by `page.route`, the scene stays usable, with no list entry and no blocking error (quickstart 18); 320 px in both languages, the bubble fully inside (quickstart 19); time from selection to visible bubble under 100 ms (SC-007)
-- [ ] T033 [P] [US4] Add a wave during the measurement in `tests/e2e/scene-perf.spec.ts`, and the figure's requests to the allowed set of `tests/e2e/privacy.spec.ts` if the test lists them (quickstart 20)
-- [ ] T034 [US4] Run `npm test`, `npm run build`, `npm run check:seo`, `npm run check:scene`, `npm run test:e2e`, `npm run lhci`; Lighthouse ≥ 90 in every category on every URL (target 100); fix any regression; if the total goes over 3 MB, stop and report the sizes to Sébastien (SC-003)
+- [x] T032 [US4] Extend `tests/e2e/scene-avatar.spec.ts`: `__scene.frames()` stays still at rest and within a second after a wave (quickstart 8, SC-005); with `avatar.glb` blocked by `page.route`, the scene stays usable, with no list entry and no blocking error (quickstart 18); 320 px in both languages, the bubble fully inside (quickstart 19); time from selection to visible bubble under 100 ms (SC-007)
+- [x] T033 [P] [US4] Add a wave during the measurement in `tests/e2e/scene-perf.spec.ts`, and the figure's requests to the allowed set of `tests/e2e/privacy.spec.ts` if the test lists them (quickstart 20)
+- [x] T034 [US4] Run `npm test`, `npm run build`, `npm run check:seo`, `npm run check:scene`, `npm run test:e2e`, `npm run lhci`; Lighthouse ≥ 90 in every category on every URL (target 100); fix any regression; if the total goes over 3 MB, stop and report the sizes to Sébastien (SC-003)
 
 **Checkpoint**: all automated checks pass
 
@@ -136,8 +136,8 @@ testing of each story.
 
 ## Phase 7: Polish & Cross-Cutting Concerns
 
-- [ ] T035 [P] Update `README.md` and `assets-src/models/README.md` (the figure, the bake with the figure present, `render_avatar.py`, a pose change means a new bake) and link [contracts/avatar.md](contracts/avatar.md) from `specs/002-isometric-3d-scene/contracts/scene-model.md`
-- [ ] T036 Record the results of quickstart B in `specs/004-scene-avatar/quickstart.md`, with the measured size of `avatar.glb`
+- [x] T035 [P] Update `README.md` and `assets-src/models/README.md` (the figure, the bake with the figure present, `render_avatar.py`, a pose change means a new bake) and link [contracts/avatar.md](contracts/avatar.md) from `specs/002-isometric-3d-scene/contracts/scene-model.md`
+- [x] T036 Record the results of quickstart B in `specs/004-scene-avatar/quickstart.md`, with the measured size of `avatar.glb`
 - [ ] T037 Manual checks (quickstart C, scenarios 23–25), by Sébastien: real Android phone by day and by night, NVDA in both languages, overall look of the figure and its shadow; adjust the light or the model if needed, and record the results
 
 ---

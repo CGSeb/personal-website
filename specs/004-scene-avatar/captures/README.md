@@ -59,3 +59,19 @@ cinq fois sans lissage.
 Contrôle du pivot `avatar.arm` à l'épaule (axe et angle : `RAISED` dans `render_avatar.py`) :
 
 ![Bras levé](avatar-arm-raised.png)
+
+## Sur le vrai site
+
+Captures du site lui-même, avec un rendu logiciel (SwiftShader).
+
+| Jour | Nuit |
+|---|---|
+| ![Bulle, jour](site-day-bubble.png) | ![Bulle, nuit](site-night-bubble.png) |
+| ![Téléphone, jour](site-phone-day-bubble.png) | ![Téléphone, nuit](site-phone-night-bubble.png) |
+| ![Sans la figurine, jour](site-blocked-day.png) | ![Sans la figurine, nuit](site-blocked-night.png) |
+
+La dernière ligne montre la chaise quand `avatar.glb` ne se charge pas (scénario 18).
+
+La main levée pendant le salut :
+
+![Salut](site-wave-raised.png)
