@@ -1,10 +1,12 @@
 ---
 import { render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Timeline from '../components/Timeline.astro';
-import { getSite } from '../content';
+import CareerEntry, { type CareerRole } from '../components/CareerEntry.astro';
+import Period from '../components/Period.astro';
+import { getSite, labelOf } from '../content';
 import { alternateOf, slugFor, urlFor, type Lang } from '../i18n/routes';
 import { t } from '../i18n/ui';
+import { firstParagraph, groupByOrganization, yearsSince } from '../lib/career-groups';
 import { breadcrumb, graph } from '../lib/jsonld';
 
 interface Props {
@@ -12,26 +14,35 @@ interface Props {
 }
 
 const { lang } = Astro.props;
-const { experience, education, pages } = await getSite();
+const { experience, education, pages, profile, technologies } = await getSite();
 const page = pages.career[lang];
 const { Content } = await render(page);
 
-const experienceEntries = experience.map((e) => ({
-  title: e.position[lang],
-  organization: e.organization,
-  location: e.location[lang],
-  period: e.period,
-  href: urlFor('experience', lang, slugFor(e, lang)),
-  tag: t(lang, `experienceType.${e.type}`),
-}));
-const educationEntries = education.map((e) => ({
-  title: e.title[lang],
-  organization: e.institution,
-  location: e.location[lang],
-  period: e.period,
-  href: urlFor('education', lang, slugFor(e, lang)),
-  tag: e.level?.[lang],
-}));
+const groups = await Promise.all(
+  groupByOrganization(experience).map(async (group) => ({
+    organization: group.organization,
+    period: group.period,
+    location: group.items[0]!.location[lang],
+    roles: await Promise.all(
+      group.items.map(async (e): Promise<CareerRole> => ({
+        title: e.position[lang],
+        period: e.period,
+        tag: t(lang, `experienceType.${e.type}`),
+        href: urlFor('experience', lang, slugFor(e, lang)),
+        technologies: e.technologies.map((id) => labelOf(technologies, id, lang)),
+        summary: firstParagraph(e.bodies[lang].body ?? ''),
+      })),
+    ),
+  })),
+);
+const firstStart = experience.reduce(
+  (min, e) => (e.period.start < min ? e.period.start : min),
+  '9999-12',
+);
+const summary = t(lang, 'career.summary', {
+  headline: profile.headline[lang],
+  years: String(yearsSince(firstStart)),
+});
 const jsonLd = graph(
   breadcrumb(Astro.site!, [
     { name: t(lang, 'nav.home'), path: urlFor('home', lang) },
@@ -53,17 +64,38 @@ const jsonLd = graph(
     <div class="prose intro">
       <Content />
     </div>
+    <p class="summary">{summary}</p>
 
-    {experienceEntries.length > 0 && (
+    {groups.length > 0 && (
       <section id="experience" aria-labelledby="experience-title">
         <h2 id="experience-title">{t(lang, 'career.experience')}</h2>
-        <Timeline lang={lang} entries={experienceEntries} />
+        <ol class="entries">
+          {groups.map((group) => (
+            <CareerEntry lang={lang} {...group} />
+          ))}
+        </ol>
       </section>
     )}
-    {educationEntries.length > 0 && (
+    {education.length > 0 && (
       <section id="education" aria-labelledby="education-title">
         <h2 id="education-title">{t(lang, 'career.education')}</h2>
-        <Timeline lang={lang} entries={educationEntries} />
+        <ol class="entries">
+          {education.map((e) => (
+            <li class="education-entry">
+              <div class="entry-dates">
+                <Period lang={lang} period={e.period} />
+              </div>
+              <div>
+                <h3 class="entry-title">
+                  <a href={urlFor('education', lang, slugFor(e, lang))}>{e.title[lang]}</a>
+                </h3>
+                <p class="entry-details">
+                  {[e.institution, e.location[lang], e.level?.[lang]].filter(Boolean).join(' · ')}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ol>
       </section>
     )}
   </div>
@@ -76,8 +108,52 @@ const jsonLd = graph(
   .intro {
     color: var(--color-muted);
   }
+  .summary {
+    margin: 0;
+    font-weight: 600;
+  }
   section {
     margin-top: var(--space-xl);
+  }
+  .entries {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .education-entry {
+    display: grid;
+    grid-template-columns: 10rem minmax(0, 1fr);
+    gap: var(--space-xs) var(--space-l);
+    padding: var(--space-m) 0;
+    border-top: 1px solid var(--color-border);
+  }
+  .entry-dates {
+    color: var(--color-muted);
+    font-size: var(--step--1);
+    padding-top: 0.35em;
+  }
+  .entry-title {
+    margin: 0;
+    font-size: var(--step-0);
+  }
+  .entry-title a {
+    color: var(--color-text);
+    text-decoration: underline 2px transparent;
+    text-underline-offset: 0.2em;
+  }
+  .entry-title a:hover,
+  .entry-title a:focus-visible {
+    text-decoration-color: var(--color-accent);
+  }
+  .entry-details {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: var(--step--1);
+  }
+  @media (max-width: 40rem) {
+    .education-entry {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
   section > :global(h2) {
     display: flex;
