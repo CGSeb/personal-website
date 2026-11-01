@@ -104,9 +104,17 @@ en code, avec les mêmes emplacements.
 | `npm run lhci` | après `build` : Lighthouse ≥ 90 partout, LCP < 2,5 s, CLS < 0,1, JavaScript ≤ 50 Ko sur la version écrite ; sur la scène, accessibilité, bonnes pratiques et SEO ≥ 90, poids total ≤ 3 Mo |
 | `npm run check:links` | les liens externes du contenu (avertissements seulement) |
 
-La CI GitHub (`.github/workflows/ci.yml`) lance tout cela sur chaque pull request, sauf
-Lighthouse : ses scores varient d'un passage à l'autre, il tourne donc chaque lundi sur `main`
-et à la demande (`.github/workflows/lighthouse.yml`, onglet Actions → Lighthouse → Run
+`npm run ci` lance les types, les tests unitaires, la construction, les tests de bout en bout, le
+SEO et le budget de la scène, à lancer à la main avant de fusionner : rien ne le fait
+automatiquement sur les pull requests. Un serveur de développement ouvert sur le port 4321 serait
+réutilisé par les tests et le site ne serait pas reconstruit : le fermer avant.
+
+Le même contrôle existe sur GitHub, sous Linux, à lancer à la main (onglet Actions → CI → Run
+workflow) : à faire avant une mise en ligne, car Windows ne voit pas une erreur de majuscules dans
+un chemin de fichier. Il lance aussi `check:links`.
+
+Lighthouse reste à part : ses scores varient d'un passage à l'autre, il tourne donc chaque lundi
+sur `main` et à la demande (`.github/workflows/lighthouse.yml`, onglet Actions → Lighthouse → Run
 workflow), et toujours avant une mise en ligne.
 
 Sous Windows, si Lighthouse ne parvient pas à lancer Chrome (`spawn UNKNOWN`), démarrer un

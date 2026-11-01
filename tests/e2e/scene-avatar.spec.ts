@@ -68,30 +68,31 @@ test.describe('in the room (US1)', () => {
     }
   }
 
-  test('every object still opens its panel, never the bubble (FR-004, SC-006)', async ({
-    page,
-    isMobile,
-  }) => {
-    test.setTimeout(120_000);
-    await openScene(page);
-    const items = await page.evaluate(
-      () =>
-        JSON.parse(document.getElementById('scene-manifest')!.textContent!) as {
-          key: string;
-          panelId: string;
-        }[],
-    );
-    expect(items.length).toBeGreaterThan(0);
-    for (const { key, panelId } of items) {
-      await select(page, key, isMobile);
-      // An item kept in an overflow box is reached through that box.
-      const panel = page.locator(`[id="${panelId}"], #panel-overflow`).locator('visible=true');
-      await expect(panel, key).toHaveCount(1);
-      await expect(page.locator('[data-avatar-bubble]')).toBeHidden();
-      await page.keyboard.press('Escape');
-      await expect(panel, key).toHaveCount(0);
-    }
-  });
+  test(
+    'every object still opens its panel, never the bubble (FR-004, SC-006)',
+    { tag: '@narrow' },
+    async ({ page, isMobile }) => {
+      test.setTimeout(120_000);
+      await openScene(page);
+      const items = await page.evaluate(
+        () =>
+          JSON.parse(document.getElementById('scene-manifest')!.textContent!) as {
+            key: string;
+            panelId: string;
+          }[],
+      );
+      expect(items.length).toBeGreaterThan(0);
+      for (const { key, panelId } of items) {
+        await select(page, key, isMobile);
+        // An item kept in an overflow box is reached through that box.
+        const panel = page.locator(`[id="${panelId}"], #panel-overflow`).locator('visible=true');
+        await expect(panel, key).toHaveCount(1);
+        await expect(page.locator('[data-avatar-bubble]')).toBeHidden();
+        await page.keyboard.press('Escape');
+        await expect(panel, key).toHaveCount(0);
+      }
+    },
+  );
 });
 
 const FR_WELCOME =
@@ -172,43 +173,44 @@ test.describe('the wave and the bubble (US2)', () => {
     await expect(page).toHaveURL(/#welcome$/);
   });
 
-  test('it follows the head, stays inside, and closes when the figure leaves the view (FR-015)', async ({
-    page,
-    isMobile,
-  }) => {
-    test.skip(isMobile, 'the mouse wheel and the drag need a mouse');
-    await openScene(page);
-    await select(page, AVATAR, false);
-    await expect(bubbleOf(page)).toBeVisible();
-    const scene = (await page.locator('.scene-wrap').boundingBox())!;
-    const before = (await bubbleOf(page).boundingBox())!;
+  test(
+    'it follows the head, stays inside, and closes when the figure leaves the view (FR-015)',
+    { tag: '@narrow' },
+    async ({ page, isMobile }) => {
+      test.skip(isMobile, 'the mouse wheel and the drag need a mouse');
+      await openScene(page);
+      await select(page, AVATAR, false);
+      await expect(bubbleOf(page)).toBeVisible();
+      const scene = (await page.locator('.scene-wrap').boundingBox())!;
+      const before = (await bubbleOf(page).boundingBox())!;
 
-    const { x, y } = await objectPoint(page, AVATAR);
-    await page.mouse.move(x, y);
-    await page.mouse.wheel(0, -300);
-    await expect
-      .poll(async () => {
-        const now = (await bubbleOf(page).boundingBox())!;
-        return Math.hypot(now.x - before.x, now.y - before.y);
-      })
-      .toBeGreaterThan(1);
-    expectInside((await bubbleOf(page).boundingBox())!, scene);
+      const { x, y } = await objectPoint(page, AVATAR);
+      await page.mouse.move(x, y);
+      await page.mouse.wheel(0, -300);
+      await expect
+        .poll(async () => {
+          const now = (await bubbleOf(page).boundingBox())!;
+          return Math.hypot(now.x - before.x, now.y - before.y);
+        })
+        .toBeGreaterThan(1);
+      expectInside((await bubbleOf(page).boundingBox())!, scene);
 
-    // Drag the view, zoomed in, until the figure is out of it.
-    await page.mouse.wheel(0, -2000);
-    for (let i = 0; i < 12 && (await bubbleOf(page).isVisible()); i++) {
-      const left = scene.x + scene.width * 0.1;
-      const top = scene.y + scene.height * 0.9;
-      await page.mouse.move(left, top);
-      await page.mouse.down();
-      await page.mouse.move(left + scene.width * 0.8, top - scene.height * 0.8, { steps: 4 });
-      await page.mouse.up();
-      if (await bubbleOf(page).isVisible())
-        expectInside((await bubbleOf(page).boundingBox())!, scene);
-    }
-    await expect(bubbleOf(page)).toBeHidden();
-    await expect(page).not.toHaveURL(/#/);
-  });
+      // Drag the view, zoomed in, until the figure is out of it.
+      await page.mouse.wheel(0, -2000);
+      for (let i = 0; i < 12 && (await bubbleOf(page).isVisible()); i++) {
+        const left = scene.x + scene.width * 0.1;
+        const top = scene.y + scene.height * 0.9;
+        await page.mouse.move(left, top);
+        await page.mouse.down();
+        await page.mouse.move(left + scene.width * 0.8, top - scene.height * 0.8, { steps: 4 });
+        await page.mouse.up();
+        if (await bubbleOf(page).isVisible())
+          expectInside((await bubbleOf(page).boundingBox())!, scene);
+      }
+      await expect(bubbleOf(page)).toBeHidden();
+      await expect(page).not.toHaveURL(/#/);
+    },
+  );
 
   test('its button, Escape, a click outside and the figure close it (FR-016)', async ({
     page,
