@@ -7,14 +7,11 @@
 #   blender --background --python assets-src/models/render_avatar.py
 #
 # The room is room.blend with its baked textures (public/models/room-*.webp) shown unlit, as the
-# scene does. The placed objects are left out. Its chair is the baked one, turned here to face the
-# camera as T009 will do, because the current one would hide the figure behind its back. The lights
-# on the figure copy src/scene/ambiance.ts and lighting.ts (three.js and Blender share the same
+# scene does. The placed objects are left out. The lights on the figure copy src/scene/ambiance.ts and lighting.ts (three.js and Blender share the same
 # units for a sun and, divided by π, for an ambient light).
 import math
 import os
 
-import bmesh
 import bpy
 import numpy as np
 from mathutils import Matrix, Vector
@@ -29,7 +26,6 @@ HOME = (0, 0.9, -0.4)  # `camera.home` of tower_markers
 EXTENTS = (3.25, 3.18)  # half-sizes of the room seen from the camera (renderer.ts, `extents`)
 FIT_MARGIN = 1.04
 SEAT = (-0.6, 0.525, -0.95)
-CHAIR = {"x": (-1.0, -0.2), "y": (0.02, 1.5), "z": (-1.37, -0.5)}
 HEAD_Y = 1.25  # height of the middle of the head in the room
 
 AMBIANCES = {
@@ -222,27 +218,6 @@ def render_alone():
     return paths
 
 
-def turn_chair(room):
-    """Turns the chair's parts of the joined room to face (1, 1, 1): back to the desk."""
-    bm = bmesh.new()
-    bm.from_mesh(room.data)
-    center = P(SEAT[0], 0, SEAT[2])
-
-    def inside(v):
-        x, z, y = v.co.x, -v.co.y, v.co.z
-        return (
-            CHAIR["x"][0] <= x <= CHAIR["x"][1]
-            and CHAIR["y"][0] <= y <= CHAIR["y"][1]
-            and CHAIR["z"][0] <= z <= CHAIR["z"][1]
-        )
-
-    verts = {v for f in bm.faces if all(inside(v) for v in f.verts) for v in f.verts}
-    # The floor and the rug have larger faces, so they stay out.
-    bmesh.ops.rotate(bm, verts=list(verts), cent=center, matrix=Matrix.Rotation(-3 * math.pi / 4, 3, "Z"))
-    bm.to_mesh(room.data)
-    bm.free()
-
-
 def baked_material(room, ambiance):
     mat = bpy.data.materials.new(f"baked-{ambiance}")
     mat.use_nodes = True
@@ -270,7 +245,6 @@ def world_to_pixel(cam, point, size):
 def render_room():
     bpy.ops.wm.open_mainfile(filepath=os.path.join(ROOT, "room.blend"))
     room = bpy.data.objects["room.baked"]
-    turn_chair(room)
     figure = load_avatar()
     root = bpy.data.objects.new("avatar.root", None)
     root.location = P(*SEAT)
@@ -296,6 +270,13 @@ def render_room():
                 enlarge(crop)
                 scale = size[0] / (2 * half * aspect)
                 print(f"phone: {scale:.1f} px/m, head about {0.47 * scale:.0f} px high")
+    # The chair and the desk, from several sides (quickstart scenario 3).
+    baked_material(room, "day")
+    setup_render("day", backgrounds["day"])
+    target = (SEAT[0], 0.75, SEAT[2] - 0.15)
+    for name, direction in (("top", (0, 1, 0.001)), ("east", (1, 0.1, 0)), ("south", (0, 0.1, 1))):
+        camera(direction, target, 2.0, (800, 800))
+        render(f"chair-{name}")
 
 
 def main():

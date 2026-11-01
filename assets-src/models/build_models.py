@@ -199,6 +199,7 @@ def room_markers(
     education=None,
     experience=None,
     neon_lights=(),
+    avatar_seat=None,
 ):
     """Slots and markers (same names and places as the provisional room in src/scene/room.ts,
     unless a room passes its own places and lights). A place is (x, y, z, rotation)."""
@@ -226,6 +227,8 @@ def room_markers(
         empty(f"light.lamp.{pad(i + 1)}", *place)
     for i, place in enumerate(neon_lights):
         empty(f"light.neon.{pad(i + 1)}", *place)
+    if avatar_seat:
+        empty("avatar.seat", *avatar_seat)
     empty("camera.home", 0, 0.9, -0.4)
     empty("bounds", 0, 1.5, 0, scale=(4, 1.5, 4))
 

@@ -11,8 +11,7 @@ blender --background --python assets-src/models/render_avatar.py
 ```
 
 Dans ces rendus, la pièce est `room.blend` avec ses textures précalculées, comme dans la scène. Les objets posés
-(écrans, diplômes, fiches) n'y figurent pas, et la chaise est tournée pour ce rendu seulement, comme le fera T009.
-L'ombre de la figurine n'y est pas non plus : elle viendra du précalcul.
+(écrans, diplômes, fiches) n'y figurent pas. L'ombre de la figurine vient du précalcul.
 
 ## La photo et la tête
 
@@ -37,6 +36,14 @@ Ordinateur, jour et nuit :
 ![Ordinateur, jour](room-desktop-day.png)
 
 ![Ordinateur, nuit](room-desktop-night.png)
+
+## La chaise et le bureau
+
+Dessus, depuis l'est et depuis le sud :
+
+| Dessus | Est | Sud |
+|---|---|---|
+| ![Dessus](chair-top.png) | ![Est](chair-east.png) | ![Sud](chair-south.png) |
 
 ## À la taille réelle d'un téléphone
 

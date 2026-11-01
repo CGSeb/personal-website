@@ -67,10 +67,10 @@ testing of each story.
 
 ### Room
 
-- [ ] T009 [US1] Move the chair into `_chair(b, x, z, rot)` in `assets-src/models/tower_room.py` (same parts, rotated) and call it with `rot = π/4`, front towards `+X +Z` (research § 6); check on a quick render without baking that neither the back nor the casters go through the desk, and move the chair if needed (quickstart scenario 3)
-- [ ] T010 [US1] Add the `avatar.seat` empty (position on the seat, same rotation as the chair) in `tower_markers()` of `assets-src/models/tower_room.py`, through a new `avatar_seat` argument of `room_markers()` in `assets-src/models/build_models.py`
-- [ ] T011 [US1] In `build_tower_room_baked` of `assets-src/models/tower_room.py`, add the figure to the Blender scene after `_join_room()`, placed at the seat, keep it for both bakes and remove it before `tower_markers()` and the export, so `room.glb` holds only its shadow (research § 5; check that `room.glb` has no `avatar-*` material)
-- [ ] T012 [US1] Rebuild: `build_models.py -- --only avatar --only room`, then `npm run models:optimize`; `public/models/avatar.glb`, `room.glb`, `room-day.webp`, `room-night.webp` are refreshed and `npm run build` + `npm run check:scene` pass; record the size of `avatar.glb`
+- [x] T009 [US1] Move the chair into `_chair(b, x, z, rot)` in `assets-src/models/tower_room.py` (same parts, rotated) and call it with `rot = π/4`, front towards `+X +Z` (research § 6); check on a quick render without baking that neither the back nor the casters go through the desk, and move the chair if needed (quickstart scenario 3)
+- [x] T010 [US1] Add the `avatar.seat` empty (position on the seat, same rotation as the chair) in `tower_markers()` of `assets-src/models/tower_room.py`, through a new `avatar_seat` argument of `room_markers()` in `assets-src/models/build_models.py`
+- [x] T011 [US1] In `build_tower_room_baked` of `assets-src/models/tower_room.py`, add the figure to the Blender scene after `_join_room()`, placed at the seat, keep it for both bakes and remove it before `tower_markers()` and the export, so `room.glb` holds only its shadow (research § 5; check that `room.glb` has no `avatar-*` material)
+- [x] T012 [US1] Rebuild: `build_models.py -- --only avatar --only room`, then `npm run models:optimize`; `public/models/avatar.glb`, `room.glb`, `room-day.webp`, `room-night.webp` are refreshed and `npm run build` + `npm run check:scene` pass; record the size of `avatar.glb`
 
 ### Scene
 

@@ -85,3 +85,22 @@ npm run lhci
 ## Résultats
 
 À remplir pendant la réalisation.
+
+**Scénario 3 (01/11/2026)** : chaise tournée de π/4, à sa place d'origine, contrôlée de dessus, de l'est et du sud
+([captures](captures/README.md)). Ni le dossier, ni les roulettes, ni la figurine ne traversent le bureau. Le haut du dossier
+passe à environ 1 cm du bord du bureau, au-dessus de son plateau.
+
+**Précalcul avec la figurine (T012, 01/11/2026)** : `room.glb` ne contient que le matériau `baked` et le marqueur
+`avatar.seat`.
+
+| Fichier (`public/models/`) | Poids |
+|---|---|
+| `avatar.glb` | 40 Ko (brut : 200 Ko) |
+| `room.glb` | 525 Ko |
+| `room-day.webp` | 254 Ko |
+| `room-night.webp` | 366 Ko |
+| Total de la scène avant interaction | 1,42 Mo / 3 Mo |
+
+Regardée sans la figurine, la texture montre son ombre sur l'assise et, sous les chaussures, deux rectangles très sombres sur
+le tapis. La figurine les recouvre. Si son chargement échoue, ils restent visibles, plus nettement que ce que prévoyait
+research § 5 : à revoir au scénario 18.

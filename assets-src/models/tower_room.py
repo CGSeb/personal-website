@@ -17,6 +17,7 @@ TOWER_H = 2.1  # half-size of the room (4.2 x 4.2 m)
 TOWER_WALL = 2.8  # wall height
 TOWER_BAKE_SIZE = 2048
 TOWER_BAKE_SAMPLES = 384
+TOWER_SEAT = (-0.6, 0.525, -0.95, math.pi / 4)  # top of the chair's seat, front towards +X +Z
 
 
 # ---------------------------------------------------------------------------------------------
@@ -191,6 +192,33 @@ def _books(b, x, y, z0, z1, axis="z", depth=0.18):
         i += 1
 
 
+def _chair(b, x, z, rot):
+    """The chair at (x, z), its front towards +Z when rot is 0 and turned by rot about the up axis."""
+
+    def at(side, front):
+        return (
+            x + side * math.cos(rot) + front * math.sin(rot),
+            z - side * math.sin(rot) + front * math.cos(rot),
+        )
+
+    px, pz = at(0, 0)
+    b.box("fabric", 0.5, 0.07, 0.48, px, 0.49, pz, rot=rot)
+    px, pz = at(0, -0.27)
+    b.box("black", 0.48, 0.62, 0.05, px, 0.95, pz, rot=rot, tilt=math.radians(-10))
+    px, pz = at(0, -0.33)
+    b.box("black", 0.3, 0.14, 0.06, px, 1.36, pz, rot=rot, tilt=math.radians(-10))
+    for side in (-1, 1):
+        px, pz = at(side * 0.29, 0.02)
+        b.box("black", 0.05, 0.035, 0.3, px, 0.69, pz, rot=rot)
+        px, pz = at(side * 0.29, -0.08)
+        b.box("metal", 0.035, 0.17, 0.035, px, 0.6, pz, rot=rot)
+    b.cylinder("steel", 0.025, 0.36, x, 0.25, z, 12)
+    for k in range(5):
+        a = k * 2 * math.pi / 5 + 0.3 + rot
+        b.box("metal", 0.3, 0.03, 0.045, x + math.cos(a) * 0.15, 0.06, z - math.sin(a) * 0.15, rot=a)
+        b.sphere("black", 0.03, x + math.cos(a) * 0.3, 0.03, z - math.sin(a) * 0.3)
+
+
 def build_tower_geometry():
     H, WALL = TOWER_H, TOWER_WALL
     b = Builder(collections.defaultdict(lambda: None))  # materials exist already
@@ -288,19 +316,8 @@ def build_tower_geometry():
     b.cylinder("ceramic", 0.04, 0.09, 0.1, top + 0.045, nz1 - 0.12, 16)
     _plant(b, -H + 0.2, top, nz0 + 0.18, 0.7, pot="pot-dark")
 
-    # Ergonomic chair at the desk, back to the camera.
-    cx, cz = -0.6, -0.95
-    b.box("fabric", 0.5, 0.07, 0.48, cx, 0.49, cz)
-    b.box("black", 0.48, 0.62, 0.05, cx, 0.95, cz + 0.27, tilt=math.radians(-10))
-    b.box("black", 0.3, 0.14, 0.06, cx, 1.36, cz + 0.33, tilt=math.radians(-10))
-    for side in (-1, 1):
-        b.box("black", 0.05, 0.035, 0.3, cx + side * 0.29, 0.69, cz - 0.02)
-        b.box("metal", 0.035, 0.17, 0.035, cx + side * 0.29, 0.6, cz + 0.08)
-    b.cylinder("steel", 0.025, 0.36, cx, 0.25, cz, 12)
-    for k in range(5):
-        a = k * 2 * math.pi / 5 + 0.3
-        b.box("metal", 0.3, 0.03, 0.045, cx + math.cos(a) * 0.15, 0.06, cz - math.sin(a) * 0.15, rot=a)
-        b.sphere("black", 0.03, cx + math.cos(a) * 0.3, 0.03, cz - math.sin(a) * 0.3)
+    # Ergonomic chair turned away from the desk, towards the camera: the figure sits on it.
+    _chair(b, TOWER_SEAT[0], TOWER_SEAT[2], TOWER_SEAT[3])
 
     # Floating shelf on the slats, with plants and books.
     b.box("walnut", 1.4, 0.035, 0.24, -1.2, 2.0, -H + 0.16)
@@ -390,6 +407,7 @@ def tower_markers(lights):
             (1.82 - i * 0.248, 2.15 if i % 2 == 0 else 1.55, -H + 0.046, 0.0) for i in range(6)
         ],
         neon_lights=(),
+        avatar_seat=TOWER_SEAT,
     )
     # The camera frames the smaller room (Blender axes: x, depth, up).
     bpy.data.objects["bounds"].scale = (H, H, 1.4)
@@ -544,6 +562,20 @@ def _bake(room, ambiance, out, name):
     return path
 
 
+def _place_avatar():
+    """Adds the figure on the chair and returns its objects."""
+    before = set(bpy.data.objects)
+    avatar_materials()
+    build_tower_avatar()
+    x, y, z, rot = TOWER_SEAT
+    root = empty("avatar.root", x, y, z, rot)
+    figure = [o for o in bpy.data.objects if o not in before]
+    for o in figure:
+        if o.parent is None and o is not root:
+            o.parent = root
+    return figure
+
+
 def build_tower_room_baked(out=None, bake=True, name="room"):
     """Builds, bakes (day and night) and exports the room as <name>.glb plus <name>-day.png and
     <name>-night.png in `out`."""
@@ -552,6 +584,8 @@ def build_tower_room_baked(out=None, bake=True, name="room"):
     tower_materials()
     lights = build_tower_geometry()
     room = _join_room()
+    # The figure is there for both bakes, for its shadow, and is not exported (research § 5).
+    figure = _place_avatar()
     paths = []
     if bake:
         for ambiance in ("day", "night"):
@@ -559,6 +593,10 @@ def build_tower_room_baked(out=None, bake=True, name="room"):
             paths.append(_bake(room, ambiance, out, name))
     for o in [o for o in bpy.data.objects if o.type == "LIGHT"]:
         bpy.data.objects.remove(o)
+    for o in figure:
+        bpy.data.objects.remove(o)
+    for m in [m for m in bpy.data.materials if m.name.startswith("avatar-")]:
+        bpy.data.materials.remove(m)
     # The export carries one plain material: the scene code replaces it with the baked maps.
     baked = bpy.data.materials.new("baked")
     room.data.materials.clear()
@@ -595,7 +633,11 @@ def tower_object_materials():
     mat_plain("screen", "#e8eaf6", rough=0.4)
     mat_plain("bezel", "#16171a", rough=0.5)
     mat_plain("stand", "#5a5d63", rough=0.35, metal=1.0)
-    # The figure (contracts/avatar.md): plain colours from the profile photo.
+    avatar_materials()
+
+
+def avatar_materials():
+    """The figure (contracts/avatar.md): plain colours from the profile photo."""
     mat_plain("avatar-skin", "#eebf9f", rough=0.7)
     mat_plain("avatar-hair", "#4b3120", rough=0.8)
     mat_plain("avatar-beard", "#5e3a22", rough=0.9)
@@ -872,13 +914,13 @@ def build_tower_avatar():
     b.blob("avatar-shirt", 0.222, 0.07, 0.135, 0, 0.415, 0)
     b.ellipse("avatar-shirt", 0.078, 0.07, 0.03, 0, 0.49, 0, segments=10)  # crew neck
     b.cylinder("avatar-skin", 0.062, 0.1, 0, 0.54, 0, 8)
-    # Hips and thighs on the seat, shins down to the floor (the seat is 0.525 above it), shoes.
+    # Hips and thighs on the seat, shins down to the rug (0.505 below the seat), shoes.
     b.box("avatar-trousers", 0.33, 0.13, 0.24, 0, 0.065, 0)
     for side in (-1, 1):
         # Knees apart, so that the seated pose reads from above.
         b.box("avatar-trousers", 0.14, 0.13, 0.42, side * 0.125, 0.065, 0.14, rot=side * math.radians(10))
         b.box("avatar-trousers", 0.115, 0.46, 0.125, side * 0.16, -0.2, 0.29)
-        b.box("avatar-trousers", 0.12, 0.065, 0.24, side * 0.165, -0.49, 0.34)
+        b.box("avatar-trousers", 0.12, 0.065, 0.24, side * 0.165, -0.47, 0.34)
     # Left arm: elbow by the armrest, the hand on the thigh.
     shoulder = (-AVATAR_SHOULDER[0], *AVATAR_SHOULDER[1:])
     elbow = (0.285, 0.23, -0.03)
