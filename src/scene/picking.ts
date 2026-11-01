@@ -19,7 +19,6 @@ export function attachPicking(
 ): () => void {
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
-  const hits = objects.map((o) => o.hit);
   let down: { x: number; y: number; id: number } | null = null;
   let hovered: string | null = null;
 
@@ -30,7 +29,13 @@ export function attachPicking(
       -((event.clientY - rect.top) / rect.height) * 2 + 1,
     );
     raycaster.setFromCamera(pointer, camera);
-    const hit = raycaster.intersectObjects(hits, false)[0];
+    // Read at each pick: the figure joins `objects` when its file arrives.
+    const hits = raycaster.intersectObjects(
+      objects.map((o) => o.hit),
+      false,
+    );
+    // An object that yields only gets the ray when no other object is on it, whatever the distance.
+    const hit = hits.find((h) => !h.object.userData.yields) ?? hits[0];
     return (hit?.object.userData.key as string | undefined) ?? null;
   };
 

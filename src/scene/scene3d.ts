@@ -3,6 +3,7 @@
 // (spec 003). Imported dynamically by boot.ts.
 import * as THREE from 'three';
 import { ambianceFor, blend, settingsFor, type Ambiance, type AmbianceSettings } from './ambiance';
+import { AVATAR_KEY, loadAvatar, type Avatar } from './avatar';
 import type { PageData } from './labels';
 import { layout } from './layout';
 import { placeObjects, type PlacedObject } from './objects';
@@ -136,6 +137,12 @@ export async function createScene(
   const placements = layout(data.items, room.slots, (id) =>
     data.models.includes(`featured/${id}.glb`),
   );
+  // The figure comes on its own: the other objects and the scene never wait for it (FR-022).
+  const avatarLoad = loadAvatar(room, data.models, {
+    reducedMotion,
+    requestRender: stage.requestRender,
+  });
+  let avatar: Avatar | null = null;
   const objects = await placeObjects(
     placements,
     room.slots,
@@ -191,9 +198,11 @@ export async function createScene(
         hovered = key;
         refreshStates();
       }
-      const label = key
-        ? (panels.item(key)?.label ?? data.labels.overflow[key.split('/')[1] as 'project'])
-        : '';
+      const label = !key
+        ? ''
+        : key === AVATAR_KEY
+          ? data.labels.avatar.name
+          : (panels.item(key)?.label ?? data.labels.overflow[key.split('/')[1] as 'project']);
       tooltip.hidden = !key;
       if (key) {
         tooltip.textContent = label;
@@ -202,6 +211,7 @@ export async function createScene(
       }
     },
     onSelect(key) {
+      if (key === AVATAR_KEY) return;
       if (key) panels.open(key, screenPosition(key), stage.renderer.domElement);
       else panels.close();
     },
@@ -249,6 +259,15 @@ export async function createScene(
   stage.requestRender();
 
   panels.openFromHash(screenPosition);
+  void avatarLoad.then((figure) => {
+    if (!figure) return;
+    avatar = figure;
+    stage.scene.add(figure.root, figure.hit);
+    lighting.adopt(figure.root);
+    objects.push(figure);
+    byKey.set(figure.key, figure);
+    stage.requestRender();
+  });
   stage.onRender((requestedAt) => {
     const action = governor.frame(performance.now(), requestedAt);
     if (action.type === 'down') {
@@ -281,6 +300,6 @@ export async function createScene(
       });
       return names;
     },
-    avatar: () => ({ shown: false, waving: false }),
+    avatar: () => ({ shown: avatar !== null, waving: false }),
   };
 }

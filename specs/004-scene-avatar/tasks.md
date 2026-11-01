@@ -74,11 +74,11 @@ testing of each story.
 
 ### Scene
 
-- [ ] T013 [P] [US1] Read `avatar.seat` in `describe()` of `src/scene/room.ts` into `Room.avatarSeat: THREE.Object3D | null`
-- [ ] T014 [US1] Create `src/scene/avatar.ts` with `AVATAR_KEY` and `loadAvatar(room, models, options)` per contracts/avatar.md: null when the file is not in `models`, the seat is missing or the load fails; places the root at the seat; uses `withHitShape`; `head()` gives the world position of `avatar.head`. `wave()` and `waving()` are stubs until T021
-- [ ] T015 [US1] In `src/scene/picking.ts`, let every other object win over the figure when a ray hits both, whatever the distance (`hit.userData.yields`, set by `avatar.ts`; contracts/avatar.md § Sélection)
-- [ ] T016 [US1] In `createScene` of `src/scene/scene3d.ts`: load the figure without delaying the other objects, `stage.scene.add` root and hit, `lighting.adopt`, add it to `objects` and `byKey` so highlight, `screenPosition('avatar')` and picking work; `onHover` shows `labels.avatar.name` in the tooltip; `onSelect('avatar')` must not reach `panels.open`; `avatar().shown` in the handle
-- [ ] T017 [US1] Create `tests/e2e/scene-avatar.spec.ts` (helpers as in `tests/e2e/scene.spec.ts`): figure shown by day and by night, in portrait and landscape, and its position inside the view (quickstart 4); every existing object opens its panel when selected at its screen position, including on the mobile projects (quickstart 5, SC-006)
+- [x] T013 [P] [US1] Read `avatar.seat` in `describe()` of `src/scene/room.ts` into `Room.avatarSeat: THREE.Object3D | null`
+- [x] T014 [US1] Create `src/scene/avatar.ts` with `AVATAR_KEY` and `loadAvatar(room, models, options)` per contracts/avatar.md: null when the file is not in `models`, the seat is missing or the load fails; places the root at the seat; uses `withHitShape`; `head()` gives the world position of `avatar.head`. `wave()` and `waving()` are stubs until T021
+- [x] T015 [US1] In `src/scene/picking.ts`, let every other object win over the figure when a ray hits both, whatever the distance (`hit.userData.yields`, set by `avatar.ts`; contracts/avatar.md § Sélection)
+- [x] T016 [US1] In `createScene` of `src/scene/scene3d.ts`: load the figure without delaying the other objects, `stage.scene.add` root and hit, `lighting.adopt`, add it to `objects` and `byKey` so highlight, `screenPosition('avatar')` and picking work; `onHover` shows `labels.avatar.name` in the tooltip; `onSelect('avatar')` must not reach `panels.open`; `avatar().shown` in the handle
+- [x] T017 [US1] Create `tests/e2e/scene-avatar.spec.ts` (helpers as in `tests/e2e/scene.spec.ts`): figure shown by day and by night, in portrait and landscape, and its position inside the view (quickstart 4); every existing object opens its panel when selected at its screen position, including on the mobile projects (quickstart 5, SC-006)
 
 **Checkpoint**: US1 stands alone: the figure is there and nothing else has changed
 
