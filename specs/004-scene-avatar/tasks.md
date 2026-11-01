@@ -74,11 +74,11 @@ testing of each story.
 
 ### Scene
 
-- [ ] T013 [P] [US1] Read `avatar.seat` in `describe()` of `src/scene/room.ts` into `Room.avatarSeat: THREE.Object3D | null`
-- [ ] T014 [US1] Create `src/scene/avatar.ts` with `AVATAR_KEY` and `loadAvatar(room, models, options)` per contracts/avatar.md: null when the file is not in `models`, the seat is missing or the load fails; places the root at the seat; uses `withHitShape`; `head()` gives the world position of `avatar.head`. `wave()` and `waving()` are stubs until T021
-- [ ] T015 [US1] In `src/scene/picking.ts`, let every other object win over the figure when a ray hits both, whatever the distance (`hit.userData.yields`, set by `avatar.ts`; contracts/avatar.md § Sélection)
-- [ ] T016 [US1] In `createScene` of `src/scene/scene3d.ts`: load the figure without delaying the other objects, `stage.scene.add` root and hit, `lighting.adopt`, add it to `objects` and `byKey` so highlight, `screenPosition('avatar')` and picking work; `onHover` shows `labels.avatar.name` in the tooltip; `onSelect('avatar')` must not reach `panels.open`; `avatar().shown` in the handle
-- [ ] T017 [US1] Create `tests/e2e/scene-avatar.spec.ts` (helpers as in `tests/e2e/scene.spec.ts`): figure shown by day and by night, in portrait and landscape, and its position inside the view (quickstart 4); every existing object opens its panel when selected at its screen position, including on the mobile projects (quickstart 5, SC-006)
+- [x] T013 [P] [US1] Read `avatar.seat` in `describe()` of `src/scene/room.ts` into `Room.avatarSeat: THREE.Object3D | null`
+- [x] T014 [US1] Create `src/scene/avatar.ts` with `AVATAR_KEY` and `loadAvatar(room, models, options)` per contracts/avatar.md: null when the file is not in `models`, the seat is missing or the load fails; places the root at the seat; uses `withHitShape`; `head()` gives the world position of `avatar.head`. `wave()` and `waving()` are stubs until T021
+- [x] T015 [US1] In `src/scene/picking.ts`, let every other object win over the figure when a ray hits both, whatever the distance (`hit.userData.yields`, set by `avatar.ts`; contracts/avatar.md § Sélection)
+- [x] T016 [US1] In `createScene` of `src/scene/scene3d.ts`: load the figure without delaying the other objects, `stage.scene.add` root and hit, `lighting.adopt`, add it to `objects` and `byKey` so highlight, `screenPosition('avatar')` and picking work; `onHover` shows `labels.avatar.name` in the tooltip; `onSelect('avatar')` must not reach `panels.open`; `avatar().shown` in the handle
+- [x] T017 [US1] Create `tests/e2e/scene-avatar.spec.ts` (helpers as in `tests/e2e/scene.spec.ts`): figure shown by day and by night, in portrait and landscape, and its position inside the view (quickstart 4); every existing object opens its panel when selected at its screen position, including on the mobile projects (quickstart 5, SC-006)
 
 **Checkpoint**: US1 stands alone: the figure is there and nothing else has changed
 
@@ -93,13 +93,13 @@ testing of each story.
 - [x] T018 [P] [US2] Create `tests/unit/scene-wave.test.ts`: `waveAngle` is 0 at 0 and from `WAVE_MS` on, `WAVE_MS ≤ 2000`, the arm goes up in between
 - [x] T019 [P] [US2] Create `tests/unit/scene-bubble.test.ts` for `bubblePosition` (above and centred on the anchor; kept inside the scene at each edge and at 320 px) and extend `tests/unit/scene-hash.test.ts` for `welcomeHash`, `isWelcomeHash` and `translateHash` on `#bienvenue` / `#welcome`, with `parseHash` still null for them
 - [x] T020 [P] [US2] Create `src/scene/wave.ts` (`WAVE_MS`, `waveAngle`: up, two beats, down) and add `welcomeHash` and `isWelcomeHash` to `src/scene/hash.ts`, with the `translateHash` case
-- [ ] T021 [US2] Implement `wave()` and `waving()` in `src/scene/avatar.ts`: a `requestAnimationFrame` loop that lives only during the gesture, as the day / night fade in `scene3d.ts`, rotates `avatar.arm` with `waveAngle`, calls `requestRender` and ends at exactly the rest pose; ignored while running and when `reducedMotion` is true (data-model.md § États du geste)
-- [ ] T022 [US2] Add the bubble element to `src/views/SceneView.astro` per contracts/avatar.md (`role="dialog"`, `aria-labelledby`, `tabindex="-1"`, `hidden`, text, close button with `scene.close`, **no link**) and its styles, with a tail towards the head, the scene's colour roles, AA contrast in both themes, text wrapping at 320 px
-- [ ] T023 [US2] Create `src/scene/bubble.ts`: class `Bubble` and pure `bubblePosition` per contracts/avatar.md. Open: show, focus (`preventScroll`), set the fragment with `history.replaceState`. Close by its button, Escape and a click outside; `.language-switcher`, `[data-theme-toggle]`, `.scene-list`, `[data-recenter]` and the canvas are excluded from "outside", as for the panels. On close: fragment removed, focus back to the opener
-- [ ] T024 [US2] Make `syncLanguageSwitcher` public in `src/scene/panels.ts`, and call it from `Bubble` on open and on close, so the language link carries the translated fragment
-- [ ] T025 [US2] Wire it all in `src/scene/scene3d.ts`: hover entering the figure → `wave()`; `onSelect('avatar')` → `wave()` and `bubble.toggle(canvas)`; any other selection or empty click closes the bubble; opening the bubble calls `panels.close()`, and `panels.events.onChange` closes it when a panel opens; `refreshStates` shows the figure as `selected` while open; `stage.onRender` calls `bubble.reposition(toScreen(avatar.head()))` while open; on the controls' `change` event, close it if the figure left the view (`isVisible`; research § 8); `avatar().waving` in the handle
-- [ ] T026 [US2] Open the bubble without a wave when the page arrives with the welcome fragment, once the figure is loaded (in `src/scene/scene3d.ts`, after `panels.openFromHash`); without a figure the fragment is ignored
-- [ ] T027 [US2] Extend `tests/e2e/scene-avatar.spec.ts`: quickstart scenarios 6, 7, 9, 10, 11, 12, 13, 14 (hover waves with no bubble; one wave only when hovered repeatedly; click and tap: exact text, one button, zero `a` in the bubble; follows the view, closes off-screen; every way of closing; one of bubble or panel; language keeps it open, without a wave; theme keeps it open)
+- [x] T021 [US2] Implement `wave()` and `waving()` in `src/scene/avatar.ts`: a `requestAnimationFrame` loop that lives only during the gesture, as the day / night fade in `scene3d.ts`, rotates `avatar.arm` with `waveAngle`, calls `requestRender` and ends at exactly the rest pose; ignored while running and when `reducedMotion` is true (data-model.md § États du geste)
+- [x] T022 [US2] Add the bubble element to `src/views/SceneView.astro` per contracts/avatar.md (`role="dialog"`, `aria-labelledby`, `tabindex="-1"`, `hidden`, text, close button with `scene.close`, **no link**) and its styles, with a tail towards the head, the scene's colour roles, AA contrast in both themes, text wrapping at 320 px
+- [x] T023 [US2] Create `src/scene/bubble.ts`: class `Bubble` and pure `bubblePosition` per contracts/avatar.md. Open: show, focus (`preventScroll`), set the fragment with `history.replaceState`. Close by its button, Escape and a click outside; `.language-switcher`, `[data-theme-toggle]`, `.scene-list`, `[data-recenter]` and the canvas are excluded from "outside", as for the panels. On close: fragment removed, focus back to the opener
+- [x] T024 [US2] Make `syncLanguageSwitcher` public in `src/scene/panels.ts`, and call it from `Bubble` on open and on close, so the language link carries the translated fragment
+- [x] T025 [US2] Wire it all in `src/scene/scene3d.ts`: hover entering the figure → `wave()`; `onSelect('avatar')` → `wave()` and `bubble.toggle(canvas)`; any other selection or empty click closes the bubble; opening the bubble calls `panels.close()`, and `panels.events.onChange` closes it when a panel opens; `refreshStates` shows the figure as `selected` while open; `stage.onRender` calls `bubble.reposition(toScreen(avatar.head()))` while open; on the controls' `change` event, close it if the figure left the view (`isVisible`; research § 8); `avatar().waving` in the handle
+- [x] T026 [US2] Open the bubble without a wave when the page arrives with the welcome fragment, once the figure is loaded (in `src/scene/scene3d.ts`, after `panels.openFromHash`); without a figure the fragment is ignored
+- [x] T027 [US2] Extend `tests/e2e/scene-avatar.spec.ts`: quickstart scenarios 6, 7, 9, 10, 11, 12, 13, 14 (hover waves with no bubble; one wave only when hovered repeatedly; click and tap: exact text, one button, zero `a` in the bubble; follows the view, closes off-screen; every way of closing; one of bubble or panel; language keeps it open, without a wave; theme keeps it open)
 
 **Checkpoint**: US1 and US2 work: the figure greets and welcomes
 
@@ -111,10 +111,10 @@ testing of each story.
 
 **Independent Test**: walk through the scene with the keyboard and a screen reader, then with reduced motion on, then without WebGL and without JavaScript
 
-- [ ] T028 [US3] Add to the end of `src/components/scene/SceneItemList.astro` the hidden section `data-avatar-entry` of contracts/avatar.md (`scene.group.welcome`, button with `scene.avatar.name`), and its style if the list's does not already cover it
-- [ ] T029 [US3] In `src/scene/scene3d.ts`, when the figure is loaded: reveal the section, have its button call `wave()` and `bubble.toggle(button)` then bring the figure into view, and highlight the figure on focus and hover as `Panels.enhanceList` does for the other entries; keep the section hidden when `loadAvatar` returns null
-- [ ] T030 [US3] Extend `tests/e2e/scene-avatar.spec.ts`: quickstart scenarios 15, 16 (list entry at the keyboard, focus into the bubble, Escape returns it to the entry; with `reducedMotion: 'reduce'`, `waving` stays false and selection opens the bubble)
-- [ ] T031 [P] [US3] Extend `tests/e2e/scene-nojs.spec.ts` and `tests/e2e/scene-nowebgl.spec.ts`: the entry and the bubble do not show (quickstart 17), and the welcome fragment is harmless there
+- [x] T028 [US3] Add to the end of `src/components/scene/SceneItemList.astro` the hidden section `data-avatar-entry` of contracts/avatar.md (`scene.group.welcome`, button with `scene.avatar.name`), and its style if the list's does not already cover it
+- [x] T029 [US3] In `src/scene/scene3d.ts`, when the figure is loaded: reveal the section, have its button call `wave()` and `bubble.toggle(button)` then bring the figure into view, and highlight the figure on focus and hover as `Panels.enhanceList` does for the other entries; keep the section hidden when `loadAvatar` returns null
+- [x] T030 [US3] Extend `tests/e2e/scene-avatar.spec.ts`: quickstart scenarios 15, 16 (list entry at the keyboard, focus into the bubble, Escape returns it to the entry; with `reducedMotion: 'reduce'`, `waving` stays false and selection opens the bubble)
+- [x] T031 [P] [US3] Extend `tests/e2e/scene-nojs.spec.ts` and `tests/e2e/scene-nowebgl.spec.ts`: the entry and the bubble do not show (quickstart 17), and the welcome fragment is harmless there
 
 **Checkpoint**: the figure is reachable by everyone, and nothing depends on it
 
@@ -126,9 +126,9 @@ testing of each story.
 
 **Independent Test**: run the existing budget, frame-rate and Lighthouse checks, and measure that no frame is drawn at rest or after a wave
 
-- [ ] T032 [US4] Extend `tests/e2e/scene-avatar.spec.ts`: `__scene.frames()` stays still at rest and within a second after a wave (quickstart 8, SC-005); with `avatar.glb` blocked by `page.route`, the scene stays usable, with no list entry and no blocking error (quickstart 18); 320 px in both languages, the bubble fully inside (quickstart 19); time from selection to visible bubble under 100 ms (SC-007)
-- [ ] T033 [P] [US4] Add a wave during the measurement in `tests/e2e/scene-perf.spec.ts`, and the figure's requests to the allowed set of `tests/e2e/privacy.spec.ts` if the test lists them (quickstart 20)
-- [ ] T034 [US4] Run `npm test`, `npm run build`, `npm run check:seo`, `npm run check:scene`, `npm run test:e2e`, `npm run lhci`; Lighthouse ≥ 90 in every category on every URL (target 100); fix any regression; if the total goes over 3 MB, stop and report the sizes to Sébastien (SC-003)
+- [x] T032 [US4] Extend `tests/e2e/scene-avatar.spec.ts`: `__scene.frames()` stays still at rest and within a second after a wave (quickstart 8, SC-005); with `avatar.glb` blocked by `page.route`, the scene stays usable, with no list entry and no blocking error (quickstart 18); 320 px in both languages, the bubble fully inside (quickstart 19); time from selection to visible bubble under 100 ms (SC-007)
+- [x] T033 [P] [US4] Add a wave during the measurement in `tests/e2e/scene-perf.spec.ts`, and the figure's requests to the allowed set of `tests/e2e/privacy.spec.ts` if the test lists them (quickstart 20)
+- [x] T034 [US4] Run `npm test`, `npm run build`, `npm run check:seo`, `npm run check:scene`, `npm run test:e2e`, `npm run lhci`; Lighthouse ≥ 90 in every category on every URL (target 100); fix any regression; if the total goes over 3 MB, stop and report the sizes to Sébastien (SC-003)
 
 **Checkpoint**: all automated checks pass
 
@@ -136,8 +136,8 @@ testing of each story.
 
 ## Phase 7: Polish & Cross-Cutting Concerns
 
-- [ ] T035 [P] Update `README.md` and `assets-src/models/README.md` (the figure, the bake with the figure present, `render_avatar.py`, a pose change means a new bake) and link [contracts/avatar.md](contracts/avatar.md) from `specs/002-isometric-3d-scene/contracts/scene-model.md`
-- [ ] T036 Record the results of quickstart B in `specs/004-scene-avatar/quickstart.md`, with the measured size of `avatar.glb`
+- [x] T035 [P] Update `README.md` and `assets-src/models/README.md` (the figure, the bake with the figure present, `render_avatar.py`, a pose change means a new bake) and link [contracts/avatar.md](contracts/avatar.md) from `specs/002-isometric-3d-scene/contracts/scene-model.md`
+- [x] T036 Record the results of quickstart B in `specs/004-scene-avatar/quickstart.md`, with the measured size of `avatar.glb`
 - [ ] T037 Manual checks (quickstart C, scenarios 23–25), by Sébastien: real Android phone by day and by night, NVDA in both languages, overall look of the figure and its shadow; adjust the light or the model if needed, and record the results
 
 ---

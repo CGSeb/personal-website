@@ -183,8 +183,8 @@ et mesurer que rien n'est calculé au repos ni après la fin d'un salut.
 **Bulle**
 
 - **FR-012**: La bulle MUST contenir seulement un mot de bienvenue qui invite à explorer la pièce :
-  « Bonjour, c'est Sébastien, bienvenue sur mon portfolio 3D. Navigue dans la pièce pour la
-  découvrir. » / « Hi, it's Sébastien, welcome to my 3D portfolio. Move around the room to
+  « Bonjour, c’est Sébastien, bienvenue sur mon portfolio 3D. Navigue dans la pièce pour la
+  découvrir. » / « Hi, it’s Sébastien, welcome to my 3D portfolio. Move around the room to
   discover it. »
 - **FR-013**: La bulle MUST ne contenir aucun lien ; sa seule action est un bouton de fermeture avec
   un nom accessible.

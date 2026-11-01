@@ -65,6 +65,13 @@ for (const colorScheme of ['light', 'dark'] as const) {
     const cdp = await page.context().newCDPSession(page);
     await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
 
+    // The figure waves during the measure (spec 004, SC-004).
+    await page.waitForFunction(() => window.__scene!.avatar().shown, null, { timeout: 30_000 });
+    const figure = (await page.evaluate(() => window.__scene!.screenPosition('avatar')))!;
+    const box = (await page.locator('#scene').boundingBox())!;
+    await page.mouse.move(box.x + figure.x, box.y + figure.y);
+    await expect.poll(() => page.evaluate(() => window.__scene!.avatar().waving)).toBe(true);
+
     const startFrames = await page.evaluate(() => window.__scene!.frames());
     const start = Date.now();
     await keepMoving(page, SECONDS * 1000);

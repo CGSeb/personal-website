@@ -40,6 +40,7 @@ Optimisation : `gltfpack -cc -tc` (Meshopt) ou équivalent ; textures en WebP, 1
 | `featured.<id-projet>` | place réservée d'un projet mis en avant | `<id-projet>` = `id` du projet dans `content/` |
 | `camera.home` | cadrage initial (position et cible = l'objet vide et son axe -Z) | un seul |
 | `bounds` | boîte englobante des déplacements de caméra (objet vide mis à l'échelle) | un seul |
+| `avatar.seat` | place de la figurine, sur l'assise de la chaise | voir [`specs/004-scene-avatar/contracts/avatar.md`](../../004-scene-avatar/contracts/avatar.md) |
 
 - L'origine de l'objet vide est le point d'ancrage ; son axe **+Z** pointe vers l'avant de
   l'objet posé (vers la pièce).
