@@ -133,18 +133,37 @@ test.describe('the wave and the bubble (US2)', () => {
     test.skip(isMobile, 'no hover on touch screens');
     await openScene(page);
     const { x, y } = await objectPoint(page, AVATAR);
-    const start = Date.now();
+    // Timed in the page: round trips with a busy test machine say nothing about the gesture.
+    const gestures = page.evaluate(
+      () =>
+        new Promise<number[]>((resolve) => {
+          const done: number[] = [];
+          const begin = performance.now();
+          let since: number | null = null;
+          const step = (now: number) => {
+            const on = window.__scene!.avatar().waving;
+            if (on && since === null) since = now;
+            if (!on && since !== null) {
+              done.push(now - since);
+              since = null;
+            }
+            if (now - begin < 4000) requestAnimationFrame(step);
+            else resolve(done);
+          };
+          requestAnimationFrame(step);
+        }),
+    );
     await page.mouse.move(x, y);
     await expect.poll(() => waving(page)).toBe(true);
     await expect(page.locator('.scene-tooltip')).toHaveText('Sébastien');
 
-    // Leaving and coming back during the gesture neither restarts it nor stacks another.
+    // Leaving and coming back in the middle of the gesture neither restarts nor stacks one.
+    await page.waitForTimeout(800);
     await page.mouse.move(2, 2);
     await page.mouse.move(x, y);
-    await expect.poll(() => waving(page), { timeout: 4000 }).toBe(false);
-    expect(Date.now() - start).toBeLessThan(2600); // WAVE_MS is 1.6 s; round trips included
-    await page.waitForTimeout(200);
-    expect(await waving(page)).toBe(false);
+    const measured = await gestures;
+    expect(measured).toHaveLength(1);
+    expect(measured[0]!).toBeLessThan(2200); // a restart would last about 2.4 s
     await expect(bubbleOf(page)).toBeHidden();
   });
 
