@@ -1,0 +1,17 @@
+node_modules
+dist
+.astro
+.git
+.github
+.claude
+.specify
+.lighthouseci
+test-results
+playwright-report
+specs
+tests
+assets-src
+deploy/server
+deploy/docker-compose.yml
+*.log
+.env*

@@ -1,0 +1,29 @@
+name: Publish image
+
+# Run by hand (Actions → Publish image → Run workflow): builds the site image and pushes it to GHCR.
+# The server then pulls it.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/cgseb/personal-website:latest
+            ghcr.io/cgseb/personal-website:${{ github.sha }}

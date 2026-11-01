@@ -1,0 +1,26 @@
+# The site, in its own container. Run on the server: docker compose pull && docker compose up -d
+# The "portfolio-web" network is shared with the server's Caddy (see deploy/server/).
+name: portfolio
+
+services:
+  site:
+    image: ghcr.io/cgseb/personal-website:${PORTFOLIO_TAG:-latest}
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs: [/tmp]
+    networks: [web]
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/fr/"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+networks:
+  web:
+    name: portfolio-web
+    external: true

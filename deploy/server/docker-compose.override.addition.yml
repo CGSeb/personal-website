@@ -1,0 +1,14 @@
+# TO MERGE into the server's docker-compose.override.yml (a server-only file, never overwritten
+# by updates): add this caddy block and this networks block, keep the rest.
+services:
+  caddy:
+    volumes:
+      - ./Caddyfile:/etc/caddy/base.Caddyfile:ro
+      - ./Caddyfile.server:/etc/caddy/Caddyfile:ro
+    networks:
+      - default
+      - portfolio-web
+
+networks:
+  portfolio-web:
+    external: true
