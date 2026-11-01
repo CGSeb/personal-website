@@ -20,14 +20,18 @@ for (const lang of ['fr', 'en'] as const) {
       await expect(page.locator('form')).toHaveCount(0);
     });
 
-    test('contact is reachable from the navigation and the footer (US5-3)', async ({ page }) => {
-      await page.goto(`/${lang}/`);
-      await expect(
-        page.locator('footer').getByRole('link', { name: L[lang].contact }),
-      ).toHaveAttribute('href', L[lang].path);
-      await page.getByRole('navigation').getByRole('link', { name: L[lang].contact }).click();
-      await expect(page).toHaveURL(new RegExp(`${L[lang].path}$`));
-    });
+    test(
+      'contact is reachable from the navigation and the footer (US5-3)',
+      { tag: '@narrow' },
+      async ({ page }) => {
+        await page.goto(`/${lang}/`);
+        await expect(
+          page.locator('footer').getByRole('link', { name: L[lang].contact }),
+        ).toHaveAttribute('href', L[lang].path);
+        await page.getByRole('navigation').getByRole('link', { name: L[lang].contact }).click();
+        await expect(page).toHaveURL(new RegExp(`${L[lang].path}$`));
+      },
+    );
   });
 }
 

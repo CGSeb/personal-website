@@ -66,7 +66,7 @@ test.describe('with JavaScript', () => {
     expect(await state(page)).toMatchObject({ dataTheme: null, scheme: 'dark', bg: dark });
   });
 
-  test('a click goes system → light → dark → system', async ({ page }) => {
+  test('a click goes system → light → dark → system', { tag: '@narrow' }, async ({ page }) => {
     const dark = await systemBg(page, 'dark');
     const light = await systemBg(page, 'light');
     // A dark system, so that each step paints something different from the one before.

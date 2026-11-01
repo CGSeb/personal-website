@@ -88,23 +88,27 @@ test.describe('scene (US1)', () => {
     await expect(page.locator('#panel-experience-cg-seb')).toContainText('Depuis');
   });
 
-  test('close button, Escape and a click outside close the panel (US1-6)', async ({ page }) => {
-    await openScene(page);
-    const panel = page.locator('#panel-project-lesson-folk');
+  test(
+    'close button, Escape and a click outside close the panel (US1-6)',
+    { tag: '@narrow' },
+    async ({ page }) => {
+      await openScene(page);
+      const panel = page.locator('#panel-project-lesson-folk');
 
-    await clickObject(page, 'project/lesson-folk');
-    await panel.getByRole('button', { name: 'Fermer' }).click();
-    await expect(panel).toBeHidden();
-    await expect(page).not.toHaveURL(/#/);
+      await clickObject(page, 'project/lesson-folk');
+      await panel.getByRole('button', { name: 'Fermer' }).click();
+      await expect(panel).toBeHidden();
+      await expect(page).not.toHaveURL(/#/);
 
-    await clickObject(page, 'project/lesson-folk');
-    await page.keyboard.press('Escape');
-    await expect(panel).toBeHidden();
+      await clickObject(page, 'project/lesson-folk');
+      await page.keyboard.press('Escape');
+      await expect(panel).toBeHidden();
 
-    await clickObject(page, 'project/lesson-folk');
-    await page.locator('main h1').click();
-    await expect(panel).toBeHidden();
-  });
+      await clickObject(page, 'project/lesson-folk');
+      await page.locator('main h1').click();
+      await expect(panel).toBeHidden();
+    },
+  );
 
   test('the item list opens panels too (FR-020)', async ({ page }) => {
     await openScene(page);
@@ -117,19 +121,21 @@ test.describe('scene (US1)', () => {
 });
 
 test.describe('scene (US2)', () => {
-  test('selecting never leaves the page; "En savoir plus" goes to the written page (US2-1, US2-2)', async ({
-    page,
-  }) => {
-    await openScene(page);
-    await clickObject(page, 'project/lesson-folk');
-    await expect(page).toHaveURL(/\/fr\/explorer\/#projet\/lesson-folk$/);
-    await page
-      .locator('#panel-project-lesson-folk')
-      .getByRole('link', { name: /En savoir plus/ })
-      .click();
-    await expect(page).toHaveURL(/\/fr\/projets\/lesson-folk\/$/);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('LessonFolk');
-  });
+  test(
+    'selecting never leaves the page; "En savoir plus" goes to the written page (US2-1, US2-2)',
+    { tag: '@narrow' },
+    async ({ page }) => {
+      await openScene(page);
+      await clickObject(page, 'project/lesson-folk');
+      await expect(page).toHaveURL(/\/fr\/explorer\/#projet\/lesson-folk$/);
+      await page
+        .locator('#panel-project-lesson-folk')
+        .getByRole('link', { name: /En savoir plus/ })
+        .click();
+      await expect(page).toHaveURL(/\/fr\/projets\/lesson-folk\/$/);
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText('LessonFolk');
+    },
+  );
 
   test('going back restores the open panel (US2-3)', async ({ page }) => {
     await openScene(page);

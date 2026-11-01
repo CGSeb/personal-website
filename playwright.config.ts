@@ -35,7 +35,13 @@ export default defineConfig({
       // Starts its own browser with Chromium-only flags, which WebKit refuses to launch with.
       testIgnore: /scene-nowebgl\.spec\.ts/,
     },
-    { name: 'chromium-320', use: { ...chromium, viewport: { width: 320, height: 640 } } },
+    {
+      name: 'chromium-320',
+      use: { ...chromium, viewport: { width: 320, height: 640 } },
+      // Only what depends on the width: no style changes between 320 px and the phone of
+      // mobile-webkit, so what can break here is overflow and what no longer fits or can be reached.
+      grep: /@narrow/,
+    },
     { name: 'chromium-nojs', use: { ...chromium, javaScriptEnabled: false } },
   ],
 });
