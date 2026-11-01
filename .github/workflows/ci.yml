@@ -1,17 +1,9 @@
 name: CI
 
+# Run by hand (Actions → CI → Run workflow): the same checks as `npm run ci`, on Linux. A showcase
+# site does not need them on every change, and on these runners they take over 10 minutes.
 on:
-  pull_request:
-    paths-ignore: &docs
-      # Not **/*.md: the site's content and the test fixtures are Markdown too.
-      - 'specs/**'
-      - 'README.md'
-      - '.specify/**/*.md'
-      - '.claude/**/*.md'
-      - 'assets-src/**/*.md'
-  push:
-    branches: [main]
-    paths-ignore: *docs
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -46,21 +38,8 @@ jobs:
       - name: Scene budget
         run: npm run check:scene
 
-      - name: Cache Playwright browsers
-        id: browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-chromium-webkit-${{ hashFiles('package-lock.json') }}
-
       - name: Playwright browsers
-        if: steps.browsers.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium webkit
-
-      # The cache only holds the browsers, not the system libraries they need.
-      - name: Playwright system dependencies
-        if: steps.browsers.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium webkit
 
       - name: End-to-end tests
         run: npm run test:e2e
