@@ -17,6 +17,7 @@ TOWER_H = 2.1  # half-size of the room (4.2 x 4.2 m)
 TOWER_WALL = 2.8  # wall height
 TOWER_BAKE_SIZE = 2048
 TOWER_BAKE_SAMPLES = 384
+TOWER_SEAT = (-0.6, 0.525, -0.95, math.pi / 4)  # top of the chair's seat, front towards +X +Z
 
 
 # ---------------------------------------------------------------------------------------------
@@ -191,6 +192,33 @@ def _books(b, x, y, z0, z1, axis="z", depth=0.18):
         i += 1
 
 
+def _chair(b, x, z, rot):
+    """The chair at (x, z), its front towards +Z when rot is 0 and turned by rot about the up axis."""
+
+    def at(side, front):
+        return (
+            x + side * math.cos(rot) + front * math.sin(rot),
+            z - side * math.sin(rot) + front * math.cos(rot),
+        )
+
+    px, pz = at(0, 0)
+    b.box("fabric", 0.5, 0.07, 0.48, px, 0.49, pz, rot=rot)
+    px, pz = at(0, -0.27)
+    b.box("black", 0.48, 0.62, 0.05, px, 0.95, pz, rot=rot, tilt=math.radians(-10))
+    px, pz = at(0, -0.33)
+    b.box("black", 0.3, 0.14, 0.06, px, 1.36, pz, rot=rot, tilt=math.radians(-10))
+    for side in (-1, 1):
+        px, pz = at(side * 0.29, 0.02)
+        b.box("black", 0.05, 0.035, 0.3, px, 0.69, pz, rot=rot)
+        px, pz = at(side * 0.29, -0.08)
+        b.box("metal", 0.035, 0.17, 0.035, px, 0.6, pz, rot=rot)
+    b.cylinder("steel", 0.025, 0.36, x, 0.25, z, 12)
+    for k in range(5):
+        a = k * 2 * math.pi / 5 + 0.3 + rot
+        b.box("metal", 0.3, 0.03, 0.045, x + math.cos(a) * 0.15, 0.06, z - math.sin(a) * 0.15, rot=a)
+        b.sphere("black", 0.03, x + math.cos(a) * 0.3, 0.03, z - math.sin(a) * 0.3)
+
+
 def build_tower_geometry():
     H, WALL = TOWER_H, TOWER_WALL
     b = Builder(collections.defaultdict(lambda: None))  # materials exist already
@@ -288,19 +316,8 @@ def build_tower_geometry():
     b.cylinder("ceramic", 0.04, 0.09, 0.1, top + 0.045, nz1 - 0.12, 16)
     _plant(b, -H + 0.2, top, nz0 + 0.18, 0.7, pot="pot-dark")
 
-    # Ergonomic chair at the desk, back to the camera.
-    cx, cz = -0.6, -0.95
-    b.box("fabric", 0.5, 0.07, 0.48, cx, 0.49, cz)
-    b.box("black", 0.48, 0.62, 0.05, cx, 0.95, cz + 0.27, tilt=math.radians(-10))
-    b.box("black", 0.3, 0.14, 0.06, cx, 1.36, cz + 0.33, tilt=math.radians(-10))
-    for side in (-1, 1):
-        b.box("black", 0.05, 0.035, 0.3, cx + side * 0.29, 0.69, cz - 0.02)
-        b.box("metal", 0.035, 0.17, 0.035, cx + side * 0.29, 0.6, cz + 0.08)
-    b.cylinder("steel", 0.025, 0.36, cx, 0.25, cz, 12)
-    for k in range(5):
-        a = k * 2 * math.pi / 5 + 0.3
-        b.box("metal", 0.3, 0.03, 0.045, cx + math.cos(a) * 0.15, 0.06, cz - math.sin(a) * 0.15, rot=a)
-        b.sphere("black", 0.03, cx + math.cos(a) * 0.3, 0.03, cz - math.sin(a) * 0.3)
+    # Ergonomic chair turned away from the desk, towards the camera: the figure sits on it.
+    _chair(b, TOWER_SEAT[0], TOWER_SEAT[2], TOWER_SEAT[3])
 
     # Floating shelf on the slats, with plants and books.
     b.box("walnut", 1.4, 0.035, 0.24, -1.2, 2.0, -H + 0.16)
@@ -390,6 +407,7 @@ def tower_markers(lights):
             (1.82 - i * 0.248, 2.15 if i % 2 == 0 else 1.55, -H + 0.046, 0.0) for i in range(6)
         ],
         neon_lights=(),
+        avatar_seat=TOWER_SEAT,
     )
     # The camera frames the smaller room (Blender axes: x, depth, up).
     bpy.data.objects["bounds"].scale = (H, H, 1.4)
@@ -544,6 +562,20 @@ def _bake(room, ambiance, out, name):
     return path
 
 
+def _place_avatar():
+    """Adds the figure on the chair and returns its objects."""
+    before = set(bpy.data.objects)
+    avatar_materials()
+    build_tower_avatar()
+    x, y, z, rot = TOWER_SEAT
+    root = empty("avatar.root", x, y, z, rot)
+    figure = [o for o in bpy.data.objects if o not in before]
+    for o in figure:
+        if o.parent is None and o is not root:
+            o.parent = root
+    return figure
+
+
 def build_tower_room_baked(out=None, bake=True, name="room"):
     """Builds, bakes (day and night) and exports the room as <name>.glb plus <name>-day.png and
     <name>-night.png in `out`."""
@@ -552,6 +584,8 @@ def build_tower_room_baked(out=None, bake=True, name="room"):
     tower_materials()
     lights = build_tower_geometry()
     room = _join_room()
+    # The figure is there for both bakes, for its shadow, and is not exported (research § 5).
+    figure = _place_avatar()
     paths = []
     if bake:
         for ambiance in ("day", "night"):
@@ -559,6 +593,10 @@ def build_tower_room_baked(out=None, bake=True, name="room"):
             paths.append(_bake(room, ambiance, out, name))
     for o in [o for o in bpy.data.objects if o.type == "LIGHT"]:
         bpy.data.objects.remove(o)
+    for o in figure:
+        bpy.data.objects.remove(o)
+    for m in [m for m in bpy.data.materials if m.name.startswith("avatar-")]:
+        bpy.data.materials.remove(m)
     # The export carries one plain material: the scene code replaces it with the baked maps.
     baked = bpy.data.materials.new("baked")
     room.data.materials.clear()
@@ -595,6 +633,18 @@ def tower_object_materials():
     mat_plain("screen", "#e8eaf6", rough=0.4)
     mat_plain("bezel", "#16171a", rough=0.5)
     mat_plain("stand", "#5a5d63", rough=0.35, metal=1.0)
+    avatar_materials()
+
+
+def avatar_materials():
+    """The figure (contracts/avatar.md): plain colours from the profile photo."""
+    mat_plain("avatar-skin", "#eebf9f", rough=0.7)
+    mat_plain("avatar-hair", "#4b3120", rough=0.8)
+    mat_plain("avatar-beard", "#5e3a22", rough=0.9)
+    mat_plain("avatar-shirt", "#a5483a", rough=0.85)
+    mat_plain("avatar-trousers", "#2a2d35", rough=0.8)
+    mat_plain("avatar-glasses", "#0e0e10", rough=0.65)
+    mat_plain("avatar-eyes", "#1e140e", rough=0.3)
 
 
 def _capsule(b, material, x0, y0, x1, y1, w, depth, z=0.0):
@@ -680,9 +730,230 @@ def build_tower_monitor(name):
     b.build(name, flat=("screen",))
 
 
+# ---------------------------------------------------------------------------------------------
+# The figure of Sébastien, seated (contracts/avatar.md, research § 1-3): origin on the seat, front
+# towards +Z, a faceted figurine with an oversized head. On a phone the head is about 20 px, so
+# glasses, beard and hair mass are exaggerated rather than detailed.
+
+AVATAR_HEAD = (0.15, 0.195, 0.165)  # half-sizes of the head
+AVATAR_HEAD_Y = 0.73  # height of its centre above the seat
+AVATAR_HEAD_TILT = math.radians(-14)  # chin up, towards the camera above
+AVATAR_SHOULDER = (-0.215, 0.43, 0.0)  # the figure's right, on the viewer's left
+
+
+def _smooth(a, b, x):
+    t = max(0.0, min(1.0, (x - a) / (b - a)))
+    return t * t * (3 - 2 * t)
+
+
+def _table(points, x):
+    """Linear interpolation in a list of (x, y), x increasing."""
+    for (x0, y0), (x1, y1) in zip(points, points[1:]):
+        if x <= x1:
+            return y0 + (y1 - y0) * max(0.0, (x - x0) / (x1 - x0))
+    return points[-1][1]
+
+
+def _head_shell(b, material, grow, lon=28, lat=16):
+    """A faceted surface around the head, pushed out by grow(a, t): `a` is the angle around the
+    head from the front (-π to π, positive on the figure's left), `t` the height (-1 chin, 1 top). Where grow is
+    negative the surface dives under the skin, which draws the hairline and the beard line."""
+    rx, ry, rz = AVATAR_HEAD
+    bm = b._bm(material)
+    limit = math.radians(84)
+    rows = [-limit + 2 * limit * j / lat for j in range(lat + 1)]
+    columns = [-math.pi + 2 * math.pi * i / lon for i in range(lon)]
+    grows, verts = {}, {}
+
+    def height(i, j):
+        if (i, j) not in grows:
+            grows[i, j] = grow(columns[i], math.sin(rows[j]))
+        return grows[i, j]
+
+    def vert(i, j):
+        if (i, j) not in verts:
+            a, e, g = columns[i], rows[j], height(i, j)
+            # The jaw is narrower and shorter than the top of the head, with a chin that stands
+            # out forward, pointed in the middle, over a flat underside.
+            jaw = 1 - 0.1 * _smooth(-0.15, -0.9, math.sin(e))
+            low = 0.93 if e < 0 else 1.0
+            chin = _smooth(-0.4, -0.8, math.sin(e)) * _smooth(1.7, 0.7, abs(a))
+            tip = 0.035 * _smooth(0.85, 0.1, abs(a))
+            verts[i, j] = bm.verts.new(
+                P(
+                    (rx + g) * jaw * math.sin(a) * math.cos(e),
+                    AVATAR_HEAD_Y + max((ry + g) * low * math.sin(e) - 0.012 * chin, -0.178 - max(g, 0)),
+                    (rz + g) * jaw * math.cos(a) * math.cos(e) + (0.035 + tip) * chin,
+                )
+            )
+        return verts[i, j]
+
+    for j in range(lat):
+        for i in range(lon):
+            k = (i + 1) % lon
+            if max(height(i, j), height(k, j), height(k, j + 1), height(i, j + 1)) >= 0:
+                bm.faces.new((vert(i, j), vert(k, j), vert(k, j + 1), vert(i, j + 1)))
+    # Close the top and the bottom when the whole ring is there.
+    if all(height(i, lat) >= 0 for i in range(lon)):
+        bm.faces.new([vert(i, lat) for i in range(lon)])
+    if all(height(i, 0) >= 0 for i in range(lon)):
+        bm.faces.new([vert(i, 0) for i in reversed(range(lon))])
+
+
+def _avatar_hair(a, t):
+    """Short sides, volume on top, a quiff swept over the forehead, temples set back as on the
+    photo."""
+    s = abs(a)
+    line = _table(
+        ((0, 0.5), (0.45, 0.48), (0.8, 0.62), (1.1, 0.42), (1.35, 0.08), (1.75, 0.0), (2.3, -0.36), (math.pi, -0.48)),
+        s,
+    )
+    # The top is flat rather than pointed, the sides and the back stay close to the head; the
+    # quiff is higher on the figure's left (a > 0).
+    volume = (0.06 * _smooth(0.42, 0.66, t) - 0.03 * _smooth(0.8, 1.0, t)) * (1 - 0.3 * abs(math.sin(a)))
+    volume *= 1 - 0.45 * _smooth(1.6, 2.8, s)
+    quiff = _smooth(1.3, 0.5, s) * _smooth(0.42, 0.6, t) * _smooth(0.95, 0.7, t) * (0.028 + 0.012 * max(-1, min(1, a)))
+    # Uneven tufts, always the same.
+    tuft = (math.sin(a * 12.9 + t * 78.2) * 43758.5) % 1.0
+    # The height falls to nothing at the line, which keeps the line clean between two rows.
+    return max(-0.02, min(0.008 + volume + quiff + 0.012 * tuft * _smooth(0.4, 0.6, t), 0.14 * (t - line)))
+
+
+def _avatar_beard(a, t):
+    """Short and full, along the jaw up to the sideburns, leaving the cheeks bare; a little
+    heavier on the chin."""
+    s = abs(a)
+    line = _table(
+        ((0, -0.34), (0.4, -0.36), (0.75, -0.3), (1.1, -0.1), (1.4, 0.12), (1.75, 0.12), (1.95, -0.5), (2.3, -1.2)),
+        s,
+    )
+    height = 0.007 + 0.008 * _smooth(-0.55, -0.9, t) * _smooth(1.6, 0.6, s)
+    return max(-0.02, min(height, 0.14 * (line - t)))
+
+
+def _avatar_skin(a, t):
+    """The head itself, left out where hair or beard cover it."""
+    return -0.01 if _avatar_hair(a, t) > 0.005 or _avatar_beard(a, t) > 0.005 else 0.0
+
+
+def _tilted(b, pivot, tilt, draw):
+    """Runs draw() and leans what it added about the X axis through `pivot`."""
+    before = {name: len(bm.verts) for name, bm in b.meshes.items()}
+    draw()
+    for name, bm in b.meshes.items():
+        bm.verts.ensure_lookup_table()
+        bmesh.ops.rotate(
+            bm,
+            verts=bm.verts[before.get(name, 0) :],
+            cent=P(*pivot),
+            matrix=Matrix.Rotation(tilt, 3, "X"),
+        )
+
+
+def _limb(b, material, start, end, r, r2=None, segments=6):
+    """A faceted tube from `start` to `end`."""
+    p0, p1 = P(*start), P(*end)
+    turn = (p1 - p0).to_track_quat("Z", "Y").to_matrix().to_4x4()
+    bmesh.ops.create_cone(
+        b._bm(material),
+        cap_ends=True,
+        segments=segments,
+        radius1=r,
+        radius2=r if r2 is None else r2,
+        depth=(p1 - p0).length,
+        matrix=Matrix.Translation((p0 + p1) / 2) @ turn,
+    )
+
+
+def _taper(b, material, y0, y1, r0, r1, depth, segments=10):
+    """A prism of oval section, `depth` times as deep as wide, from radius r0 at y0 to r1 at y1."""
+    bmesh.ops.create_cone(
+        b._bm(material),
+        cap_ends=True,
+        segments=segments,
+        radius1=r0,
+        radius2=r1,
+        depth=1,
+        matrix=matrix(0, (y0 + y1) / 2, 0, size=(1, y1 - y0, depth)),
+    )
+
+
+def _avatar_head(b):
+    y = AVATAR_HEAD_Y
+    _, _, rz = AVATAR_HEAD
+    _head_shell(b, "avatar-skin", _avatar_skin)
+    _head_shell(b, "avatar-hair", _avatar_hair)
+    _head_shell(b, "avatar-beard", _avatar_beard)
+    # Nose, ears, the moustache and the lower lip in the beard.
+    b.blob("avatar-skin", 0.027, 0.036, 0.032, 0, y - 0.022, rz + 0.002)
+    for side in (-1, 1):
+        b.blob("avatar-skin", 0.021, 0.05, 0.032, side * 0.156, y + 0.012, -0.022)
+    b.blob("avatar-beard", 0.062, 0.015, 0.02, 0, y - 0.077, rz - 0.002)
+    b.box("avatar-skin", 0.056, 0.008, 0.012, 0, y - 0.092, rz - 0.001)
+    # Glasses: wide rectangles with thick rims, the part that must survive at 20 px.
+    w, h, bar, ey, ez = 0.112, 0.066, 0.022, y + 0.032, rz + 0.012
+    for side in (-1, 1):
+        x = side * 0.073
+        turn = side * math.radians(7)
+        for dy in (-1, 1):
+            b.box("avatar-glasses", w + bar, bar, bar, x, ey + dy * h / 2, ez - 0.004, rot=turn)
+        for dx in (-1, 1):
+            b.box("avatar-glasses", bar, h, bar, x + dx * w / 2, ey, ez - 0.004 - side * dx * 0.007, rot=turn)
+        # Temple, from the outer rim back to the ear.
+        _limb(b, "avatar-glasses", (side * 0.135, ey + 0.012, ez - 0.02), (side * 0.158, ey + 0.012, -0.01), 0.008, segments=4)
+        # Eye and eyebrow.
+        b.blob("avatar-eyes", 0.02, 0.018, 0.008, x, ey - 0.002, rz - 0.016 - abs(x) * 0.2)
+        b.box("avatar-hair", 0.09, 0.013, 0.014, x, ey + h / 2 + 0.021, rz - 0.012, rot=turn)
+    b.box("avatar-glasses", 0.04, bar * 0.8, bar * 0.8, 0, ey + 0.012, ez)
+
+
+def build_tower_avatar():
+    b = Builder(collections.defaultdict(lambda: None))
+    # Trunk widening to the shoulders, neck.
+    _taper(b, "avatar-shirt", 0.06, 0.4, 0.165, 0.205, 0.68)
+    b.blob("avatar-shirt", 0.222, 0.07, 0.135, 0, 0.415, 0)
+    b.ellipse("avatar-shirt", 0.078, 0.07, 0.03, 0, 0.49, 0, segments=10)  # crew neck
+    b.cylinder("avatar-skin", 0.062, 0.1, 0, 0.54, 0, 8)
+    # Hips and thighs on the seat, shins down to the rug (0.505 below the seat), shoes.
+    b.box("avatar-trousers", 0.33, 0.13, 0.24, 0, 0.065, 0)
+    for side in (-1, 1):
+        # Knees apart, so that the seated pose reads from above.
+        b.box("avatar-trousers", 0.14, 0.13, 0.42, side * 0.125, 0.065, 0.14, rot=side * math.radians(10))
+        b.box("avatar-trousers", 0.115, 0.46, 0.125, side * 0.16, -0.2, 0.29)
+        b.box("avatar-trousers", 0.12, 0.065, 0.24, side * 0.165, -0.47, 0.34)
+    # Left arm: elbow by the armrest, the hand on the thigh.
+    shoulder = (-AVATAR_SHOULDER[0], *AVATAR_SHOULDER[1:])
+    elbow = (0.285, 0.23, -0.03)
+    wrist = (0.15, 0.17, 0.235)
+    _limb(b, "avatar-shirt", shoulder, (0.25, 0.32, -0.015), 0.058, 0.056)
+    _limb(b, "avatar-skin", (0.25, 0.32, -0.015), elbow, 0.046)
+    _limb(b, "avatar-skin", elbow, wrist, 0.046, 0.038)
+    b.blob("avatar-skin", 0.048, 0.033, 0.058, 0.135, 0.16, 0.27)
+    _tilted(b, (0, 0.525, 0), AVATAR_HEAD_TILT, lambda: _avatar_head(b))
+    b.build("avatar", bevel=0)
+
+    # Right arm: rigid parts drawn from the shoulder (the origin of `avatar.arm`), at rest on the
+    # armrest with the forearm pointing forward.
+    arm = Builder(collections.defaultdict(lambda: None))
+    elbow = (-0.075, -0.2, -0.03)
+    _limb(arm, "avatar-shirt", (0, 0, 0), (-0.035, -0.11, -0.015), 0.058, 0.056)
+    _limb(arm, "avatar-skin", (-0.035, -0.11, -0.015), elbow, 0.046)
+    _limb(arm, "avatar-skin", elbow, (-0.1, -0.195, 0.24), 0.046, 0.038)
+    arm.blob("avatar-skin", 0.044, 0.033, 0.058, -0.104, -0.195, 0.29)
+    pivot = empty("avatar.arm", *AVATAR_SHOULDER)
+    for part in arm.build("avatar.arm", bevel=0):
+        part.parent = pivot
+
+    # Anchor of the bubble, at the top of the hair (leaning with the head).
+    top = AVATAR_HEAD_Y + AVATAR_HEAD[1] + 0.05
+    lean = (top - 0.525) * math.sin(-AVATAR_HEAD_TILT)
+    empty("avatar.head", 0, 0.525 + (top - 0.525) * math.cos(AVATAR_HEAD_TILT), -lean)
+
+
 # Model file -> builder and scale: the desk objects are drawn larger than life so they read
 # from the isometric view.
 TOWER_OBJECTS = {
+    "avatar": (build_tower_avatar, 1.0),
     "generic-education": (build_tower_education, 1.0),
     "generic-experience": (build_tower_experience, 1.0),
     "generic-project": (lambda: build_tower_monitor("generic-project"), 1.0),

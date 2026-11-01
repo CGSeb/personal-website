@@ -25,6 +25,11 @@ npm run models:optimize
 
 La validation de Sébastien est consignée ici avant de passer à la suite.
 
+**Validation du 01/11/2026 (scénarios 1 et 2)** : Sébastien valide la figurine sur les rendus de
+[captures/](captures/README.md). Ajustements demandés avant de valider : moins de volume dans la barbe, puis un menton plus
+marqué, à la même hauteur mais pointé vers l'avant. Ces rendus sont faits dans Blender, sans précalcul et avec une lumière
+qui imite celle du site. Le regard final sur le site reste à faire (scénarios 23 et 25). Le scénario 3 reste à faire avec T009.
+
 ## B. Contrôles automatiques
 
 ```bash
@@ -80,3 +85,22 @@ npm run lhci
 ## Résultats
 
 À remplir pendant la réalisation.
+
+**Scénario 3 (01/11/2026)** : chaise tournée de π/4, à sa place d'origine, contrôlée de dessus, de l'est et du sud
+([captures](captures/README.md)). Ni le dossier, ni les roulettes, ni la figurine ne traversent le bureau. Le haut du dossier
+passe à environ 1 cm du bord du bureau, au-dessus de son plateau.
+
+**Précalcul avec la figurine (T012, 01/11/2026)** : `room.glb` ne contient que le matériau `baked` et le marqueur
+`avatar.seat`.
+
+| Fichier (`public/models/`) | Poids |
+|---|---|
+| `avatar.glb` | 40 Ko (brut : 200 Ko) |
+| `room.glb` | 525 Ko |
+| `room-day.webp` | 254 Ko |
+| `room-night.webp` | 366 Ko |
+| Total de la scène avant interaction | 1,42 Mo / 3 Mo |
+
+Regardée sans la figurine, la texture montre son ombre sur l'assise et, sous les chaussures, deux rectangles très sombres sur
+le tapis. La figurine les recouvre. Si son chargement échoue, ils restent visibles, plus nettement que ce que prévoyait
+research § 5 : à revoir au scénario 18.

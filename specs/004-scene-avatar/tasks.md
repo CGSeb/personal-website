@@ -58,19 +58,19 @@ testing of each story.
 
 ### Model and validation
 
-- [ ] T005 [US1] Add the `avatar-*` materials and `build_tower_avatar()` to `assets-src/models/tower_room.py`, following contracts/avatar.md and research § 1–3: origin on the seat, front towards +Z, rigid parts, faceted, no texture; oversized head, short brown hair with volume on top, short full beard and moustache, dark rectangular glasses, fair skin, brick-red T-shirt, dark trousers, seated pose; right arm under the empty `avatar.arm` at the shoulder, its parts bent and rigid; empty `avatar.head` at the top of the head; register it in `TOWER_OBJECTS` (scale 1.0)
-- [ ] T006 [US1] Add `assets-src/models/render_avatar.py`: renders `avatar` from the front and at three-quarters, and in the room from the scene's isometric direction `(1, 1, 1)`, to `specs/004-scene-avatar/captures/` (PNG, with an extra crop at the size of a phone view: a head of about 20 px)
-- [ ] T007 [US1] Build and render: run `build_models.py -- --only avatar` then `render_avatar.py`; place the photo `content/profile-photo.webp` beside the renders in `specs/004-scene-avatar/captures/README.md`, and iterate on T005 until the main features read at phone size
-- [ ] T008 [US1] **Validation by Sébastien** (quickstart A, scenarios 1–2): show the renders, adjust on feedback, record the decision in `specs/004-scene-avatar/quickstart.md`
+- [x] T005 [US1] Add the `avatar-*` materials and `build_tower_avatar()` to `assets-src/models/tower_room.py`, following contracts/avatar.md and research § 1–3: origin on the seat, front towards +Z, rigid parts, faceted, no texture; oversized head, short brown hair with volume on top, short full beard and moustache, dark rectangular glasses, fair skin, brick-red T-shirt, dark trousers, seated pose; right arm under the empty `avatar.arm` at the shoulder, its parts bent and rigid; empty `avatar.head` at the top of the head; register it in `TOWER_OBJECTS` (scale 1.0)
+- [x] T006 [US1] Add `assets-src/models/render_avatar.py`: renders `avatar` from the front and at three-quarters, and in the room from the scene's isometric direction `(1, 1, 1)`, to `specs/004-scene-avatar/captures/` (PNG, with an extra crop at the size of a phone view: a head of about 20 px)
+- [x] T007 [US1] Build and render: run `build_models.py -- --only avatar` then `render_avatar.py`; place the photo `content/profile-photo.webp` beside the renders in `specs/004-scene-avatar/captures/README.md`, and iterate on T005 until the main features read at phone size
+- [x] T008 [US1] **Validation by Sébastien** (quickstart A, scenarios 1–2): show the renders, adjust on feedback, record the decision in `specs/004-scene-avatar/quickstart.md`
 
 **Checkpoint**: likeness validated; only now may the bake start
 
 ### Room
 
-- [ ] T009 [US1] Move the chair into `_chair(b, x, z, rot)` in `assets-src/models/tower_room.py` (same parts, rotated) and call it with `rot = π/4`, front towards `+X +Z` (research § 6); check on a quick render without baking that neither the back nor the casters go through the desk, and move the chair if needed (quickstart scenario 3)
-- [ ] T010 [US1] Add the `avatar.seat` empty (position on the seat, same rotation as the chair) in `tower_markers()` of `assets-src/models/tower_room.py`, through a new `avatar_seat` argument of `room_markers()` in `assets-src/models/build_models.py`
-- [ ] T011 [US1] In `build_tower_room_baked` of `assets-src/models/tower_room.py`, add the figure to the Blender scene after `_join_room()`, placed at the seat, keep it for both bakes and remove it before `tower_markers()` and the export, so `room.glb` holds only its shadow (research § 5; check that `room.glb` has no `avatar-*` material)
-- [ ] T012 [US1] Rebuild: `build_models.py -- --only avatar --only room`, then `npm run models:optimize`; `public/models/avatar.glb`, `room.glb`, `room-day.webp`, `room-night.webp` are refreshed and `npm run build` + `npm run check:scene` pass; record the size of `avatar.glb`
+- [x] T009 [US1] Move the chair into `_chair(b, x, z, rot)` in `assets-src/models/tower_room.py` (same parts, rotated) and call it with `rot = π/4`, front towards `+X +Z` (research § 6); check on a quick render without baking that neither the back nor the casters go through the desk, and move the chair if needed (quickstart scenario 3)
+- [x] T010 [US1] Add the `avatar.seat` empty (position on the seat, same rotation as the chair) in `tower_markers()` of `assets-src/models/tower_room.py`, through a new `avatar_seat` argument of `room_markers()` in `assets-src/models/build_models.py`
+- [x] T011 [US1] In `build_tower_room_baked` of `assets-src/models/tower_room.py`, add the figure to the Blender scene after `_join_room()`, placed at the seat, keep it for both bakes and remove it before `tower_markers()` and the export, so `room.glb` holds only its shadow (research § 5; check that `room.glb` has no `avatar-*` material)
+- [x] T012 [US1] Rebuild: `build_models.py -- --only avatar --only room`, then `npm run models:optimize`; `public/models/avatar.glb`, `room.glb`, `room-day.webp`, `room-night.webp` are refreshed and `npm run build` + `npm run check:scene` pass; record the size of `avatar.glb`
 
 ### Scene
 
