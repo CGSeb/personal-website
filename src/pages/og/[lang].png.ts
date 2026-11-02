@@ -30,8 +30,9 @@ export const GET: APIRoute = async ({ params }) => {
     .map((line, i) => `<tspan x="80" dy="${i === 0 ? 0 : 56}">${escape(line)}</tspan>`)
     .join('');
   // Style « tour »: charcoal like the room at night, an amber LED line and the amber cube.
-  // librsvg only knows the fonts installed on the build machine, hence the fallbacks.
-  const font = "'Space Grotesk', Inter, 'Segoe UI', Arial, sans-serif";
+  // librsvg only knows the fonts installed on the build machine, hence the fallbacks (the Docker
+  // build installs Liberation Sans, which answers to Arial). Without any font it draws boxes.
+  const font = "'Space Grotesk', Inter, 'Segoe UI', Arial, 'Liberation Sans', sans-serif";
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
   <defs><radialGradient id="glow" cx="0.83" cy="0.45" r="0.45">
     <stop offset="0" stop-color="#f0a35a" stop-opacity="0.22"/><stop offset="1" stop-color="#f0a35a" stop-opacity="0"/>
