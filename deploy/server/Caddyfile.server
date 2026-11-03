@@ -5,7 +5,16 @@ import /etc/caddy/base.Caddyfile
 
 sebastienmichon.fr {
 	encode zstd gzip
-	reverse_proxy portfolio-site-1:8080
+
+	# Do not advertise the software: "Server: Caddy" and the "Via: 1.1 Caddy" added by reverse_proxy.
+	header {
+		-Server
+		-Via
+	}
+
+	reverse_proxy portfolio-site-1:8080 {
+		header_down -Via
+	}
 }
 
 www.sebastienmichon.fr {
